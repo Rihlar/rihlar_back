@@ -64,7 +64,9 @@ tasks:
   restart:
     cmds:
       - docker compose restart auth
-      - docker compose restart app
+      - docker compose restart game
+      - docker compose restart user
+      - docker compose restart gcore
   
   genkey:
     cmds:
