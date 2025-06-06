@@ -27,11 +27,11 @@ services:
             mysql:
                 condition: service_healthy
     
-    # アプリコンテナ
+    # ユーザーコンテナ
     user:
         hostname: user
         build:
-            context: ./user
+            context: ./containers/user
             dockerfile: Dockerfile
             target: Develop
         tty: true
@@ -46,6 +46,47 @@ services:
                 condition: service_healthy
             auth:
                 condition: service_started
+    
+    # ゲームコンテナ
+    game:
+        hostname: game
+        build:
+            context: ./containers/game
+            dockerfile: Dockerfile
+            target: Develop
+        tty: true
+        env_file:
+            - ./openssl/jwtKeys/public.env
+            - ./config/game.env
+        volumes:
+            - ./containers/game/src:/root/src
+        restart: always
+        depends_on:
+            mysql:
+                condition: service_healthy
+            auth:
+                condition: service_started
+    
+    # ゲームの核となるコンテナ
+    gcore:
+        hostname: gcore
+        build:
+            context: ./containers/core
+            dockerfile: Dockerfile
+            target: Develop
+        tty: true
+        env_file:
+            - ./openssl/jwtKeys/public.env
+            - ./config/gcore.env
+        volumes:
+            - ./containers/gcore/src:/root/src
+        restart: always
+        depends_on:
+            mysql:
+                condition: service_healthy
+            auth:
+                condition: service_started
+
     # データベース
     mysql:
         hostname: db

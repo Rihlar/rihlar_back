@@ -1,7 +1,7 @@
 package middlewares
 
 import (
-	"core/logger"
+	"gcore/logger"
 	"crypto/ed25519"
 	"crypto/x509"
 	"encoding/pem"

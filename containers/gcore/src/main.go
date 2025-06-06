@@ -1,10 +1,10 @@
 package main
 
 import (
-	"core/controllers"
-	"core/middlewares"
-	"core/models"
-	"core/services"
+	"gcore/controllers"
+	"gcore/middlewares"
+	"gcore/models"
+	"gcore/services"
 	"net/http"
 
 	"github.com/labstack/echo/v4"

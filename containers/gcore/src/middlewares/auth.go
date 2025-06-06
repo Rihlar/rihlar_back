@@ -1,7 +1,7 @@
 package middlewares
 
 import (
-	"core/logger"
+	"gcore/logger"
 	"net/http"
 
 	"github.com/labstack/echo/v4"

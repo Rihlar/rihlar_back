@@ -19,6 +19,6 @@ app/src/tmp/
 location/src/tmp/
 auth/icons/
 
-containers/core/src/tmp/
 containers/user/src/tmp/
 containers/game/src/tmp/
+containers/gcore/src/tmp/

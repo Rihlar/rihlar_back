@@ -1,7 +1,7 @@
 package middlewares
 
 import (
-	"core/logger"
+	"gcore/logger"
 
 	"github.com/golang-jwt/jwt/v5"
 )

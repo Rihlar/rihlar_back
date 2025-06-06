@@ -1,4 +1,4 @@
-module core
+module gcore
 
 go 1.24.4
 
