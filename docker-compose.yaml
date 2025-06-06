@@ -71,7 +71,7 @@ services:
     gcore:
         hostname: gcore
         build:
-            context: ./containers/core
+            context: ./containers/gcore
             dockerfile: Dockerfile
             target: Develop
         tty: true

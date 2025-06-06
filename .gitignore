@@ -7,8 +7,9 @@ database/data/
 openssl/jwtKeys/
 config/auth.env
 config/app.env
-config/location.env
-config/config.env
+config/user.env
+config/gcore.env
+config/game.env
 
 auth/src/assets/icons/*
 !auth/src/assets/icons/readme.md
@@ -22,3 +23,4 @@ auth/icons/
 containers/user/src/tmp/
 containers/game/src/tmp/
 containers/gcore/src/tmp/
+
