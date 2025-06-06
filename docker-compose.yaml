@@ -28,24 +28,23 @@ services:
                 condition: service_healthy
     
     # アプリコンテナ
-    app:
-        hostname: app
+    user:
+        hostname: user
         build:
-            context: ./app
+            context: ./user
             dockerfile: Dockerfile
             target: Develop
         tty: true
         env_file:
             - ./openssl/jwtKeys/public.env
-            - ./config/app.env
+            - ./config/user.env
         volumes:
-            - ./app/src:/root/src
+            - ./containers/user/src:/root/src
         restart: always
         depends_on:
             mysql:
                 condition: service_healthy
             auth:
-
                 condition: service_started
     # データベース
     mysql:

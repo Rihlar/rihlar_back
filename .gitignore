@@ -8,6 +8,8 @@ openssl/jwtKeys/
 config/auth.env
 config/app.env
 config/location.env
+config/config.env
+
 auth/src/assets/icons/*
 !auth/src/assets/icons/readme.md
 dashboard/src/node_modules/
@@ -16,3 +18,7 @@ auth/src/tmp/
 app/src/tmp/
 location/src/tmp/
 auth/icons/
+
+containers/core/src/tmp/
+containers/user/src/tmp/
+containers/game/src/tmp/
