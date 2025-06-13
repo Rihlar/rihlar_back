@@ -11,7 +11,7 @@ func DeleteAndMigrate(table interface{}) error {
 
 	// エラー処理
 	if err != nil {
-		logger.PrintErr("テーブルの削除中にエラーが発生しました",err)
+		logger.PrintErr("テーブルの削除中にエラーが発生しました", err)
 	}
 
 	// マイグレーションする
@@ -21,7 +21,9 @@ func DeleteAndMigrate(table interface{}) error {
 func Debug() {
 	// マイグレーション のコードをここに書く
 	DeleteAndMigrate(Sample{})
+	DeleteAndMigrate(Profile{})
 
 	// デバッグのコードを呼び出す
 	DebugSample()
+	DebugProfile()
 }
