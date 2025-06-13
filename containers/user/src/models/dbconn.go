@@ -3,6 +3,7 @@ package models
 import (
 	"log"
 	"os"
+
 	// "os"
 
 	// "gorm.io/driver/sqlite"
@@ -32,4 +33,7 @@ func Init() {
 
 	// グローバル変数に格納
 	dbconn = db
+
+	// debug 用の関数を呼び出す
+	Debug()
 }
