@@ -27,6 +27,8 @@ func Debug() {
 	DeleteAndMigrate(Team{})
 	DeleteAndMigrate(Member{})
 	DeleteAndMigrate(Circle{})
+	DeleteAndMigrate(Region{})
+	DeleteAndMigrate(MovementLog{})
 
 	// デバッグのコードを呼び出す
 	DebugSample()
@@ -36,5 +38,7 @@ func Debug() {
 	DebugTeam()
 	DebugMember()
 	DebugCircle()
+	DebugRegion()
+	DebugMovementLog()
 }
 
