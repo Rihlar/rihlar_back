@@ -21,7 +21,17 @@ func DeleteAndMigrate(table interface{}) error {
 func Debug() {
 	// マイグレーション のコードをここに書く
 	DeleteAndMigrate(Sample{})
+	DeleteAndMigrate(Game{})
+	DeleteAndMigrate(GameChunck{})
+	DeleteAndMigrate(Team{})
+	DeleteAndMigrate(Member{})
+	DeleteAndMigrate(Circle{})
 
 	// デバッグのコードを呼び出す
 	DebugSample()
+	DebugGame()
+	DebugChunck()
+	DebugTeam()
+	DebugMember()
+	DebugCircle()
 }

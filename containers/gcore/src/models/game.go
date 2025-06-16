@@ -1,6 +1,9 @@
 package models
 
-import "time"
+import (
+	"gcore/logger"
+	"time"
+)
 
 // テーブル定義
 type Game struct {
@@ -17,4 +20,48 @@ type Game struct {
 // テーブル名
 func (Game) TableName() string {
 	return "games"
+}
+
+// デバック用
+func DebugGame() {
+	// デバッグ用のコードをここに書く
+
+	gameid := "f36eb7ce-4e24-4805-99a5-b3ae3468708a"
+	regionid:= "f6b4e846-1e99-45a1-a7a7-1858a9f94d28"	// kansai
+
+	// 書き込み
+	result := dbconn.Save(&Game{
+		GameID:    gameid,
+		StartTime: time.Now().AddDate(0,0,1),
+		EndTime:   time.Now().AddDate(0,0,5),
+		Flag:      0,
+		Type:      1,
+		Teams:     []Team{},
+		Status:    0,
+		RegionID:  regionid,
+	})
+
+	// エラー処理
+	if result.Error != nil {
+		logger.PrintErr("ゲーム保存エラー",result.Error)
+		return
+	}
+
+	logger.Println("ゲーム保存成功")
+
+	// 取得コード
+	returnData := Game{}
+
+	// 取得する
+	result = dbconn.Where(&Game{
+		GameID:   gameid,
+	}).First(&returnData)
+
+	// エラー処理
+	if result.Error != nil {
+		logger.PrintErr("ゲームID取得エラー",result.Error)
+		return
+	}
+
+	logger.Println("げーむ取得成功")
 }
