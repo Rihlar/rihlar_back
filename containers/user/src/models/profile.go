@@ -1,6 +1,10 @@
 package models
 
-import "user/logger"
+import (
+	"user/logger"
+
+	"gorm.io/gorm"
+)
 
 // テーブル構造
 type Profile struct {
@@ -17,6 +21,15 @@ type Profile struct {
 
 func (Profile) TableName() string {
 	return "Profile"
+}
+
+// IDからプロフィールを返す
+func FindProfileById(db *gorm.DB, id string) (*Profile, error) {
+	var profile Profile
+	if err := db.First(&profile, "user_id = ?", id).Error; err != nil {
+		return nil, err
+	}
+	return &profile, nil
 }
 
 // デバッグ用
