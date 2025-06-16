@@ -1,9 +1,9 @@
 package models
 
-import "gcore/logger"
+import "game/logger"
 
 // テーブル定義
-type Chunk struct {
+type BaseChunk struct {
 	ChunkID   string  `gorm:"primaryKey" json:"chunkID"`   // チャンクID
 	Latitude  float64 `gorm:"double" json:"latitude"`      // 緯度
 	Longitude float64 `gorm:"double" json:"longitude"`     // 経度
@@ -11,18 +11,18 @@ type Chunk struct {
 }
 
 // テーブル名
-func (Chunk) TableName() string {
+func (BaseChunk) TableName() string {
 	return "chunks"
 }
 
-func DebugChunk() {
+func DebugBaseChunk() {
 	// デバッグ用のコードをここに書く
 
 	chunkid := "3325d4ee-ef32-42a3-91d1-33d3582dffc2"
 	regionid := "f6b4e846-1e99-45a1-a7a7-1858a9f94d28" // kansai
 
 	// 書き込み
-	result := dbconn.Save(&Chunk{
+	result := dbconn.Save(&BaseChunk{
 		ChunkID:   chunkid,
 		Latitude:  0,
 		Longitude: 0,
@@ -31,25 +31,25 @@ func DebugChunk() {
 
 	// エラー処理
 	if result.Error != nil {
-		logger.PrintErr("チャンク保存エラー", result.Error)
+		logger.PrintErr("ベースチャンク保存エラー", result.Error)
 		return
 	}
 
-	logger.Println("チャンク保存成功")
+	logger.Println("ベースチャンク保存成功")
 
 	// 取得コード
-	returnData := Chunk{}
+	returnData := BaseChunk{}
 
 	// 取得する
-	result = dbconn.Where(&Chunk{
+	result = dbconn.Where(&BaseChunk{
 		ChunkID: chunkid,
 	}).First(&returnData)
 
 	// エラー処理
 	if result.Error != nil {
-		logger.PrintErr("チャンク取得エラー", result.Error)
+		logger.PrintErr("ベースチャンク取得エラー", result.Error)
 		return
 	}
 
-	logger.Println("チャンク取得成功")
+	logger.Println("ベースチャンク取得成功")
 }
