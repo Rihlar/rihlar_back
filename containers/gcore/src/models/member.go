@@ -4,10 +4,10 @@ import "gcore/logger"
 
 // テーブル定義
 type Member struct {
-	GameID string `gorm:"varchar(36);primaryKey" json:"gameID"` // ゲームID（複合主キー）
-	TeamID string `gorm:"varchar(36);not null" json:"teamID"`   // チームID
-	UserID string `gorm:"varchar(36);primaryKey" json:"userID"` // ユーザーID（複合主キー）
-	Points int    `gorm:"not null" json:"points"`               // ポイント
+	GameID string `gorm:"primaryKey;size:36" json:"gameID"` // ゲームID（複合主キー）
+	TeamID string `gorm:"not null;size:36" json:"teamID"`   // チームID
+	UserID string `gorm:"primaryKey" json:"userID"` // ユーザーID（複合主キー）
+	Points int    `gorm:"not null" json:"points"`   // ポイント
 }
 
 // テーブル名
@@ -32,7 +32,7 @@ func DebugMember() {
 
 	// エラー処理
 	if result.Error != nil {
-		logger.PrintErr("メンバー保存エラー",result.Error)
+		logger.PrintErr("メンバー保存エラー", result.Error)
 		return
 	}
 
@@ -43,12 +43,12 @@ func DebugMember() {
 
 	// 取得する
 	result = dbconn.Where(&Member{
-		UserID:   userid,
+		UserID: userid,
 	}).First(&returnData)
 
 	// エラー処理
 	if result.Error != nil {
-		logger.PrintErr("メンバー取得エラー",result.Error)
+		logger.PrintErr("メンバー取得エラー", result.Error)
 		return
 	}
 

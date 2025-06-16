@@ -7,15 +7,15 @@ import (
 
 // テーブル定義
 type Circle struct {
-	CircleID  string    `gorm:"varchar(36);primaryKey" json:"circlesID"` // サークルID
-	GameID    string    `gorm:"varchar(36) not null" json:"gameID"`      // ゲームID
-	UserID    string    `gorm:"varchar(36) not null" json:"userID"`      // ユーザーID
-	Size      int       `gorm:"not null" json:"size"`                    // サークルサイズ
-	Level     int       `gorm:"not null" json:"level"`                   // 防衛レベル
-	Latitude  float64   `gorm:"double" json:"latitude"`                  // 緯度
-	Longitude float64   `gorm:"double" json:"longitude"`                 // 経度
-	CreatedAT time.Time `gorm:"autoCreateTime" json:"createdAT"`         // 作成時
-	ImageID   string    `gorm:"varchar(36)" json:"imageID"`              // イメージID
+	CircleID  string    `gorm:"primaryKey" json:"circlesID"`        // サークルID
+	GameID    string    `gorm:"varchar(36) not null" json:"gameID"` // ゲームID
+	UserID    string    `gorm:"varchar(36) not null" json:"userID"` // ユーザーID
+	Size      int       `gorm:"not null" json:"size"`               // サークルサイズ
+	Level     int       `gorm:"not null" json:"level"`              // 防衛レベル
+	Latitude  float64   `gorm:"double" json:"latitude"`             // 緯度
+	Longitude float64   `gorm:"double" json:"longitude"`            // 経度
+	CreatedAT time.Time `gorm:"autoCreateTime" json:"createdAT"`    // 作成時
+	ImageID   string    `gorm:"varchar(36)" json:"imageID"`         // イメージID
 }
 
 // テーブル名
@@ -38,7 +38,7 @@ func DebugCircle() {
 		UserID:    userid,
 		Size:      1,
 		Level:     1,
-		Latitude:  34.706414954712386, 
+		Latitude:  34.706414954712386,
 		Longitude: 135.50363863029338,
 		CreatedAT: time.Time{},
 		ImageID:   imageid,
@@ -46,7 +46,7 @@ func DebugCircle() {
 
 	// エラー処理
 	if result.Error != nil {
-		logger.PrintErr("サークル保存エラー",result.Error)
+		logger.PrintErr("サークル保存エラー", result.Error)
 		return
 	}
 
@@ -57,12 +57,12 @@ func DebugCircle() {
 
 	// 取得する
 	result = dbconn.Where(&Circle{
-		CircleID:  circleid,
+		CircleID: circleid,
 	}).First(&returnData)
 
 	// エラー処理
 	if result.Error != nil {
-		logger.PrintErr("サークル取得エラー",result.Error)
+		logger.PrintErr("サークル取得エラー", result.Error)
 		return
 	}
 

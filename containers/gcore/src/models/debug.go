@@ -22,7 +22,8 @@ func Debug() {
 	// マイグレーション のコードをここに書く
 	DeleteAndMigrate(Sample{})
 	DeleteAndMigrate(Game{})
-	DeleteAndMigrate(GameChunck{})
+	DeleteAndMigrate(Chunk{})
+	DeleteAndMigrate(GameChunk{})
 	DeleteAndMigrate(Team{})
 	DeleteAndMigrate(Member{})
 	DeleteAndMigrate(Circle{})
@@ -30,8 +31,10 @@ func Debug() {
 	// デバッグのコードを呼び出す
 	DebugSample()
 	DebugGame()
-	DebugChunck()
+	DebugChunk()
+	DebugGameChunk()
 	DebugTeam()
 	DebugMember()
 	DebugCircle()
 }
+
