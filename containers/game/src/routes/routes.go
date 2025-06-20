@@ -7,10 +7,10 @@ import (
 )
 
 // ルーティング　
-func InitRoutes(e *echo.Echo) *echo.Echo {
+func InitRoutes(router *echo.Echo) *echo.Echo {
 
 	//ranking取得
-	e.GET("/ranking/personal/:user_id", controllers.GetMyRankingHandler)
+	router.GET("/ranking/personal/:user_id", controllers.GetMyRankingHandler)
 
-	return e
+	return router
 }
