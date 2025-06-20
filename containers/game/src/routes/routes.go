@@ -4,13 +4,13 @@ package routes
 import (
 	"game/controllers"
 	"github.com/labstack/echo/v4"
-	"gorm.io/gorm"
 )
 
-// ルーティング　nagasugi kimosugi yurusenai
-func InitRoutes(e *echo.Echo, db *gorm.DB) {
+// ルーティング　
+func InitRoutes(e *echo.Echo) *echo.Echo {
 
-	//
-	e.GET("/users/:id", controllers.GetMyRankingHandler)
+	//ranking取得
+	e.GET("/ranking/personal/:user_id", controllers.GetMyRankingHandler)
 
+	return e
 }

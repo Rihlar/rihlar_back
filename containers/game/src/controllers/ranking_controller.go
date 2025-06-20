@@ -30,5 +30,7 @@ func GetMyRankingHandler(c echo.Context) error {
 		"helpData": ranking,
 	})
 
+	logger.Println("ランキング", ranking)
+
 	return nil
 }
