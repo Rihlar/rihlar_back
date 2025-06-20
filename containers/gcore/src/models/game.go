@@ -22,6 +22,23 @@ func (Game) TableName() string {
 	return "games"
 }
 
+// ゲームを取得するエンドポイント
+func GetGame(gameid string) (Game, error) {
+	var game Game
+
+	// 取得する
+	result := dbconn.Where(&Game{
+		GameID: gameid,
+	}).Find(&game)
+
+	return game, result.Error
+}
+
+// ゲームを保存するエンドポイント
+func SaveGame(game Game) error {
+	return dbconn.Save(&game).Error
+}
+
 // デバック用
 func DebugGame() {
 	// デバッグ用のコードをここに書く
@@ -65,3 +82,4 @@ func DebugGame() {
 
 	logger.Println("げーむ取得成功")
 }
+
