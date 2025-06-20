@@ -1,0 +1,11 @@
+@base_url = https://localhost:8943/game
+
+@user_id = e3abf90d-4bcf-4c3b-bbde-37694b1611b3
+
+
+# test
+GET {{base_url}}/
+
+### ランキング取得
+GET {{base_url}}/ranking/personal/{{user_id}}
+
