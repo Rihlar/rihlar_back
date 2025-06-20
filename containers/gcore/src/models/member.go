@@ -15,6 +15,40 @@ func (Member) TableName() string {
 	return "Members"
 }
 
+// 点数を更新する
+func (member *Member) UpdatePoints(point int) error {
+	// 点数を更新
+	member.Points = point
+
+	// アップデートを実行する
+	result := dbconn.Model(member).Update("points", member.Points)
+
+	// エラー処理
+	if result.Error != nil {
+		logger.PrintErr("メンバー更新エラー", result.Error)
+		return result.Error
+	}
+
+	return nil
+}
+
+// メンバーを取得する
+func GetMemberByUserID(userid string) (Member, error) {
+	var member Member
+
+	// 取得する
+	result := dbconn.Where(&Member{
+		UserID: userid,
+	}).First(&member)
+
+	return member, result.Error
+}
+
+// メンバーを保存する (上書き)
+func SaveMember(member Member) error {
+	return dbconn.Save(&member).Error
+}
+
 func DebugMember() {
 	// デバッグ用のコードをここに書く
 
