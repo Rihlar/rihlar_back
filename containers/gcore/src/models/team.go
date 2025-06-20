@@ -19,6 +19,35 @@ func (Team) TableName() string {
 	return "Teams"
 }
 
+// チームの点数を更新する
+func (team *Team) UpdatePoints(point int) error {
+	// チームの点数を更新
+	team.Points = point
+
+	// アップデートを実行する
+	result := dbconn.Model(team).Update("points", team.Points)
+
+	// エラー処理
+	if result.Error != nil {
+		logger.PrintErr("チーム更新エラー", result.Error)
+		return result.Error
+	}
+
+	return nil
+}
+
+// チームを取得する処理
+func GetTeam(teamID string) (Team, error) {
+	returnData := Team{}
+
+	// 取得する
+	result := dbconn.Where(&Team{
+		TeamID: teamID,
+	}).First(&returnData)
+
+	return returnData, result.Error
+}
+
 func DebugTeam() {
 	// デバッグ用のコードをここに書く
 
