@@ -100,7 +100,6 @@ func GetMyRanking(userId string, gameId string) (int, error) {
 
 	// ゲームIDでフィルタし、得点順に並べて全件取得
 	err := dbconn.
-		Model(&Member{}).
 		Where("game_id = ?", gameId).
 		Order("points DESC").
 		Find(&users).Error
@@ -143,4 +142,23 @@ func GetMyPoints(userId string, gameId string) (Member, error) {
 	}
 
 	return user, nil
+}
+
+// ユーザーの全てのゲームを取得する
+func GetPlaingGames(userUuid string) ([]string, error) {
+	// 結果格納用
+	var games []Member
+
+	result := dbconn.Where("user_id = ?", userUuid).Find(&games)
+	if result.Error != nil {
+		logger.PrintErr("ゲームID取得エラー", result.Error)
+		return []string{}, nil
+	}
+
+	// gameIDだけを抽出
+	var gameIds []string
+	for _, game := range games {
+		gameIds = append(gameIds, game.GameID)
+	}
+	return gameIds, nil
 }

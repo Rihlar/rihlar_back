@@ -37,7 +37,7 @@ func DebugGame() {
 		Flag:      0,
 		Type:      1,
 		Teams:     []Team{},
-		Status:    0,
+		Status:    1,
 		RegionID:  regionid,
 	})
 
@@ -66,13 +66,28 @@ func DebugGame() {
 	logger.Println("げーむ取得成功")
 }
 
-// 現在進行中のゲームを取得する
-func GetGame(userUuid string) ([]Game, error) {
+
+// ゲームの詳細取得
+func GetGame(gameId []string) ([]Game, error) {
 	// 結果格納用
 	var games []Game
 
-	result := dbconn.Where("user_id and status = 1", userUuid).Find(&games)
-	if result.Error != nil {
+	result := dbconn.Where("game_id = ?", gameId).Find(&games)
+	if result.Error  != nil {
+		logger.PrintErr("ゲームID取得エラー", result.Error)
+		return []Game{}, nil
+	}
+
+	return games, nil
+}
+
+// 開催中のゲーム取得
+func GetGameHolding(gameId []string) ([]Game, error) {
+	// 結果格納用
+	var games []Game
+
+	result := dbconn.Where("game_id = ? AND status = 1", gameId).Find(&games)
+	if result.Error  != nil {
 		logger.PrintErr("ゲームID取得エラー", result.Error)
 		return []Game{}, nil
 	}

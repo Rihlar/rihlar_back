@@ -13,11 +13,10 @@ var rankingService = services.RnakingService{} // サービスの実体を作る
 // 自分の現在のランキング取得
 func GetMyRankingHandler(c echo.Context) error {
 	// ユーザーの特定する
-	id := c.Get("id")
-	idAdjusted := id.(string) // アサーション
+	id := c.Param("user_id")
 
 	// サービスに渡す
-	ranking, err := rankingService.GetMyRanking(idAdjusted)
+	ranking, err := rankingService.GetMyRanking(id)
 	if err != nil {
 		logger.PrintErr("ランキング取得エラー", ranking)
 		return err
