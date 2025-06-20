@@ -24,8 +24,6 @@ func (RnakingService) GetMyRanking(userId string) (RankingResult, error) {
 		return RankingResult{}, err
 	}
 
-		logger.Println(allGames)
-
 	// 開催中ゲームの一覧取得
 	games, err := models.GetGameHolding(allGames)
 	if err != nil {
@@ -33,20 +31,14 @@ func (RnakingService) GetMyRanking(userId string) (RankingResult, error) {
 		return RankingResult{}, err
 	}
 
-	logger.Println(games)
-
 	var gameId string
 	// adminゲームか判断してIDを保持する
 	for _, game := range games {
-		logger.Println("あああああ", game)
 		// adminゲームはTypeが１
 		if game.Type == 1 {
 			gameId = game.GameID
-			logger.Println("あああああ")
 		}
 	}
-
-	logger.Println(gameId) 
 
 	// 特定したgameIdとuserIdからランキングを取得
 	ranking, err := models.GetMyRanking(userId, gameId)
@@ -54,7 +46,6 @@ func (RnakingService) GetMyRanking(userId string) (RankingResult, error) {
 		logger.PrintErr("Unable to get ranking", err)
 		return RankingResult{}, err
 	}
-		logger.Println(ranking)
 
 	// 自己満で得点も返したいので取得してくる
 	user, err := models.GetMyPoints(userId, gameId)
