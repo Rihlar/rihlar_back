@@ -11,9 +11,9 @@ import (
 var rankingService = services.RnakingService{} // サービスの実体を作る。
 
 // 自分の現在のランキング取得
-func GetMyRankingHandler(c echo.Context) error {
+func GetMyRankingHandler(ctx echo.Context) error {
 	// ユーザーの特定する
-	id := c.Param("user_id")
+	id := ctx.Param("user_id")
 
 	// サービスに渡す
 	ranking, err := rankingService.GetMyRanking(id)
@@ -24,8 +24,9 @@ func GetMyRankingHandler(c echo.Context) error {
 
 	// 成功ログ
 	logger.Println("Successful myRanking get.")
+	
 	// レスポンス
-	c.JSON(http.StatusCreated, echo.Map{
+	ctx.JSON(http.StatusCreated, echo.Map{
 		"helpData": ranking,
 	})
 
