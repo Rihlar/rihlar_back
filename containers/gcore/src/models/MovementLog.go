@@ -20,6 +20,19 @@ func (MovementLog) TableName() string {
 	return "movementLog"
 }
 
+// 歩いたログを保存する (緯度経度 歩数)
+func (member *Member) SaveMovementLog(Latitude,Longitude float64,Steps int64) error {
+	// 歩いた記録をする
+	return dbconn.Save(&MovementLog{
+		UserID:    member.UserID,
+		Latitude:  Latitude,
+		Longitude: Longitude,
+		Steps:     Steps,
+		GameID:    member.GameID,
+		TimeStamp: time.Now().Unix(),
+	}).Error
+}
+
 func DebugMovementLog() {
 	// デバッグ用のコードをここに書く
 
