@@ -26,11 +26,8 @@ func GetCircleDeteileHandler(ctx echo.Context) error {
 	logger.Println("Successful circleDeteil get.")
 	
 	// レスポンス
-	ctx.JSON(http.StatusCreated, echo.Map{
+	return ctx.JSON(http.StatusOK, echo.Map{
 		"Data": circle,
 	})
 
-	logger.Println(circle)
-
-	return nil
 }
