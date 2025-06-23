@@ -27,7 +27,7 @@ func GetMyRankingHandler(ctx echo.Context) error {
 	
 	// レスポンス
 	ctx.JSON(http.StatusCreated, echo.Map{
-		"helpData": ranking,
+		"Data": ranking,
 	})
 
 	logger.Println(ranking)

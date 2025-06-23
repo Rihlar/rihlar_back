@@ -15,18 +15,19 @@ func GetCircleDeteileHandler(ctx echo.Context) error {
 	// サークルIDの特定する
 	id := ctx.Param("circle_id")
 
+	// 円の詳細取得
 	circle, err := circleService.GetCircleDeteile(id)
 		if err != nil {
-		logger.PrintErr("ランキング取得エラー", circle)
+		logger.PrintErr("円取得エラー", circle)
 		return err
 	}
 
 	// 成功ログ
-	logger.Println("Successful myRanking get.")
+	logger.Println("Successful circleDeteil get.")
 	
 	// レスポンス
 	ctx.JSON(http.StatusCreated, echo.Map{
-		"helpData": circle,
+		"Data": circle,
 	})
 
 	logger.Println(circle)
