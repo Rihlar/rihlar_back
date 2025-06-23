@@ -23,6 +23,38 @@ func (Circle) TableName() string {
 	return "Circles"
 }
 
+// メンバーに属する円の一覧取得
+func (member *Member) GetCircles() ([]Circle, error) {
+	// 取得
+	returnData := []Circle{}
+
+	// 取得
+	return returnData, dbconn.Where(&Circle{
+		UserID: member.UserID,
+	}).Find(&returnData).Error
+}
+
+// 円を作成する
+func (member *Member) CreateCircle(circle *Circle) error {
+	// 値を設定
+	circle.GameID = member.GameID
+	circle.UserID = member.UserID
+
+	// 作成時の時間を設定
+	circle.CreatedAT = time.Now()
+
+	return dbconn.Save(circle).Error
+}
+
+// 円のレベルを変更する
+func (circle *Circle) ChangeLevel(level int) error {
+	// 変更
+	circle.Level = level
+
+	// 更新
+	return dbconn.Model(circle).Update("level", level).Error
+}
+
 func DebugCircle() {
 	// デバッグ用のコードをここに書く
 
