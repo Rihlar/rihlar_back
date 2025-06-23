@@ -68,3 +68,17 @@ func DebugCircle() {
 
 	logger.Println("サークル取得成功")
 }
+
+
+// 円の詳細取得
+func GetCircleDeteile(circleId string) (Circle, error) {
+	var circleDeteile Circle
+
+	result := dbconn.Where("circle_id = ?", circleId).Take(&circleDeteile)
+	if result.Error != nil {
+		logger.PrintErr("円詳細取得エラー", result.Error)
+		return Circle{}, nil
+	}
+
+	return circleDeteile, nil
+}
