@@ -4,6 +4,7 @@ import (
 	"game/controllers"
 	"game/middlewares"
 	"game/models"
+	"game/routes"
 	"game/services"
 	"net/http"
 
@@ -30,6 +31,9 @@ func main() {
 	// router.Use(middleware.Recover())
 	router.Use(middleware.Logger())
 	// router.Use(middlewares.PocketAuth())
+
+	// ルーティングの設定を追加
+	router = routes.InitRoutes(router)
 
 	router.GET("/", func(ctx echo.Context) error {
 		return ctx.JSON(http.StatusOK, echo.Map{

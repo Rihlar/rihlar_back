@@ -1,13 +1,17 @@
 package models
 
-import "gcore/logger"
+import (
+	"gcore/logger"
+	"time"
+)
 
 // テーブル定義
 type MovementLog struct {
-	UserID    string  `gorm:"primaryKey" json:"userID"` // ユーザID
-	Latitude  float64 `gorm:"double" json:"latitude"`     // 緯度
-	Longitude float64 `gorm:"double" json:"longitude"`    // 経度
-	GameID    string  `gorm:"varchar(36)" json:"gameID"`  // ゲームID
+	UserID    string  `gorm:"primaryKey" json:"userID"`             // ユーザID
+	Latitude  float64 `gorm:"double" json:"latitude"`               // 緯度
+	Longitude float64 `gorm:"double" json:"longitude"`              // 経度
+	GameID    string  `gorm:"primaryKey;varchar(36)" json:"gameID"` // ゲームID
+	TimeStamp int64   `gorm:"primaryKey" json:"timeStamp"`          //保存時間
 }
 
 // テーブル名
@@ -27,6 +31,7 @@ func DebugMovementLog() {
 		Latitude:  0,
 		Longitude: 0,
 		GameID:    gameid,
+		TimeStamp: time.Now().Unix(),
 	})
 
 	// エラー処理
@@ -53,5 +58,3 @@ func DebugMovementLog() {
 
 	logger.Println("movementログ取得成功")
 }
-
-

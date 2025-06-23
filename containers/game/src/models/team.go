@@ -34,6 +34,23 @@ func DebugTeam() {
 		Points:    0,
 	})
 
+	// 使ってないよって言われるので＿使ってます
+	_ = dbconn.Save(&Team{
+		TeamID:    "4098a6fc-cae8-435d-a24a-48167ec3f3c8",
+		GameID:    gameid,
+		Members:   []Member{},
+		CreatedAT: time.Time{},
+		Points:    0,
+	})
+
+	_ = dbconn.Save(&Team{
+		TeamID:    "e6913e1e-9188-4b21-acfa-aa91ad75d14f",
+		GameID:    gameid,
+		Members:   []Member{},
+		CreatedAT: time.Time{},
+		Points:    0,
+	})
+
 	// エラー処理
 	if result.Error != nil {
 		logger.PrintErr("チーム保存エラー", result.Error)
