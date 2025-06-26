@@ -13,3 +13,6 @@ GET {{base_url}}/ranking/personal/{{user_id}}
 
 ### 円の詳細取得
 GET {{base_url}}/circle/{{circle_id}}
+
+### 終了済みゲーム一覧
+GET {{base_url}}/endgame/{{user_id}}
