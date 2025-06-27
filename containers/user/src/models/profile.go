@@ -8,15 +8,16 @@ import (
 
 // テーブル構造
 type Profile struct {
-	UserID    string  `gorm:"primaryKey;type:varchar(36)" json:"user_id"`        // ユーザID
-	RecordID  string  `gorm:"type:varchar(36)" json:"record_id"`                 // 実績ID
-	Comment   string  `json:"comment"`                                           // ユーザコメント（デフォルト空白）
+	UserID    string  `gorm:"primaryKey;type:varchar(50)" json:"user_id"`        // ユーザID
+	Name      string  `gorm:"type:varchar(100);default:''" json:"name"`          //ユーザ名
+	RecordID  string  `gorm:"type:varchar(50)" json:"record_id"`                 // 実績ID
+	Comment   string  `gorm:"type:varchar(255);default:''" json:"comment"`       // ユーザコメント（デフォルト空白）
 	Latitude  float64 `gorm:"type:double;default:0" json:"latitude"`             // 緯度（デフォルト0）
 	Longitude float64 `gorm:"type:double;default:0" json:"longitude"`            // 経度（デフォルト0）
 	Size      int     `gorm:"default:0" json:"size"`                             // サイズ（デフォルト0）
-	RegionID  string  `gorm:"type:varchar(36);default:''" json:"region_id"`      // 地域ID
-	SysGame   string  `gorm:"type:varchar(36);default:''" json:"system_game_id"` // システムゲームID
-	AdmGame   string  `gorm:"type:varchar(36);default:''" json:"admin_game_id"`  // アドミンゲームID
+	RegionID  string  `gorm:"type:varchar(50);default:''" json:"region_id"`      // 地域ID
+	SysGame   string  `gorm:"type:varchar(50);default:''" json:"system_game_id"` // システムゲームID
+	AdmGame   string  `gorm:"type:varchar(50);default:''" json:"admin_game_id"`  // アドミンゲームID
 }
 
 func (Profile) TableName() string {
@@ -24,12 +25,29 @@ func (Profile) TableName() string {
 }
 
 // IDからプロフィールを返す
-func FindProfileById(db *gorm.DB, id string) (*Profile, error) {
+func FindProfileById(userID string) (*Profile, error) {
 	var profile Profile
-	if err := db.First(&profile, "user_id = ?", id).Error; err != nil {
+	if err := dbconn.Where(&Profile{
+		UserID:    userID,
+	}).First(&profile).Error; err != nil {
 		return nil, err
 	}
 	return &profile, nil
+}
+
+// プロフィールを編集する
+func UpdateProfile(userID string, data Profile) error {
+	result := dbconn.
+		Where("user_id = ?", userID).
+		Updates(&data)
+
+	if result.Error != nil {
+		return result.Error
+	}
+	if result.RowsAffected == 0 {
+		return gorm.ErrRecordNotFound
+	}
+	return nil
 }
 
 // デバッグ用
@@ -41,6 +59,7 @@ func DebugProfile() {
 	//書き込み
 	result := dbconn.Save(&Profile{
 		UserID:    user_id,
+		Name:      "山田太郎",
 		RecordID:  "第一回優勝",
 		Comment:   "よろしくお願いします。",
 		Latitude:  35.23,
@@ -60,10 +79,10 @@ func DebugProfile() {
 	logger.PrintErr("プロフィール保存成功")
 
 	//取得コード
-	returnData := Sample{}
+	returnData := Profile{}
 
 	//取得する
-	result = dbconn.Where(&Sample{
+	result = dbconn.Where(&Profile{
 		UserID: user_id,
 	}).First(&returnData)
 
