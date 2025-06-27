@@ -4,10 +4,10 @@ import "gcore/logger"
 
 // テーブル定義
 type BaseChunk struct {
-	BaseChunkID   string  `gorm:"primaryKey" json:"chunkID"`   // チャンクID
-	Latitude  float64 `gorm:"double" json:"latitude"`      // 緯度
-	Longitude float64 `gorm:"double" json:"longitude"`     // 経度
-	RegionID  string  `gorm:"varchar(36)" json:"regionID"` // ゲーム開催地域
+	BaseChunkID string  `gorm:"primaryKey" json:"chunkID"`   // チャンクID
+	Latitude    float64 `gorm:"double" json:"latitude"`      // 緯度
+	Longitude   float64 `gorm:"double" json:"longitude"`     // 経度
+	RegionID    string  `gorm:"varchar(50)" json:"regionID"` // ゲーム開催地域
 }
 
 // テーブル名
@@ -23,10 +23,10 @@ func DebugBaseChunk() {
 
 	// 書き込み
 	result := dbconn.Save(&BaseChunk{
-		BaseChunkID:   chunkid,
-		Latitude:  0,
-		Longitude: 0,
-		RegionID:  regionid,
+		BaseChunkID: chunkid,
+		Latitude:    0,
+		Longitude:   0,
+		RegionID:    regionid,
 	})
 
 	// エラー処理

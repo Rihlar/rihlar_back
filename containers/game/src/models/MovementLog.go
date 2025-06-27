@@ -11,7 +11,7 @@ type MovementLog struct {
 	Latitude  float64 `gorm:"double" json:"latitude"`               // 緯度
 	Longitude float64 `gorm:"double" json:"longitude"`              // 経度
 	Steps     int64   `json:"steps"`                                // 歩数
-	GameID    string  `gorm:"primaryKey;varchar(36)" json:"gameID"` // ゲームID
+	GameID    string  `gorm:"primaryKey;varchar(50)" json:"gameID"` // ゲームID
 	TimeStamp int64   `gorm:"primaryKey" json:"timeStamp"`          //保存時間
 }
 

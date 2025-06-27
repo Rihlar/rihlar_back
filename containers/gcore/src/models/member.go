@@ -4,10 +4,10 @@ import "gcore/logger"
 
 // テーブル定義
 type Member struct {
-	GameID string `gorm:"primaryKey;size:36" json:"gameID"` // ゲームID（複合主キー）
-	TeamID string `gorm:"not null;size:36" json:"teamID"`   // チームID
-	UserID string `gorm:"primaryKey" json:"userID"` // ユーザーID（複合主キー）
-	Points int    `gorm:"not null" json:"points"`   // ポイント
+	GameID string `gorm:"primaryKey;size:50" json:"gameID"` // ゲームID（複合主キー）
+	TeamID string `gorm:"not null;size:50" json:"teamID"`   // チームID
+	UserID string `gorm:"primaryKey" json:"userID"`         // ユーザーID（複合主キー）
+	Points int    `gorm:"not null" json:"points"`           // ポイント
 }
 
 // テーブル名
