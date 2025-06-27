@@ -16,6 +16,9 @@ func InitRoutes(router *echo.Echo) *echo.Echo {
 
 	// 終了済みゲーム一覧
 	router.GET("/endgame/:user_id", controllers.GetEndGamesHandler)
+	// 参加している全てのゲーム一覧取得
+	router.GET("/joingame/:user_id", controllers.GetJoinGamesHandler)
+
 
 	return router
 }

@@ -145,7 +145,7 @@ func GetMyPoints(userId string, gameId string) (Member, error) {
 }
 
 // ユーザーの全てのゲームを取得する
-func GetPlaingGames(userUuid string) ([]string, error) {
+func GetJoinGames(userUuid string) ([]string, error) {
 	// 結果格納用
 	var games []Member
 

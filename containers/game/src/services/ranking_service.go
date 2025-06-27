@@ -18,7 +18,7 @@ type RankingResult struct {
 func (RnakingService) GetMyRanking(userId string) (RankingResult, error) {
 
 	// 全てのゲームを取得してくる
-	allGames, err := models.GetPlaingGames(userId)
+	allGames, err := models.GetJoinGames(userId)
 	if err != nil {
 		logger.PrintErr("Game ID does not exist", err)
 		return RankingResult{}, err
