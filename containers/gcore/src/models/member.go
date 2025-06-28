@@ -15,6 +15,24 @@ func (Member) TableName() string {
 	return "Members"
 }
 
+func GetMemberByUserID(gameid string, userid string) (Member, error) {
+	// 取得する
+	returnData := Member{}
+
+	// 取得する
+	err := dbconn.Where(&Member{
+		UserID: userid,
+		GameID: gameid,
+	}).First(&returnData).Error
+
+	// エラー処理
+	if err != nil {
+		return Member{}, err
+	}
+
+	return returnData, nil
+}
+
 func DebugMember() {
 	// デバッグ用のコードをここに書く
 

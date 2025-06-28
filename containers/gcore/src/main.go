@@ -37,5 +37,8 @@ func main() {
 		})
 	}, middlewares.RequireAuth)
 
+	// ルーティングの設定を追加
+	router = InitRouter(router)
+
 	router.Logger.Fatal(router.Start(":8090"))
 }

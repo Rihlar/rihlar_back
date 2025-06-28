@@ -10,6 +10,7 @@ const (
 	regionid = "regionid-f6b4e846-1e99-45a1-a7a7-1858a9f94d28" // kansai
 
 	teamID = "teamid-b5fef636-b22e-4057-b1fe-acc7bde6add0"	// チームID
+	sysTeamID = "teamid-5ce6deb0-6cca-4472-aef9-6d0b8b555643"	// system チームID
 
 	teamID2 = "teamid-48d21736-ebdf-48e6-b308-53f416d0afd5"	// チームID2
 

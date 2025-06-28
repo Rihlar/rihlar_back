@@ -1,0 +1,11 @@
+@base_url = https://localhost:8943/gcore
+
+POST {{base_url}}/report/movement HTTP/1.1
+UserID : userid-8a5fafff-0b2e-4f2b-b011-da21a5a724cd
+Content-Type: application/json
+
+{
+    "latitude": 34.70649578495347,
+    "longitude": 135.50326868815958,
+    "steps": 10
+}

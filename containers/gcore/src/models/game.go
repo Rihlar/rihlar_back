@@ -62,6 +62,7 @@ func DebugGame() {
 
 	// メンバーを追加するをテストする
 	DebugAddMember(admin_game_id,teamID, user_id)
+	DebugAddMember(system_game_id,sysTeamID, user_id)
 }
 
 // 管理者が作成したゲームのデバッグをする
