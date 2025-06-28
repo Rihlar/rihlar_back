@@ -1,7 +1,9 @@
 package models
 
 import (
+	"gcore/location"
 	"gcore/logger"
+	"gcore/utils"
 	"time"
 )
 
@@ -20,6 +22,45 @@ type Game struct {
 // テーブル名
 func (Game) TableName() string {
 	return "games"
+}
+
+// 緯度経度からチャンクを取得する
+func (game *Game) GetChunkByLatLon(lat, lon float64) (*GameChunk, error) {
+	// TODO 後で処理を書く
+	return nil, nil
+}
+
+// TODO デバッグ用 ゲーム用のリージョンを作成する関数
+func (game *Game) FillRegion(region Region) error {
+	// グリッド生成
+	grids := location.GenerateGrid(region.StartLat, region.StartLon, region.EndLat, region.EndLon, 3000)
+
+	for _, grid := range grids {
+		// ID を生成する
+		chunkId, _ := utils.Genid()
+
+		// チャンクを保存する
+		err := dbconn.Create(&GameChunk{
+			ChunkID:  "chunkid-" + chunkId,
+			GameID:   game.GameID,
+			ImageID:  "",
+			OwnerID:  "",
+			StartLat: grid.TopLeft.Lat,
+			StartLon: grid.TopLeft.Lon,
+			EndLat:   grid.BottomRight.Lat,
+			EndLon:   grid.BottomRight.Lon,
+			GridID:   grid.ID,
+			Level:    0,
+		}).Error
+
+		// エラー処理
+		if err != nil {
+			logger.PrintErr("チャンク保存エラー", err)
+			return err
+		}
+	}
+
+	return nil
 }
 
 // TODO デバッグ用 チームを追加する
@@ -57,12 +98,9 @@ func DebugGame() {
 	// ゲームを作成したのでデバッグ用のユーザーをゲームに追加する
 	debugGameUser()
 
-	// メンバーとして追加するテストをする
-	debugGameMember()
-
 	// メンバーを追加するをテストする
-	DebugAddMember(admin_game_id,teamID, user_id)
-	DebugAddMember(system_game_id,sysTeamID, user_id)
+	DebugAddMember(admin_game_id, teamID, user_id)
+	DebugAddMember(system_game_id, sysTeamID, user_id)
 }
 
 // 管理者が作成したゲームのデバッグをする
@@ -81,6 +119,33 @@ func debugAdminGame() {
 
 	if err != nil {
 		logger.PrintErr("ゲーム作成エラー", err)
+		return
+	}
+
+	// ゲームを取得する
+	game, err := GetGame(admin_game_id)
+
+	// エラー処理
+	if err != nil {
+		logger.PrintErr("ゲーム取得エラー", err)
+		return
+	}
+
+	// 関西リージョン取得
+	region, err := GetRegionByID(regionid)
+
+	// エラー処理
+	if err != nil {
+		logger.PrintErr("リージョン取得エラー", err)
+		return
+	}
+
+	// チャンクを作成する
+	err = game.FillRegion(region)
+
+	// エラー処理
+	if err != nil {
+		logger.PrintErr("チャンク作成エラー", err)
 		return
 	}
 
@@ -161,7 +226,7 @@ func DebugAddMember(gameID string, teamID string, userID string) error {
 	}
 
 	// チームを取得
-	team,err := game.GetTeam(teamID)
+	team, err := game.GetTeam(teamID)
 
 	// エラー処理
 	if err != nil {
@@ -181,28 +246,4 @@ func DebugAddMember(gameID string, teamID string, userID string) error {
 	}
 
 	return nil
-}
-
-func debugGameMember() {
-	// メンバーを追加する
-	err := DebugAddMember(admin_game_id,teamID, user_id)
-
-	// エラー処理
-	if err != nil {
-		logger.PrintErr("メンバー追加エラー", err)
-		return
-	}
-
-	logger.Println("メンバー1追加成功")
-
-	// メンバー2を追加する
-	err = DebugAddMember(admin_game_id,teamID2, user_id2)
-
-	// エラー処理
-	if err != nil {
-		logger.PrintErr("メンバー2追加エラー", err)
-		return
-	}
-
-	logger.Println("メンバー2追加成功")
 }
