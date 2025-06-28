@@ -1,11 +1,12 @@
 package main
 
 import (
+	"net/http"
 	"user/controllers"
 	"user/middlewares"
 	"user/models"
+	"user/routes"
 	"user/services"
-	"net/http"
 
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/echo/v4/middleware"
@@ -36,6 +37,8 @@ func main() {
 			"result": "hello world",
 		})
 	}, middlewares.RequireAuth)
+
+	router = routes.InitRoute(router)
 
 	router.Logger.Fatal(router.Start(":8090"))
 }
