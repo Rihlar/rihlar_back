@@ -13,6 +13,9 @@ import (
 )
 
 func main() {
+	// location 初期化
+	location.Init()
+
 	// モデル初期化
 	models.Init()
 
@@ -24,9 +27,6 @@ func main() {
 
 	// コントローラー初期化
 	controllers.Init()
-
-	// location 初期化
-	location.Init()
 
 	// ルーター
 	router := echo.New()

@@ -62,6 +62,17 @@ func ReportMovement(args MovementArgs) error {
 		return err
 	}
 
+	// 一番近いリージョンを取得 (admin)
+	nearChunk,err := admGame.GetChunkByLatLon(args.Latitude, args.Longitude)
+
+	// エラー処理
+	if err != nil {
+		return err
+	}
+
+	// チャンクの情報表示
+	logger.Println(nearChunk)
+
 	return nil
 }
 
