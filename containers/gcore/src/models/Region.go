@@ -15,9 +15,6 @@ func (Region) TableName() string {
 
 func DebugRegion() {
 	// デバッグ用のコードをここに書く
-
-	regionid := "f6b4e846-1e99-45a1-a7a7-1858a9f94d28" // kansai
-
 	// 書き込み
 	result := dbconn.Save(&Region{
 		RegionID:   regionid,
