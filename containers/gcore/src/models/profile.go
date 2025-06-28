@@ -69,10 +69,10 @@ func DebugProfile() {
 	logger.PrintErr("プロフィール保存成功")
 
 	//取得コード
-	returnData := Sample{}
+	returnData := Profile{}
 
 	//取得する
-	result = dbconn.Where(&Sample{
+	result = dbconn.Where(&Profile{
 		UserID: user_id,
 	}).First(&returnData)
 

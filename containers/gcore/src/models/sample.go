@@ -16,7 +16,6 @@ type Sample struct {
 
 func DebugSample() {
 	// デバッグ用のコードをここに書く
-
 	userid := "e3abf90d-4bcf-4c3b-bbde-37694b1611b3"
 
 	// 書き込み

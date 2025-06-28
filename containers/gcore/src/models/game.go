@@ -1,9 +1,7 @@
 package models
 
 import (
-	"gcore/location"
 	"gcore/logger"
-	"gcore/utils"
 	"time"
 )
 
@@ -22,45 +20,6 @@ type Game struct {
 // テーブル名
 func (Game) TableName() string {
 	return "games"
-}
-
-// 緯度経度からチャンクを取得する
-func (game *Game) GetChunkByLatLon(lat, lon float64) (*GameChunk, error) {
-	// TODO 後で処理を書く
-	return nil, nil
-}
-
-// TODO デバッグ用 ゲーム用のリージョンを作成する関数
-func (game *Game) FillRegion(region Region) error {
-	// グリッド生成
-	grids := location.GenerateGrid(region.StartLat, region.StartLon, region.EndLat, region.EndLon, 3000)
-
-	for _, grid := range grids {
-		// ID を生成する
-		chunkId, _ := utils.Genid()
-
-		// チャンクを保存する
-		err := dbconn.Create(&GameChunk{
-			ChunkID:  "chunkid-" + chunkId,
-			GameID:   game.GameID,
-			ImageID:  "",
-			OwnerID:  "",
-			StartLat: grid.TopLeft.Lat,
-			StartLon: grid.TopLeft.Lon,
-			EndLat:   grid.BottomRight.Lat,
-			EndLon:   grid.BottomRight.Lon,
-			GridID:   grid.ID,
-			Level:    0,
-		}).Error
-
-		// エラー処理
-		if err != nil {
-			logger.PrintErr("チャンク保存エラー", err)
-			return err
-		}
-	}
-
-	return nil
 }
 
 // TODO デバッグ用 チームを追加する
@@ -247,3 +206,4 @@ func DebugAddMember(gameID string, teamID string, userID string) error {
 
 	return nil
 }
+

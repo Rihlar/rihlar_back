@@ -1,6 +1,10 @@
 package models
 
-import "gcore/logger"
+import (
+	"gcore/location"
+	"gcore/logger"
+	"gcore/utils"
+)
 
 // テーブル定義
 type GameChunk struct {
@@ -51,6 +55,92 @@ func (gc *GameChunk) ChangeLevel(level int) error {
 	// 更新
 	return dbconn.Model(gc).Update("level", level).Error
 }
+
+// 緯度経度からチャンクを取得する
+func (game *Game) GetChunkByLatLon(lat, lon float64) (GameChunk, error) {
+	// region の ID がキャッシュに保存されてる
+	exists := location.ExistsRegion(game.RegionID)
+
+	// 存在しない場合は埋める
+	if !exists {
+		// 埋める処理
+		// リージョンを取得
+		region, err := GetRegionByID(game.RegionID)
+		if err != nil {
+			return GameChunk{}, err
+		}
+
+		// リージョンを埋める
+		err = game.FillRegion(region)
+		if err != nil {
+			return GameChunk{}, err
+		}
+	}
+
+	// チャンクを取得 (Grid のサイズ のばいを計算する)
+	chunkCode,err := location.FindNearChunk(game.RegionID, lat, lon, GridMeter * 2)
+	if err != nil {
+		return GameChunk{}, err
+	}
+
+	findChunk := GameChunk{}
+
+	logger.Println("チャンクCode", chunkCode)
+	logger.Println("ゲームID", game.GameID)
+
+	// ゲームからチャンクを取得する
+	err = dbconn.Where(GameChunk{
+		GameID:   game.GameID,
+		GridID:   chunkCode,
+	}).First(&findChunk).Error
+
+	// エラー処理
+	if err != nil {
+		return GameChunk{}, err
+	}
+
+	return findChunk, nil
+}
+
+// TODO デバッグ用 ゲーム用のリージョンを作成する関数
+func (game *Game) FillRegion(region Region) error {
+	// グリッド生成
+	grids := location.GenerateGrid(region.StartLat, region.StartLon, region.EndLat, region.EndLon, GridMeter)
+
+	for _, grid := range grids {
+		// ID を生成する
+		chunkId, _ := utils.Genid()
+
+		// チャンクをキャッシュに保存する
+		err := location.SaveChunk(region.RegionID, grid.ID, grid.BottomRight.Lat, grid.BottomRight.Lon)
+		if err != nil {
+			return err
+		}
+
+		// チャンクを保存する
+		err = dbconn.Create(&GameChunk{
+			ChunkID:  "chunkid-" + chunkId,
+			GameID:   game.GameID,
+			ImageID:  "",
+			OwnerID:  "",
+			StartLat: grid.TopLeft.Lat,
+			StartLon: grid.TopLeft.Lon,
+			EndLat:   grid.BottomRight.Lat,
+			EndLon:   grid.BottomRight.Lon,
+			GridID:   grid.ID,
+			Level:    0,
+		}).Error
+
+		// エラー処理
+		if err != nil {
+			logger.PrintErr("チャンク保存エラー", err)
+			return err
+		}
+	}
+
+	return nil
+}
+
 
 func DebugGameChunk() {
 	// デバッグ用のコードをここに書く
@@ -132,3 +222,4 @@ func DebugGameChunk() {
 
 	logger.Println("ゲームチャンク取得成功")
 }
+
