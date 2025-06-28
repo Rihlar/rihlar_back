@@ -21,13 +21,13 @@ func DeleteAndMigrate(table interface{}) error {
 func Debug() {
 	// マイグレーション のコードをここに書く
 	DeleteAndMigrate(Sample{})
+	DeleteAndMigrate(Region{})
 	DeleteAndMigrate(Member{})
 	DeleteAndMigrate(Team{})
 	DeleteAndMigrate(Game{})
 	DeleteAndMigrate(BaseChunk{})
 	DeleteAndMigrate(GameChunk{})
 	DeleteAndMigrate(Circle{})
-	DeleteAndMigrate(Region{})
 	DeleteAndMigrate(MovementLog{})
 	DeleteAndMigrate(Profile{})
 
@@ -37,6 +37,11 @@ func Debug() {
 	DebugProfile()
 	// DebugTeam()
 	// DebugMember()
+
+	// ゲームで使用するリージョンを作成する
+	DebugRegion()
+
+	// ゲームをデバッグする
 	DebugGame()
 
 	DebugBaseChunk()
@@ -44,7 +49,5 @@ func Debug() {
 
 	// DebugCircle()
 	// DebugMovementLog()
-
-	DebugRegion()
 }
 
