@@ -1,0 +1,415 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Leaflet 400mグリッド表示</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.css" />
+    <style>
+        body {
+            margin: 0;
+            padding: 20px;
+            font-family: Arial, sans-serif;
+            background: #f5f5f5;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 10px;
+            padding: 20px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+        
+        h1 {
+            text-align: center;
+            color: #333;
+            margin-bottom: 30px;
+        }
+        
+        .input-section {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin-bottom: 20px;
+            padding: 20px;
+            background: #f8f9fa;
+            border-radius: 8px;
+        }
+        
+        .coordinate-group {
+            background: white;
+            padding: 15px;
+            border-radius: 6px;
+            border: 1px solid #ddd;
+        }
+        
+        .coordinate-group h3 {
+            margin: 0 0 15px 0;
+            color: #555;
+            font-size: 16px;
+        }
+        
+        .coord-inputs {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+        
+        label {
+            font-weight: bold;
+            color: #666;
+            min-width: 60px;
+        }
+        
+        input[type="number"] {
+            flex: 1;
+            padding: 8px 12px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            font-size: 14px;
+        }
+        
+        input[type="number"]:focus {
+            outline: none;
+            border-color: #007bff;
+            box-shadow: 0 0 0 2px rgba(0,123,255,0.25);
+        }
+        
+        .button-section {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        
+        button {
+            background: linear-gradient(135deg, #007bff, #0056b3);
+            color: white;
+            padding: 12px 30px;
+            border: none;
+            border-radius: 6px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0,123,255,0.3);
+        }
+        
+        button:active {
+            transform: translateY(0);
+        }
+        
+        #map {
+            height: 600px;
+            border-radius: 8px;
+            border: 2px solid #ddd;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+        
+        .info {
+            margin-top: 15px;
+            padding: 15px;
+            background: #e3f2fd;
+            border-radius: 6px;
+            border-left: 4px solid #2196f3;
+        }
+        
+        .info p {
+            margin: 5px 0;
+            color: #1976d2;
+        }
+        
+        .error {
+            background: #ffebee;
+            border-left-color: #f44336;
+        }
+        
+        .error p {
+            color: #c62828;
+        }
+        
+        .json-section textarea:focus {
+            outline: none;
+            border-color: #007bff;
+            box-shadow: 0 0 0 2px rgba(0,123,255,0.25);
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🗺️ 400mグリッド表示システム</h1>
+        
+        <div class="input-section">
+            <div class="coordinate-group">
+                <h3>📍 開始座標 (左上 A)</h3>
+                <div class="coord-inputs">
+                    <label>緯度:</label>
+                    <input type="number" id="startLat" step="0.000001" placeholder="35.681236" value="35.681236">
+                </div>
+                <div class="coord-inputs" style="margin-top: 10px;">
+                    <label>経度:</label>
+                    <input type="number" id="startLng" step="0.000001" placeholder="139.767125" value="139.767125">
+                </div>
+            </div>
+            
+            <div class="coordinate-group">
+                <h3>📍 終了座標 (右下 B)</h3>
+                <div class="coord-inputs">
+                    <label>緯度:</label>
+                    <input type="number" id="endLat" step="0.000001" placeholder="35.675236" value="35.675236">
+                </div>
+                <div class="coord-inputs" style="margin-top: 10px;">
+                    <label>経度:</label>
+                    <input type="number" id="endLng" step="0.000001" placeholder="139.775125" value="139.775125">
+                </div>
+            </div>
+        </div>
+        
+        <div class="json-section" style="margin-bottom: 20px;">
+            <div style="background: #f8f9fa; padding: 20px; border-radius: 8px;">
+                <h3 style="margin: 0 0 15px 0; color: #555;">📄 JSON入力</h3>
+                <textarea id="jsonInput" placeholder='{ "region": "関西", "top": { "latitude": 35.8, "longitude": 134.0 }, "bottom": { "latitude": 33.5, "longitude": 137.5 } }' 
+                    style="width: 100%; height: 80px; padding: 10px; border: 1px solid #ccc; border-radius: 4px; font-family: monospace; resize: vertical;"></textarea>
+                <div style="margin-top: 10px; text-align: center;">
+                    <button onclick="loadFromJson()" style="margin-right: 10px; background: linear-gradient(135deg, #28a745, #1e7e34);">📥 JSONから読み込み</button>
+                    <button onclick="exportToJson()" style="background: linear-gradient(135deg, #17a2b8, #117a8b);">📤 JSON出力</button>
+                </div>
+            </div>
+        </div>
+        
+        <div class="button-section">
+            <button onclick="generateGrid()">🔍 グリッドを生成</button>
+        </div>
+        
+        <div id="map"></div>
+        <div id="info" class="info" style="display: none;"></div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.js"></script>
+    <script>
+        let map;
+        let gridLayer;
+        
+        // マップを初期化
+        function initMap() {
+            map = L.map('map').setView([35.6785, 139.7713], 13);
+            
+            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                attribution: '© OpenStreetMap contributors'
+            }).addTo(map);
+        }
+        
+        // 2点間の距離を計算（ハバーサイン公式）
+        function calculateDistance(lat1, lng1, lat2, lng2) {
+            const R = 6371000; // 地球の半径（メートル）
+            const dLat = (lat2 - lat1) * Math.PI / 180;
+            const dLng = (lng2 - lng1) * Math.PI / 180;
+            const a = Math.sin(dLat/2) * Math.sin(dLat/2) +
+                     Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) *
+                     Math.sin(dLng/2) * Math.sin(dLng/2);
+            const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+            return R * c;
+        }
+        
+        // メートルを緯度経度の差分に変換
+        function metersToLatLng(meters, lat) {
+            const latDiff = meters / 111111; // 1度 ≈ 111.111km
+            const lngDiff = meters / (111111 * Math.cos(lat * Math.PI / 180));
+            return { latDiff, lngDiff };
+        }
+        
+        // JSONから座標を読み込む
+        function loadFromJson() {
+            const jsonText = document.getElementById('jsonInput').value.trim();
+            if (!jsonText) {
+                showInfo('エラー: JSONデータを入力してください。', true);
+                return;
+            }
+            
+            try {
+                const data = JSON.parse(jsonText);
+                
+                // データ構造の検証
+                if (!data.top || !data.bottom || 
+                    typeof data.top.latitude !== 'number' || typeof data.top.longitude !== 'number' ||
+                    typeof data.bottom.latitude !== 'number' || typeof data.bottom.longitude !== 'number') {
+                    throw new Error('JSONの構造が正しくありません');
+                }
+                
+                // フォームに値を設定
+                document.getElementById('startLat').value = data.top.latitude;
+                document.getElementById('startLng').value = data.top.longitude;
+                document.getElementById('endLat').value = data.bottom.latitude;
+                document.getElementById('endLng').value = data.bottom.longitude;
+                
+                const regionText = data.region ? ` (${data.region})` : '';
+                showInfo(`JSONデータを読み込みました${regionText}！<br>座標が入力フィールドに設定されました。`);
+                
+                // // 読み込み後、自動的にグリッドを生成
+                // setTimeout(() => {
+                //     generateGrid();
+                // }, 500);
+                
+            } catch (error) {
+                showInfo(`エラー: JSON解析に失敗しました。<br>${error.message}`, true);
+            }
+        }
+        
+        // 現在の座標をJSONとして出力
+        function exportToJson() {
+            const startLat = parseFloat(document.getElementById('startLat').value);
+            const startLng = parseFloat(document.getElementById('startLng').value);
+            const endLat = parseFloat(document.getElementById('endLat').value);
+            const endLng = parseFloat(document.getElementById('endLng').value);
+            
+            if (isNaN(startLat) || isNaN(startLng) || isNaN(endLat) || isNaN(endLng)) {
+                showInfo('エラー: すべての座標を正しく入力してください。', true);
+                return;
+            }
+            
+            const jsonData = {
+                region: "カスタム領域",
+                top: {
+                    latitude: startLat,
+                    longitude: startLng
+                },
+                bottom: {
+                    latitude: endLat,
+                    longitude: endLng
+                }
+            };
+            
+            const jsonText = JSON.stringify(jsonData, null, 2);
+            document.getElementById('jsonInput').value = jsonText;
+            
+            // クリップボードにコピー
+            navigator.clipboard.writeText(jsonText).then(() => {
+                showInfo('現在の座標をJSON形式で出力しました！<br>クリップボードにもコピーしました。');
+            }).catch(() => {
+                showInfo('現在の座標をJSON形式で出力しました！');
+            });
+        }
+        
+        // グリッドを生成
+        function generateGrid() {
+            const startLat = parseFloat(document.getElementById('startLat').value);
+            const startLng = parseFloat(document.getElementById('startLng').value);
+            const endLat = parseFloat(document.getElementById('endLat').value);
+            const endLng = parseFloat(document.getElementById('endLng').value);
+            
+            // 入力値検証
+            if (isNaN(startLat) || isNaN(startLng) || isNaN(endLat) || isNaN(endLng)) {
+                showInfo('エラー: すべての座標を正しく入力してください。', true);
+                return;
+            }
+            
+            if (startLat <= endLat || startLng >= endLng) {
+                showInfo('エラー: 開始座標は終了座標の左上に位置する必要があります。<br>（右下座標がはみ出しても問題ありません）', true);
+                return;
+            }
+            
+            // 既存のグリッドを削除
+            if (gridLayer) {
+                map.removeLayer(gridLayer);
+            }
+            
+            gridLayer = L.layerGroup().addTo(map);
+            
+            const gridSize = 1000; // 400メートル
+            const centerLat = (startLat + endLat) / 2;
+            const centerLng = (startLng + endLng) / 2;
+            
+            // 400mを緯度経度の差分に変換
+            const { latDiff, lngDiff } = metersToLatLng(gridSize, centerLat);
+            
+            // グリッド数を計算（右下座標を超えるまで埋める）
+            const totalLatDiff = startLat - endLat;
+            const totalLngDiff = endLng - startLng;
+            const gridCountLat = Math.ceil(totalLatDiff / latDiff);
+            const gridCountLng = Math.ceil(totalLngDiff / lngDiff);
+            
+            let gridCount = 0;
+            
+            // グリッドを描画（右下座標を超えても埋めるように）
+            for (let i = 0; i < gridCountLat; i++) {
+                for (let j = 0; j < gridCountLng; j++) {
+                    const north = startLat - (i * latDiff);
+                    const south = startLat - ((i + 1) * latDiff);
+                    const west = startLng + (j * lngDiff);
+                    const east = startLng + ((j + 1) * lngDiff);
+                    
+                    // グリッドで完全に埋めるため、はみ出しチェックを削除
+                    
+                    const bounds = [[south, west], [north, east]];
+                    
+                    const rectangle = L.rectangle(bounds, {
+                        color: '#3388ff',
+                        weight: 2,
+                        opacity: 0.8,
+                        fillColor: '#3388ff',
+                        fillOpacity: 0.1
+                    });
+                    
+                    // グリッド情報をポップアップに追加
+                    const centerGridLat = (north + south) / 2;
+                    const centerGridLng = (west + east) / 2;
+                    rectangle.bindPopup(`
+                        <div style="text-align: center;">
+                            <strong>グリッド ${i + 1}-${j + 1}</strong><br>
+                            中心座標: ${centerGridLat.toFixed(6)}, ${centerGridLng.toFixed(6)}<br>
+                            範囲: ${north.toFixed(6)} ~ ${south.toFixed(6)}<br>
+                            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;${west.toFixed(6)} ~ ${east.toFixed(6)}
+                        </div>
+                    `);
+                    
+                    gridLayer.addLayer(rectangle);
+                    gridCount++;
+                }
+            }
+            
+            // 境界線を描画
+            const bounds = L.latLngBounds([endLat, startLng], [startLat, endLng]);
+            const boundary = L.rectangle(bounds, {
+                color: '#ff0000',
+                weight: 3,
+                opacity: 1,
+                fillOpacity: 0
+            }).addTo(gridLayer);
+            
+            // マップの表示範囲を調整
+            map.fitBounds(bounds, { padding: [20, 20] });
+            
+            // 実際のグリッド範囲を計算（右下座標を超えた範囲も含む）
+            const actualEndLat = startLat - (gridCountLat * latDiff);
+            const actualEndLng = startLng + (gridCountLng * lngDiff);
+            const actualTotalArea = ((startLat - actualEndLat) * 111111) * ((actualEndLng - startLng) * 111111 * Math.cos(centerLat * Math.PI / 180)) / 1000000;
+            
+            showInfo(`
+                グリッド生成完了！<br>
+                • 生成されたグリッド数: ${gridCount}個<br>
+                • 各グリッドサイズ: 400m × 400m<br>
+                • 指定範囲対角線距離: ${(totalDistance / 1000).toFixed(2)}km<br>
+                • 実際のグリッド総面積: 約${actualTotalArea.toFixed(2)}km²<br>
+                • グリッド範囲: ${startLat.toFixed(6)} ~ ${actualEndLat.toFixed(6)} (緯度)<br>
+                • &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;${startLng.toFixed(6)} ~ ${actualEndLng.toFixed(6)} (経度)
+            `);
+        }
+        
+        // 情報表示
+        function showInfo(message, isError = false) {
+            const infoDiv = document.getElementById('info');
+            infoDiv.innerHTML = `<p>${message}</p>`;
+            infoDiv.style.display = 'block';
+            infoDiv.className = isError ? 'info error' : 'info';
+        }
+        
+        // 初期化
+        window.onload = function() {
+            initMap();
+        };
+    </script>
+</body>
+</html>
