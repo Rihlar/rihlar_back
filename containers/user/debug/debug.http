@@ -21,4 +21,29 @@ Content-Type: application/json
   "admin_game_id": "01e32526-1c27-c9a9-2b5b-d158b0f50c80"
 }
 
-###
+### プライバシー取得
+GET  {{base_url}}/privacy/{{user_id}}
+Content-Type: application/json
+
+### プライバシー編集
+
+PUT  {{base_url}}/privacy/{{user_id}}
+Content-Type: application/json
+
+{
+  "latitude": 35.00,
+  "longitude": 135.21,
+  "size": 200
+}
+
+###　所属地域の取得
+GET  {{base_url}}/region/{{user_id}}
+Content-Type: application/json
+
+### 所属地域の編集
+PUT {{base_url}}/region/{{user_id}}
+Content-Type: application/json
+
+{
+  "region_id": "関東地方"
+}

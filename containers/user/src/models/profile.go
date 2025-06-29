@@ -20,6 +20,18 @@ type Profile struct {
 	AdmGame   string  `gorm:"type:varchar(50);default:''" json:"admin_game_id"`  // アドミンゲームID
 }
 
+//プライバシー情報のみの構造体
+type PrivacyProfile struct {
+	Latitude  float64 `json:"latitude"`
+	Longitude float64 `json:"longitude"`
+	Size      int     `json:"size"`
+}
+
+//地域設定情報のみの構造体
+type RegionProfile struct {
+	RegionID string `json:"region_id"`
+}
+
 func (Profile) TableName() string {
 	return "Profile"
 }
@@ -48,6 +60,39 @@ func UpdateProfile(userID string, data Profile) error {
 		return gorm.ErrRecordNotFound
 	}
 	return nil
+}
+
+//プライバシー情報を返す
+func FindPrivacyProfile(UserID string) (*PrivacyProfile, error) {
+	var result PrivacyProfile
+	err := dbconn.Model(&Profile{}).
+	Select("latitude", "longitude", "size").
+	Where("user_id = ?", UserID).
+	Scan(&result).Error
+	return &result, err
+}
+
+//プライバシー情報を編集する
+func UpdatePrivacyProfile(UserID string, data PrivacyProfile) error {
+	return dbconn.Model(&Profile{}).
+		Where("user_id = ?", UserID).
+		Updates(data).Error
+}
+
+//地域情報を返す
+func FindRegionProfile (UserID string) (*RegionProfile, error) {
+	var result RegionProfile
+	err := dbconn.Model(&Profile{}).
+	Select("region_id").
+	Where("user_id = ?", UserID).
+	Scan(&result).Error
+	return &result, err
+}
+
+func UpdateRegionProfile (UserID string, regionID string) error {
+	return dbconn.Model(&Profile{}).
+	Where("user_id = ?", UserID).
+	Update("region_id", regionID).Error
 }
 
 // デバッグ用
