@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Leafletで四角形とピンを描画（座標入力対応）</title>
+    <title>Leafletで四角形とピン、円を描画（座標入力対応）</title>
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
         integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="" />
     <style>
@@ -67,9 +67,9 @@
             padding-top: 15px;
             border-top: 1px dashed #e0e0e0;
         }
-        #message {
+        .message { /* メッセージ表示用に汎用クラスに変更 */
             color: red;
-            margin-top: 10px;
+            margin-top: 5px; /* マージンを調整 */
             font-weight: bold;
         }
     </style>
@@ -96,7 +96,7 @@
             <input type="number" id="bottomRightLng" value="" step="0.0001">
         </div>
         <button id="drawRectangleButton">四角形を描画</button>
-        <div id="message_rectangle"></div>
+        <div id="message_rectangle" class="message"></div>
     </div>
 
     <div class="input-section">
@@ -110,7 +110,25 @@
             <input type="number" id="pinLng" value="" step="0.0001">
         </div>
         <button id="addPinButton">ピンを立てる</button>
-        <div id="message_pin"></div>
+        <div id="message_pin" class="message"></div>
+    </div>
+
+    <div class="input-section">
+        <h2>円の座標入力</h2>
+        <div class="input-group">
+            <label for="circleLat">中心 緯度:</label>
+            <input type="number" id="circleLat" value="" step="0.0001">
+        </div>
+        <div class="input-group">
+            <label for="circleLng">中心 経度:</label>
+            <input type="number" id="circleLng" value="" step="0.0001">
+        </div>
+        <div class="input-group">
+            <label for="circleRadius">半径 (メートル):</label>
+            <input type="number" id="circleRadius" value="" min="1" step="1">
+        </div>
+        <button id="drawCircleButton">円を描画</button>
+        <div id="message_circle" class="message"></div>
     </div>
 
     <div class="clear-buttons">
@@ -138,8 +156,15 @@
         const pinLngInput = document.getElementById('pinLng');
         const messagePinDiv = document.getElementById('message_pin');
 
+        // 円入力要素
+        const circleLatInput = document.getElementById('circleLat');
+        const circleLngInput = document.getElementById('circleLng');
+        const circleRadiusInput = document.getElementById('circleRadius');
+        const messageCircleDiv = document.getElementById('message_circle');
+
         let drawnRectangles = []; // 描画された矩形を格納する配列
         let drawnMarkers = [];    // 描画されたピン（マーカー）を格納する配列
+        let drawnCircles = [];    // 描画された円を格納する配列
 
         /**
          * localStorageに四角形の座標を保存する関数
@@ -186,6 +211,28 @@
         }
 
         /**
+         * localStorageに円の座標と半径を保存する関数
+         */
+        function saveCircleCoordinates() {
+            localStorage.setItem('circle_lat', circleLatInput.value);
+            localStorage.setItem('circle_lng', circleLngInput.value);
+            localStorage.setItem('circle_radius', circleRadiusInput.value);
+        }
+
+        /**
+         * localStorageから円の座標と半径をロードし、入力フィールドに設定する関数
+         */
+        function loadCircleCoordinates() {
+            const savedCircleLat = localStorage.getItem('circle_lat');
+            const savedCircleLng = localStorage.getItem('circle_lng');
+            const savedCircleRadius = localStorage.getItem('circle_radius');
+
+            if (savedCircleLat !== null) circleLatInput.value = savedCircleLat;
+            if (savedCircleLng !== null) circleLngInput.value = savedCircleLng;
+            if (savedCircleRadius !== null) circleRadiusInput.value = savedCircleRadius;
+        }
+
+        /**
          * 指定された左上と右下の座標からLeafletマップに矩形を描画する関数
          * @param {Array<number>} topLeftCoords - 左上の緯度・経度 [lat, lng]
          * @param {Array<number>} bottomRightCoords - 右下の緯度・経度 [lat, lng]
@@ -221,6 +268,30 @@
             return marker;
         }
 
+        /**
+         * 指定された中心座標と半径からLeafletマップに円を描画する関数
+         * @param {Array<number>} centerCoords - 円の中心の緯度・経度 [lat, lng]
+         * @param {number} radius - 円の半径 (メートル単位)
+         * @param {Object} [options={}] - 円のスタイルオプション (LeafletのPathOptions)
+         */
+        function drawCircle(centerCoords, radius, options = {}) {
+            if (typeof L === 'undefined' || !map) {
+                console.error("Leaflet (L) or map is not defined. Make sure leaflet.js is loaded and map is initialized.");
+                return null;
+            }
+
+            const circle = L.circle(centerCoords, {
+                radius: radius, // 半径をメートルで指定
+                color: options.color || 'blue',
+                fillColor: options.fillColor || '#03f',
+                fillOpacity: options.fillOpacity || 0.2,
+                weight: options.weight || 2
+            }).addTo(map);
+            drawnCircles.push(circle);
+            map.fitBounds(circle.getBounds()); // 円全体が見えるようにマップを調整
+            return circle;
+        }
+
 
         // --- ページの読み込みが完了したときに実行 ---
         document.addEventListener('DOMContentLoaded', function() {
@@ -235,6 +306,7 @@
             // localStorageから入力値をロード
             loadRectangleCoordinates();
             loadPinCoordinates();
+            loadCircleCoordinates();
 
             // --- イベントリスナー ---
 
@@ -294,6 +366,31 @@
                 savePinCoordinates(); // 入力値をlocalStorageに保存
             });
 
+            // 円描画ボタン
+            document.getElementById('drawCircleButton').addEventListener('click', function() {
+                const circleLat = parseFloat(circleLatInput.value);
+                const circleLng = parseFloat(circleLngInput.value);
+                const circleRadius = parseFloat(circleRadiusInput.value);
+
+                if (isNaN(circleLat) || isNaN(circleLng) || isNaN(circleRadius) || circleRadius <= 0) {
+                    messageCircleDiv.textContent = '中心点の緯度・経度、および正の半径を入力してください。';
+                    return;
+                }
+
+                messageCircleDiv.textContent = ''; // メッセージをクリア
+
+                // 円の描画オプション
+                const options = {
+                    color: 'darkgreen',
+                    weight: 2,
+                    fillColor: '#008000', // 緑色
+                    fillOpacity: 0.15
+                };
+
+                drawCircle([circleLat, circleLng], circleRadius, options);
+                saveCircleCoordinates(); // 入力値をlocalStorageに保存
+            });
+
 
             // すべてクリアボタン
             document.getElementById('clearAllButton').addEventListener('click', function() {
@@ -309,24 +406,37 @@
                 });
                 drawnMarkers = [];
 
+                // すべての円をマップから削除
+                drawnCircles.forEach(circle => {
+                    map.removeLayer(circle);
+                });
+                drawnCircles = [];
+
                 messageRectangleDiv.textContent = ''; // 四角形メッセージをクリア
                 messagePinDiv.textContent = '';       // ピンメッセージをクリア
+                messageCircleDiv.textContent = '';    // 円メッセージをクリア
 
-                // localStorageからすべての保存値を削除（任意）
+                // localStorageからすべての保存値を削除（任意：必要であればコメントを外してください）
                 // localStorage.removeItem('rect_topLeftLat');
                 // localStorage.removeItem('rect_topLeftLng');
                 // localStorage.removeItem('rect_bottomRightLat');
                 // localStorage.removeItem('rect_bottomRightLng');
                 // localStorage.removeItem('pin_lat');
                 // localStorage.removeItem('pin_lng');
+                // localStorage.removeItem('circle_lat');
+                // localStorage.removeItem('circle_lng');
+                // localStorage.removeItem('circle_radius');
 
-                // 入力フィールドもクリアしたい場合
+                // 入力フィールドもクリアしたい場合（任意：必要であればコメントを外してください）
                 // topLeftLatInput.value = '';
                 // topLeftLngInput.value = '';
                 // bottomRightLatInput.value = '';
                 // bottomRightLngInput.value = '';
                 // pinLatInput.value = '';
                 // pinLngInput.value = '';
+                // circleLatInput.value = '';
+                // circleLngInput.value = '';
+                // circleRadiusInput.value = '';
             });
         });
     </script>
