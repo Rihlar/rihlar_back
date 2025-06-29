@@ -11,10 +11,14 @@ import (
 // テーブル定義
 type BaseChunk struct {
 	GridID    string  `gorm:"primaryKey" json:"gridID"`               // グリッドID
-	StartLat  float64 `gorm:"not null" json:"startLat"`              // 開始緯度
-	StartLon  float64 `gorm:"not null" json:"startLon"`              // 開始経度
-	EndLat    float64 `gorm:"not null" json:"endLat"`                // 終了緯度
-	EndLon    float64 `gorm:"not null" json:"endLon"`                // 終了経度
+	LeftTopLat float64 `gorm:"double" json:"leftTopLat"`               // 左上緯度
+	LeftTopLon float64 `gorm:"double" json:"leftTopLon"`               // 左上経度
+	LeftBotLat float64 `gorm:"double" json:"leftBotLat"`               // 左下緯度
+	LeftBotLon float64 `gorm:"double" json:"leftBotLon"`               // 左下経度
+	RightTopLat float64 `gorm:"double" json:"rightTopLat"`             // 右上緯度
+	RightTopLon float64 `gorm:"double" json:"rightTopLon"`             // 右上経度
+	RightBotLat float64 `gorm:"double" json:"rightBotLat"`             // 右下緯度
+	RightBotLon float64 `gorm:"double" json:"rightBotLon"`             // 右下経度
 	RegionID  string  `gorm:"varchar(50);primaryKey" json:"regionID"` // ゲーム開催地域
 }
 
@@ -39,10 +43,14 @@ func (game *Game) FillRegion(region Region) error {
 
 		// チャンクを保存する
 		err = dbconn.Create(&BaseChunk{
-			StartLat:  grid.TopLeft.Lat,
-			StartLon:  grid.TopLeft.Lon,
-			EndLat:    grid.BottomRight.Lat,
-			EndLon:    grid.BottomRight.Lon,
+			LeftTopLat: grid.TopLeft.Lat,
+			LeftTopLon: grid.TopLeft.Lon,
+			LeftBotLat: grid.BottomLeft.Lat,
+			LeftBotLon: grid.BottomLeft.Lon,
+			RightTopLat: grid.TopRight.Lat,
+			RightTopLon: grid.TopRight.Lon,
+			RightBotLat: grid.BottomRight.Lat,
+			RightBotLon: grid.BottomRight.Lon,
 			RegionID:  region.RegionID,
 			GridID:    grid.ID,
 		}).Error
@@ -119,10 +127,10 @@ func (game *Game) GetChunkByLatLon(lat, lon float64) (GameChunk, error) {
 			GameID:   game.GameID,
 			ImageID:  "",
 			OwnerID:  "",
-			StartLat: baseChunk.StartLat,
-			StartLon: baseChunk.StartLon,
-			EndLat:   baseChunk.EndLat,
-			EndLon:   baseChunk.EndLon,
+			StartLat: baseChunk.LeftTopLat,
+			StartLon: baseChunk.LeftTopLon,
+			EndLat:   baseChunk.RightBotLat,
+			EndLon:   baseChunk.RightBotLon,
 			GridID:   gridId,
 			Level:    0,
 		}
