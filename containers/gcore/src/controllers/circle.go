@@ -1,5 +1,13 @@
 package controllers
 
+import (
+	"gcore/logger"
+	"gcore/services"
+	"net/http"
+
+	"github.com/labstack/echo/v4"
+)
+
 // import (
 // 	"gcore/services"
 
@@ -13,26 +21,33 @@ type CircleArgs struct {
 	Steps     int64   `json:"steps`     //歩いた歩数
 }
 
-// // 円を作成する関数
-// func CreateCircle(ctx echo.Context) error {
-// 	// bind する
-// 	args := CircleArgs{}
-// 	if err := ctx.Bind(&args); err != nil {
-// 		return err
-// 	}
+// 円を作成する関数
+func CreateCircle(ctx echo.Context) error {
+	// bind する
+	args := CircleArgs{}
+	if err := ctx.Bind(&args); err != nil {
+		return err
+	}
 
-// 	// TODO 後ほどミドルウェアからの取得に変更する
-// 	userId := ctx.Request().Header.Get("UserID")
+	// TODO 後ほどミドルウェアからの取得に変更する
+	userId := ctx.Request().Header.Get("UserID")
 
-// 	// 円を作成する
-// 	services.CreateCircle(services.CircleArgs{
-// 		UserID:    userId,
-// 		Steps:     args.Steps,
-// 		Latitude:  args.Latitude,
-// 		Longitude: args.Longitude,
-// 	})
+	// 円を作成する
+	circleIds, err := services.CreateCircle(services.CreateCircleArgs{
+		UserID:    userId,
+		Steps:     args.Steps,
+		Latitude:  args.Latitude,
+		Longitude: args.Longitude,
+	})
 
-// 	return ctx.JSON(http.StatusOK, echo.Map{
-// 		"result": "success",
-// 	})
-// }
+	// エラー処理
+	if err != nil {
+		logger.PrintErr(err)
+		return err
+	}
+
+	return ctx.JSON(http.StatusOK, echo.Map{
+		"result": "success",
+		"circleIds": circleIds,
+	})
+}

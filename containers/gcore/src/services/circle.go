@@ -13,32 +13,59 @@ type CreateCircleArgs struct {
 	Longitude float64 `json:"longitude`
 }
 
-func CreateCircle(args CreateCircleArgs) (string,error) {
-	// // ユーザーのプロファイルを取得する
-	// profile, err := models.GetProfile(args.UserID)
+func CreateCircle(args CreateCircleArgs) ([]string,error) {
+	// ユーザーのプロファイルを取得する
+	profile, err := models.GetProfile(args.UserID)
 
-	// // エラー処理
-	// if err != nil {
-	// 	return "", err
-	// }
+	// エラー処理
+	if err != nil {
+		return []string{}, err
+	}
 
-	// // adminゲームを取得
-	// admGame, err := models.GetGame(profile.AdmGame)
+	// adminゲームを取得
+	admGame, err := models.GetGame(profile.AdmGame)
 
-	// // エラー処理
-	// if err != nil {
-	// 	return "", err
-	// }
+	// エラー処理
+	if err != nil {
+		return []string{}, err
+	}
 
-	// // システムゲームを取得
-	// sysGame, err := models.GetGame(profile.SysGame)
+	// システムゲームを取得
+	sysGame, err := models.GetGame(profile.SysGame)
 
-	// // エラー処理
-	// if err != nil {
-	// 	return "", err
-	// }
-	return  "", nil
+	// エラー処理
+	if err != nil {
+		return []string{}, err
+	}
+
+	// 円を作成
+	circleIds, err := WriteCiecleData(GamesCreateCircleArgs{
+		UserID:    args.UserID,
+		Steps:     args.Steps,
+		Latitude:  args.Latitude,
+		Longitude: args.Longitude,
+		Games:     []models.Game{admGame, sysGame},
+	})
+
+	// エラー処理
+	if err != nil {
+		return []string{}, err
+	}
+
+	// 円を更新
+	if err := ProcessCircleChunk(GamesCreateCircleArgs{
+		UserID:    args.UserID,
+		Steps:     args.Steps,
+		Latitude:  args.Latitude,
+		Longitude: args.Longitude,
+		Games:     []models.Game{admGame, sysGame},
+	}); err != nil {
+		return []string{}, err
+	}
+
+	return circleIds, nil
 }
+
 
 type GamesCreateCircleArgs struct {
 	UserID    string  `json:"userID`
@@ -48,7 +75,54 @@ type GamesCreateCircleArgs struct {
 	Games     []models.Game
 }
 
-func PorcessCreateCircle(args GamesCreateCircleArgs) error {
+func ProcessCircleChunk(args GamesCreateCircleArgs) error {
+	// ゲームを回す
+	for _, game := range args.Games {
+		// メンバーを取得
+		member, err := game.GetMemberByUserID(args.UserID)
+
+		// エラー処理
+		if err != nil {
+			return err
+		}
+
+		// 円形にチャンクを取得する
+		chunks, err := game.GetCircleChunkByLatLon(args.Latitude, args.Longitude, StepToSize(args.Steps))
+
+		// エラー処理
+		if err != nil {
+			return err
+		}
+
+		for _, chunk := range chunks {
+			// チャンクのレベルが2 以下なら
+			if chunk.Level <= 2 {
+				// チャンクを更新する
+				if err := chunk.ChangeLevel(2); err != nil {
+					logger.PrintErr(err)
+					return err
+				}
+
+				// オーナーも変更する
+				if err := chunk.ChangeOwner(member.UserID); err != nil {
+					logger.PrintErr(err)
+					return err
+				}
+			}
+		}
+	}
+
+	return nil
+}
+
+func StepToSize(steps int64) float64 {
+	return float64(500) //float64(steps * 10.0)
+}
+
+// 円のデータを保存する関数 (円のIDリスト,エラー)
+func WriteCiecleData(args GamesCreateCircleArgs) ([]string,error) {
+	imageIds := []string{}
+
 	for _, game := range args.Games {
 		// 円を作成する関数
 		// メンバーを取得する関数
@@ -56,7 +130,7 @@ func PorcessCreateCircle(args GamesCreateCircleArgs) error {
 
 		// エラー処理
 		if err != nil {
-			return err
+			return []string{}, err
 		}
 
 		// ID 生成
@@ -81,9 +155,12 @@ func PorcessCreateCircle(args GamesCreateCircleArgs) error {
 			ImageID:   ImageIdStr,
 		}); err != nil {
 			logger.PrintErr(err)
-			return err
+			return []string{}, err
 		}
+
+		// ID を追加
+		imageIds = append(imageIds, ImageIdStr)
 	}
 
-	return nil
+	return imageIds, nil
 }
