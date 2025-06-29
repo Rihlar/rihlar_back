@@ -1,11 +1,7 @@
 package models
 
 import (
-	"gcore/location"
-	"gcore/logger"
-	"gcore/utils"
 
-	"gorm.io/gorm"
 )
 
 // テーブル定義
@@ -98,95 +94,6 @@ func (game *Game) FillRegion(region Region) error {
 	return nil
 }
 
-// 緯度経度からチャンクを取得する
-func (game *Game) GetChunkByLatLon(lat, lon float64) (GameChunk, error) {
-	// region の ID がキャッシュに保存されてる
-	exists := location.ExistsRegion(game.RegionID)
-
-	// 存在しない場合は埋める
-	if !exists {
-		// 埋める処理
-		// リージョンを取得
-		region, err := GetRegionByID(game.RegionID)
-		if err != nil {
-			return GameChunk{}, err
-		}
-
-		// リージョンを埋める
-		err = game.FillRegion(region)
-		if err != nil {
-			return GameChunk{}, err
-		}
-	}
-
-	// キャッシュから一番近いgrididを取得する
-	gridId,err := location.FindNearChunk(game.RegionID, lat, lon, GridMeter * 2)
-	if err != nil {
-		return GameChunk{}, err
-	}
-
-	findChunk := GameChunk{}
-
-	logger.Println("gridID", gridId)
-	logger.Println("ゲームID", game.GameID)
-
-	// ゲームからチャンクを取得する
-	err = dbconn.Where(GameChunk{
-		GameID:   game.GameID,
-		GridID:   gridId,
-	}).First(&findChunk).Error
-
-	// 存在しない場合
-	if err == gorm.ErrRecordNotFound {
-		baseChunk := BaseChunk{}
-
-		// チャンクが存在しない場合 (初めて入るチャンクの場合)
-		// ベースチャンクからデータを取得
-		err = dbconn.Where(BaseChunk{
-			RegionID: game.RegionID,
-			GridID:   gridId,
-		}).First(&baseChunk).Error
-		
-		if err != nil {
-			return GameChunk{}, err
-		}
-
-		// チャンクのIDを生成する
-		chunkId,_ := utils.Genid()
-
-		// 新く作るチャンクのデータ
-		chunkData := GameChunk{
-			ChunkID:  "chunkId-" + chunkId,
-			GameID:   game.GameID,
-			ImageID:  "",
-			OwnerID:  "",
-			StartLat: baseChunk.LeftTopLat,
-			StartLon: baseChunk.LeftTopLon,
-			EndLat:   baseChunk.RightBotLat,
-			EndLon:   baseChunk.RightBotLon,
-			GridID:   gridId,
-			Level:    0,
-		}
-
-		// ベースチャンクを元にゲームチャンクを作成する
-		err = dbconn.Create(&chunkData).Error
-
-		// エラー処理
-		if err != nil {
-			return GameChunk{}, err
-		}
-
-		// 新く作ったチャンクのデータを返す
-		return chunkData, nil
-	}
-
-	// エラー処理
-	if err != nil {
-		return GameChunk{}, err
-	}
-
-	return findChunk, nil
-}
 
 
 func DebugBaseChunk() {

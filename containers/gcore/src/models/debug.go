@@ -25,7 +25,7 @@ func Debug() {
 	DeleteAndMigrate(Member{})
 	DeleteAndMigrate(Team{})
 	DeleteAndMigrate(Game{})
-	DeleteAndMigrate(BaseChunk{})
+	// DeleteAndMigrate(BaseChunk{})
 	DeleteAndMigrate(GameChunk{})
 	DeleteAndMigrate(Circle{})
 	DeleteAndMigrate(MovementLog{})
@@ -42,9 +42,9 @@ func Debug() {
 	DebugRegion()
 
 	// ゲームをデバッグする
-	// DebugGame()
+	DebugGame()
 
-	DebugBaseChunk()
+	// DebugBaseChunk()
 	DebugGameChunk()
 
 	DebugPerformance()

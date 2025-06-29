@@ -14,7 +14,6 @@ type GameChunk struct {
 	StartLon float64 `gorm:"not null" json:"startLon"`   // 開始経度
 	EndLat   float64 `gorm:"not null" json:"endLat"`     // 終了緯度
 	EndLon   float64 `gorm:"not null" json:"endLon"`     // 終了経度
-	GridID   string  `gorm:"not null" json:"gridID"`     // グリッドID
 	Level    int     `gorm:"not null" json:"level"`      // 防衛レベル
 }
 

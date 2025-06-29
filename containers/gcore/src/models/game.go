@@ -1,8 +1,12 @@
 package models
 
 import (
+	"gcore/location"
 	"gcore/logger"
+	"gcore/utils"
 	"time"
+
+	"gorm.io/gorm"
 )
 
 // テーブル定義
@@ -44,6 +48,91 @@ func SaveGame(game Game) error {
 	return dbconn.Save(&game).Error
 }
 
+// 緯度経度からチャンクを取得する
+func (game *Game) GetChunkByLatLon(lat, lon float64) (GameChunk, error) {
+	// リージョンの情報を取得
+	region, err := GetRegionByID(game.RegionID)
+
+	// エラー処理
+	if err != nil {
+		return GameChunk{}, err
+	}
+
+	// 自分が入っているチャンクを取得
+	// リージョンから情報を生成
+	gridData,err := location.NewRegionGridInfo(location.LatLng{
+		Lat: region.StartLat,
+		Lng: region.StartLon,
+	},location.LatLng{
+		Lat: region.EndLat,
+		Lng: region.EndLon,
+	},GridMeter)
+
+	// エラー処理
+	if err != nil {
+		return GameChunk{}, err
+	}
+
+	// Grid から近くのチャンクを取得
+	inGridData, err := gridData.GetGridCell(location.LatLng{
+		Lat: lat,
+		Lng: lon,
+	})
+
+	// エラー処理
+	if err != nil {
+		return GameChunk{}, err
+	}
+
+	findChunk := GameChunk{}
+	// ゲームからチャンクを取得する
+	err = dbconn.Where(GameChunk{
+		GameID:   game.GameID,
+		StartLat: inGridData.Bounds.TopLeft.Lat,
+		StartLon: inGridData.Bounds.TopLeft.Lng,
+		EndLat:   inGridData.Bounds.BottomRight.Lat,
+		EndLon:   inGridData.Bounds.BottomRight.Lng,
+	}).First(&findChunk).Error
+
+	// 存在しない場合
+	if err == gorm.ErrRecordNotFound {
+		// チャンクのIDを生成する
+		chunkId,_ := utils.Genid()
+
+		// 新く作るチャンクのデータ
+		chunkData := GameChunk{
+			ChunkID:  "chunkId-" + chunkId,
+			GameID:   game.GameID,
+			ImageID:  "",
+			OwnerID:  "",
+			StartLat: inGridData.Bounds.TopLeft.Lat,
+			StartLon: inGridData.Bounds.TopLeft.Lng,
+			EndLat:   inGridData.Bounds.BottomRight.Lat,
+			EndLon:   inGridData.Bounds.BottomRight.Lng,
+			Level:    0,
+		}
+
+		// ベースチャンクを元にゲームチャンクを作成する
+		err = dbconn.Create(&chunkData).Error
+
+		// エラー処理
+		if err != nil {
+			return GameChunk{}, err
+		}
+
+		// 新く作ったチャンクのデータを返す
+		return chunkData, nil
+	}
+
+	// エラー処理
+	if err != nil {
+		return GameChunk{}, err
+	}
+
+	return findChunk, nil
+}
+
+
 // デバック用
 func DebugGame() {
 	// デバッグ用のコードをここに書く
@@ -80,33 +169,6 @@ func debugAdminGame() {
 
 	if err != nil {
 		logger.PrintErr("ゲーム作成エラー", err)
-		return
-	}
-
-	// ゲームを取得する
-	game, err := GetGame(admin_game_id)
-
-	// エラー処理
-	if err != nil {
-		logger.PrintErr("ゲーム取得エラー", err)
-		return
-	}
-
-	// 関西リージョン取得
-	region, err := GetRegionByID(regionid)
-
-	// エラー処理
-	if err != nil {
-		logger.PrintErr("リージョン取得エラー", err)
-		return
-	}
-
-	// チャンクを作成する
-	err = game.FillRegion(region)
-
-	// エラー処理
-	if err != nil {
-		logger.PrintErr("チャンク作成エラー", err)
 		return
 	}
 
