@@ -4,6 +4,7 @@ import (
 	"context"
 	"errors"
 	"gcore/logger"
+	"slices"
 	"strings"
 
 	"github.com/redis/go-redis/v9"
@@ -143,7 +144,16 @@ func FindContactChunk(regionId string,Lat float64,Lon float64,Distance float64) 
 		// 全てのチャンクを表示する
 		for _, result := range results {
 			// 後ろの記号を削除する (0_108|left_bottom -> 0_108)
-			returnDatas = append(returnDatas,strings.SplitN(result.Name,"|",2)[0])
+			appendValue := strings.SplitN(result.Name,"|",2)[0]
+
+			// すでに存在するか
+			if slices.Contains(returnDatas,appendValue) {
+				// 存在する場合は戻る
+				continue
+			}
+
+			// 返り値に追加
+			returnDatas = append(returnDatas,appendValue)
 		}
 	}
 
