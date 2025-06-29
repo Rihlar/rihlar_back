@@ -17,5 +17,5 @@ const (
 
 	user_id2 = "userid-50452766-49e8-4dd9-84a1-d02ee1c2425c"	// ユーザーID2
 
-	GridMeter = 2000
+	GridMeter = 100
 )

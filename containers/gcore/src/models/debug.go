@@ -42,11 +42,12 @@ func Debug() {
 	DebugRegion()
 
 	// ゲームをデバッグする
-	DebugGame()
+	// DebugGame()
 
 	DebugBaseChunk()
 	DebugGameChunk()
 
+	DebugPerformance()
 	// DebugCircle()
 	// DebugMovementLog()
 }
