@@ -41,6 +41,39 @@ func (game *Game) FillRegion(region Region) error {
 			return err
 		}
 
+		// 円の検索用データをキャッシュに保存する
+		// 左上の座標
+		err = location.SaveCircleChunk(region.RegionID, grid.ID + "|left_top", grid.TopRight.Lat, grid.TopRight.Lon)
+
+		// エラー処理
+		if err != nil {
+			return err
+		}
+
+		// 左下の座標
+		err = location.SaveCircleChunk(region.RegionID, grid.ID + "|left_bottom", grid.BottomRight.Lat, grid.BottomRight.Lon)
+
+		// エラー処理
+		if err != nil {
+			return err
+		}
+
+		// 右上の座標
+		err = location.SaveCircleChunk(region.RegionID, grid.ID + "|right_top", grid.TopLeft.Lat, grid.TopLeft.Lon)
+
+		// エラー処理
+		if err != nil {
+			return err
+		}
+
+		// 右下の座標
+		err = location.SaveCircleChunk(region.RegionID, grid.ID + "|right_bottom", grid.BottomLeft.Lat, grid.BottomLeft.Lon)
+
+		// エラー処理
+		if err != nil {
+			return err
+		}
+
 		// チャンクを保存する
 		err = dbconn.Create(&BaseChunk{
 			LeftTopLat: grid.TopLeft.Lat,
