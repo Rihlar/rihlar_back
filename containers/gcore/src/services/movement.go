@@ -7,24 +7,31 @@ import (
 
 // 歩いたことを報告する引数
 type MovementArgs struct {
-	UserID    string  `json:"userID`	// ユーザーID
-	Steps     int64   `json:"steps`		// 歩数
-	Latitude  float64 `json:"latitude`	// 緯度
-	Longitude float64 `json:"longitude`	// 経度
+	UserID    string  `json:"userID`    // ユーザーID
+	Steps     int64   `json:"steps`     // 歩数
+	Latitude  float64 `json:"latitude`  // 緯度
+	Longitude float64 `json:"longitude` // 経度
 }
 
 type SaveMovementLogArgs struct {
-	UserID    string  `json:"userID`	// ユーザーID
-	SystemID  string  `json:"systemID`	// システムゲームID
-	AdminID   string  `json:"adminID`	// 管理ゲームID
-	Steps     int64   `json:"steps`		// 歩数
-	Latitude  float64 `json:"latitude`	// 緯度
-	Longitude float64 `json:"longitude`	// 経度
+	UserID    string        `json:"userID`    // ユーザーID
+	SystemID  string        `json:"systemID`  // システムゲームID
+	Games     []models.Game `json:"games`     // 管理ゲームID
+	Steps     int64         `json:"steps`     // 歩数
+	Latitude  float64       `json:"latitude`  // 緯度
+	Longitude float64       `json:"longitude` // 経度
+}
+
+type ProcessChunkArgs struct {
+	UserID    string        `json:"userID`    // ユーザーID
+	Latitude  float64       `json:"latitude`  // 緯度
+	Longitude float64       `json:"longitude` // 経度
+	Games     []models.Game `json:"games`     // 管理ゲームID
 }
 
 func ReportMovement(args MovementArgs) error {
 	// プロファイルを取得する
-	profile,err := models.GetProfile(args.UserID)
+	profile, err := models.GetProfile(args.UserID)
 
 	// エラー処理
 	if err != nil {
@@ -32,7 +39,7 @@ func ReportMovement(args MovementArgs) error {
 	}
 
 	// システムゲームを取得
-	sysGame,err := models.GetGame(profile.SysGame)
+	sysGame, err := models.GetGame(profile.SysGame)
 
 	// エラー処理
 	if err != nil {
@@ -40,7 +47,7 @@ func ReportMovement(args MovementArgs) error {
 	}
 
 	// adminゲームを取得
-	admGame,err := models.GetGame(profile.AdmGame)
+	admGame, err := models.GetGame(profile.AdmGame)
 
 	// エラー処理
 	if err != nil {
@@ -51,7 +58,7 @@ func ReportMovement(args MovementArgs) error {
 	err = SaveMovementLog(SaveMovementLogArgs{
 		UserID:    args.UserID,
 		SystemID:  sysGame.GameID,
-		AdminID:   admGame.GameID,
+		Games:     []models.Game{admGame, sysGame},
 		Steps:     args.Steps,
 		Latitude:  args.Latitude,
 		Longitude: args.Longitude,
@@ -62,54 +69,70 @@ func ReportMovement(args MovementArgs) error {
 		return err
 	}
 
-	// 一番近いリージョンを取得 (admin)
-	nearChunk,err := admGame.GetChunkByLatLon(args.Latitude, args.Longitude)
+	// チャンクに対しての処理
+	err = ProcessChunk(ProcessChunkArgs{
+		UserID:    args.UserID,
+		Latitude:  args.Latitude,
+		Longitude: args.Longitude,
+		Games:     []models.Game{admGame, sysGame},
+	})
 
 	// エラー処理
 	if err != nil {
 		return err
 	}
-
-	// チャンクの情報表示
-	logger.Println(nearChunk)
 
 	return nil
 }
 
 // 歩いたログを記録する関数
 func SaveMovementLog(args SaveMovementLogArgs) error {
-	logger.Println("SaveMovementLog", args)
+	// ゲームを回す
+	for _, game := range args.Games {
+		// メンバーオブジェクト取得
+		member, err := game.GetMemberByUserID(args.UserID)
 
-	// admin のメンバーを取得
-	adminMember, err := models.GetMemberByUserID(args.AdminID, args.UserID)
+		// エラー処理
+		if err != nil {
+			return err
+		}
 
-	// エラー処理
-	if err != nil {
-		return err
+		// 歩いたログを保存する
+		if err := member.SaveMovementLog(args.Latitude, args.Longitude, args.Steps); err != nil {
+			logger.PrintErr(err)
+			return err
+		}
 	}
 
-	// system のメンバーを取得
-	systemMember, err := models.GetMemberByUserID(args.SystemID, args.UserID)
+	return nil
+}
 
-	// エラー処理
-	if err != nil {
-		return err
-	}
+// チャンクに対しての処理 (Level1 などを実行する)
+func ProcessChunk(args ProcessChunkArgs) error {
+	// ゲームを回す
+	for _, game := range args.Games {
+		// 一番近いチャンクを取得
+		chunk,err := game.GetChunkByLatLon(args.Latitude, args.Longitude)
 
-	// admin を保存
-	err = adminMember.SaveMovementLog(args.Latitude, args.Longitude, args.Steps)
+		// エラー処理
+		if err != nil {
+			return err
+		}
 
-	// エラー処理
-	if err != nil {
-		return err
-	}
+		// チャンクのレベルが0か1なら
+		if chunk.Level == 0 || chunk.Level == 1 {
+			// チャンクを更新する
+			if err := chunk.ChangeLevel(1); err != nil {
+				logger.PrintErr(err)
+				return err
+			}
 
-	// system を保存
-	err = systemMember.SaveMovementLog(args.Latitude, args.Longitude, args.Steps)
-
-	// エラー処理
-	if err != nil {
-		return err
+			// オーナーも変更する
+			if err := chunk.ChangeOwner(args.UserID); err != nil {
+				logger.PrintErr(err)
+				return err
+			}
+		}
 	}
 
 	return nil

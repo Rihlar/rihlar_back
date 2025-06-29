@@ -15,14 +15,14 @@ func (Member) TableName() string {
 	return "Members"
 }
 
-func GetMemberByUserID(gameid string, userid string) (Member, error) {
+func (game *Game) GetMemberByUserID(userid string) (Member, error) {
 	// 取得する
 	returnData := Member{}
 
 	// 取得する
 	err := dbconn.Where(&Member{
 		UserID: userid,
-		GameID: gameid,
+		GameID: game.GameID,
 	}).First(&returnData).Error
 
 	// エラー処理
