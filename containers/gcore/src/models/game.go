@@ -59,7 +59,9 @@ func DebugGame() {
 
 	// メンバーを追加するをテストする
 	DebugAddMember(admin_game_id, teamID, user_id)
+	DebugAddMember(admin_game_id, teamID2, user_id2)
 	DebugAddMember(system_game_id, sysTeamID, user_id)
+	DebugAddMember(system_game_id2, sysTeamID, user_id2)
 }
 
 // 管理者が作成したゲームのデバッグをする
@@ -131,6 +133,23 @@ func debugSystemGame() {
 	}
 
 	logger.Println("ゲーム作成成功")
+
+	// 二つ目のシステムゲームを作成
+	err = SaveGame(Game{
+		GameID:    system_game_id2,
+		StartTime: time.Now(),
+		EndTime:   time.Now().AddDate(0, 0, 5),
+		Flag:      0,
+		Type:      0,
+		Teams:     []Team{},
+		Status:    1,
+		RegionID:  regionid,
+	})
+
+	if err != nil {
+		logger.PrintErr("ゲーム作成エラー", err)
+		return
+	}
 }
 
 // ゲームにユーザーを追加する
@@ -152,6 +171,28 @@ func debugGameUser() {
 
 	// プロファイルを保存する
 	err = SaveProfile(profile)
+
+	// エラー処理
+	if err != nil {
+		logger.PrintErr("プロファイル保存エラー", err)
+		return
+	}
+
+	// 二人目のプロファイルを更新する
+	profile2, err := GetProfile(user_id2)
+
+	// エラー処理
+	if err != nil {
+		logger.PrintErr("プロファイル取得エラー", err)
+		return
+	}
+
+	// プロファイルを更新する
+	profile2.SysGame = system_game_id2
+	profile2.AdmGame = admin_game_id
+
+	// プロファイルを保存する
+	err = SaveProfile(profile2)
 
 	// エラー処理
 	if err != nil {

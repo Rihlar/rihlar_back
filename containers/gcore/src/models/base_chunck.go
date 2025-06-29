@@ -30,7 +30,7 @@ func (game *Game) FillRegion(region Region) error {
 
 	for _, grid := range grids {
 		// チャンクをキャッシュに保存する
-		err := location.SaveChunk(region.RegionID, grid.ID, grid.BottomRight.Lat, grid.BottomRight.Lon)
+		err := location.SaveChunk(region.RegionID, grid.ID, grid.Center.Lat, grid.Center.Lon)
 
 		// エラー処理
 		if err != nil {
@@ -39,10 +39,10 @@ func (game *Game) FillRegion(region Region) error {
 
 		// チャンクを保存する
 		err = dbconn.Create(&BaseChunk{
-			StartLat:  grid.BottomRight.Lat,
-			StartLon:  grid.BottomRight.Lon,
-			EndLat:    grid.TopLeft.Lat,
-			EndLon:    grid.TopLeft.Lon,
+			StartLat:  grid.TopLeft.Lat,
+			StartLon:  grid.TopLeft.Lon,
+			EndLat:    grid.BottomRight.Lat,
+			EndLon:    grid.BottomRight.Lon,
 			RegionID:  region.RegionID,
 			GridID:    grid.ID,
 		}).Error

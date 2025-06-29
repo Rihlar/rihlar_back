@@ -33,6 +33,56 @@ func (game *Game) GetMemberByUserID(userid string) (Member, error) {
 	return returnData, nil
 }
 
+// 点数を更新する関数
+func (member *Member) GetOwnerdChunks() ([]GameChunk, error) {
+	// チャンクを取得する
+	returnChunks := []GameChunk{}
+
+	// チャンクを検索する
+	err := dbconn.Where(&GameChunk{
+		OwnerID: member.UserID,
+		GameID:  member.GameID,
+	}).Find(&returnChunks).Error
+
+	// エラー処理
+	if err != nil {
+		return []GameChunk{}, err
+	}
+
+	return returnChunks, nil
+}
+
+// ポイントを更新する関数
+func (member *Member) UpdatePoints(points int) error {
+	// 更新する
+	member.Points = points
+
+	// 更新する
+	return dbconn.Model(member).Update("points", points).Error
+}
+
+// 所有中のチャンクをポイントに反映する関数
+func (member *Member) ReflectPoints() error {
+	// 所有中のチャンクを取得する
+	chunks, err := member.GetOwnerdChunks()
+
+	// エラー処理
+	if err != nil {
+		return err
+	}
+
+	// 更新する
+	err = member.UpdatePoints(len(chunks))
+
+	// エラー処理
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+
 func DebugMember() {
 	// デバッグ用のコードをここに書く
 

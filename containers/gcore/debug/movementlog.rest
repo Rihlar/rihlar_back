@@ -9,3 +9,25 @@ Content-Type: application/json
     "longitude": 135.50326868815958,
     "steps": 10
 }
+
+### 東京 (リージョン以外 ユーザー1)
+POST {{base_url}}/report/movement HTTP/1.1
+UserID : userid-8a5fafff-0b2e-4f2b-b011-da21a5a724cd
+Content-Type: application/json
+
+{
+    "latitude": 35.7365646305852,
+    "longitude": 139.80954685258914,
+    "steps": 10
+}
+
+### 東京 (リージョン以外 ユーザー2)
+POST {{base_url}}/report/movement HTTP/1.1
+UserID : userid-50452766-49e8-4dd9-84a1-d02ee1c2425c
+Content-Type: application/json
+
+{
+    "latitude": 35.7365646305852,
+    "longitude": 139.80954685258914,
+    "steps": 10
+}

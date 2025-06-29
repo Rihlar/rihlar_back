@@ -68,6 +68,19 @@ func DebugProfile() {
 
 	logger.PrintErr("プロフィール保存成功")
 
+	// ユーザー2のプロフィール作成
+	result = dbconn.Save(&Profile{
+		UserID:    user_id2,
+		RecordID:  "第2回優勝",
+		Comment:   "よろしくお願いします。",
+		Latitude:  35.23,
+		Longitude: 135.25,
+		Size:      100,
+		RegionID:  "関東地方",
+		SysGame:   system_game_id2,
+		AdmGame:   admin_game_id,
+	})
+
 	//取得コード
 	returnData := Profile{}
 

@@ -38,11 +38,58 @@ func GetGameChunk(chunkid string) (GameChunk, error) {
 
 // 所有者を変更する
 func (gc *GameChunk) ChangeOwner(ownerid string) error {
+	// ゲームを取得する
+	game, err := GetGame(gc.GameID)
+
+	// エラー処理
+	if err != nil {
+		return err
+	}
+
+	// 前のオーナーを取得
+	beforeOwner, err := game.GetMemberByUserID(ownerid)
+
+	// エラー処理
+	if err != nil {
+		return err
+	}
+
+	// 新しいオーナーを取得
+	afterOwner, err := game.GetMemberByUserID(gc.OwnerID)
+
+	// エラー処理
+	if err != nil {
+		return err
+	}
+
 	// 変更
 	gc.OwnerID = ownerid
 
 	// 更新
-	return dbconn.Model(gc).Update("owner_id", ownerid).Error
+	err = dbconn.Model(gc).Update("owner_id", ownerid).Error
+
+	// エラー処理
+	if err != nil {
+		return err
+	}
+
+	// 前のユーザーのポイントを更新する
+	err = beforeOwner.ReflectPoints()
+
+	// エラー処理
+	if err != nil {
+		return err
+	}
+
+	// 新しいユーザーのポイントを更新する
+	err = afterOwner.ReflectPoints()
+
+	// エラー処理
+	if err != nil {
+		return err
+	}
+
+	return nil
 }
 
 // レベルを変更する
@@ -53,7 +100,6 @@ func (gc *GameChunk) ChangeLevel(level int) error {
 	// 更新
 	return dbconn.Save(gc).Error
 }
-
 
 func DebugGameChunk() {
 	// デバッグ用のコードをここに書く
@@ -135,4 +181,3 @@ func DebugGameChunk() {
 
 	logger.Println("ゲームチャンク取得成功")
 }
-

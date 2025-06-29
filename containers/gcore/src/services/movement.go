@@ -119,6 +119,8 @@ func ProcessChunk(args ProcessChunkArgs) error {
 			return err
 		}
 
+		logger.Println("near chunk:", chunk)
+
 		// チャンクのレベルが0か1なら
 		if chunk.Level == 0 || chunk.Level == 1 {
 			// チャンクを更新する
