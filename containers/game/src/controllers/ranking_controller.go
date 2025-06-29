@@ -8,7 +8,7 @@ import (
 	"github.com/labstack/echo/v4"
 )
 
-var rankingService = services.RnakingService{} // サービスの実体を作る。
+var rankingService = services.RankingService{} // サービスの実体を作る。
 
 // 自分の現在のランキング取得
 func GetMyRankingHandler(ctx echo.Context) error {
@@ -24,6 +24,27 @@ func GetMyRankingHandler(ctx echo.Context) error {
 
 	// 成功ログ
 	logger.Println("Successful myRanking get.")
+	
+	// レスポンス
+	return ctx.JSON(http.StatusOK, echo.Map{
+		"Data": ranking,
+	})
+}
+
+// ランキングのtop10を取得
+func GetRankingTopHandler(ctx echo.Context) error {
+	// ゲームの特定する
+	id := ctx.Param("game_id")
+
+	// サービスに渡す
+	ranking, err := rankingService.GetRankingTop(id)
+	if err != nil {
+		logger.PrintErr("ランキング取得エラー", ranking)
+		return err
+	}
+
+	// 成功ログ
+	logger.Println("Successful Ranking get.")
 	
 	// レスポンス
 	return ctx.JSON(http.StatusOK, echo.Map{

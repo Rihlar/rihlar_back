@@ -5,7 +5,7 @@ import (
 	"game/models"
 )
 
-type RnakingService struct{}
+type RankingService struct{}
 
 // ランキングを取得し返還する用のテーブル
 type RankingResult struct {
@@ -15,7 +15,7 @@ type RankingResult struct {
 }
 
 // 自分のランキング取得
-func (RnakingService) GetMyRanking(userId string) (RankingResult, error) {
+func (RankingService) GetMyRanking(userId string) (RankingResult, error) {
 
 	// 全てのゲームを取得してくる
 	allGames, err := models.GetPlaingGames(userId)
@@ -62,4 +62,16 @@ func (RnakingService) GetMyRanking(userId string) (RankingResult, error) {
 	}
 
 	return result, nil
+}
+
+// ランキングtop10取得
+func (RankingService) GetRankingTop(gameId string) ([]models.Team, error) {
+
+	ranking, err := models.GetRanking(gameId)
+		if err != nil {
+		logger.PrintErr("Unable to get ranking", err)
+		return []models.Team{}, err
+	}
+
+	return ranking, nil
 }
