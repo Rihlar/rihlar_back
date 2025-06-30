@@ -7,18 +7,20 @@ import (
 )
 
 func InitRoute(router *echo.Echo) *echo.Echo {
-	//profile全取得
-	router.GET("/profile/:user_id", controllers.GetProfileById)
+	//profile一件取得
+	router.GET("/profile", controllers.GetProfileById)
+	//profile作成
+	router.POST("/profile", controllers.CreateProfile)
 	//profile編集
-	router.PUT("/profile/:user_id", controllers.UpdateProfileById)
+	router.PUT("/profile", controllers.UpdateProfileById)
 	//privacyエリア取得
-	router.GET("/privacy/:user_id", controllers.GetPrivacyProfile)
+	router.GET("/privacy", controllers.GetPrivacyProfile)
 	//privacyエリア編集
-	router.PUT("/privacy/:user_id", controllers.UpdatePrivacyProfile)
+	router.PUT("/privacy", controllers.UpdatePrivacyProfile)
 	//所属地域の取得
-	router.GET("region/:user_id", controllers.GetRegionProfile)
+	router.GET("/region", controllers.GetRegionProfile)
 	//所属地域の編集
-	router.PUT("region/:user_id", controllers.UpdateRegionProfile)
+	router.PUT("/region", controllers.UpdateRegionProfile)
 
 	return router
 }
