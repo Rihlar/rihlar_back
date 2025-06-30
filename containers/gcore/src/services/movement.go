@@ -89,6 +89,7 @@ func ReportMovement(args MovementArgs) error {
 		Latitude:  args.Latitude,
 		Longitude: args.Longitude,
 		Games:     []models.Game{admGame, sysGame},
+		Steps:     args.Steps,
 	})
 
 	// エラー処理

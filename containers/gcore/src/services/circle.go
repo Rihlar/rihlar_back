@@ -5,6 +5,8 @@ import (
 	"gcore/logger"
 	"gcore/models"
 	"gcore/utils"
+
+	"gorm.io/gorm"
 )
 
 type CreateCircleArgs struct {
@@ -187,15 +189,35 @@ func LevelUpCircle(args ProcessCircleArgs) error {
 		return err
 	}
 
+	logger.Println("near circles:", NearCircles)
+
 	// 縁が近い順に並んでいるので (円のサイズより距離が大きい円を見つけるまでループ)
 	for _, NearCiecle := range NearCircles {
 		// 円のデータを取得する
 		circle, err := models.GetCircle(NearCiecle.CircleID)
 
+		if err == gorm.ErrRecordNotFound {
+			// 見つからない時
+			// キャッシュから削除
+			err := location.DeleteCircle(location.CircleData{
+				CircleID: NearCiecle.CircleID,
+				UserID:   args.UserID,
+			})
+
+			// エラー処理
+			if err != nil {
+				logger.PrintErr("delete circle error:", err)
+				continue
+			}
+		}
+
 		// エラー処理
 		if err != nil {
-			return err
+			logger.PrintErr("near circle error:", err)
+			continue
 		}
+
+		logger.Println("Size:", circle.Size, "Distance:", NearCiecle.Distance)
 
 		if circle.Size < int(NearCiecle.Distance) {
 			// 距離のほうが大きい (入っていない円を見つけた時)
@@ -203,6 +225,7 @@ func LevelUpCircle(args ProcessCircleArgs) error {
 			break
 		}
 
+		logger.Println("steps:", circle.Steps, "args steps:", args.Steps)
 		// 距離のほうが小さい時 (ユーザーが入っている時)
 		// 歩数を判定する
 		if (args.Steps - circle.Steps) > LevelUpSteps {
