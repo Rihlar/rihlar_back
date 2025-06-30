@@ -1,6 +1,6 @@
 package models
 
-import "game/logger"
+import "gcore/logger"
 
 // テーブル構造
 type Profile struct {
@@ -16,15 +16,36 @@ type Profile struct {
 	Name      string  `gorm:"type:varchar(100);default:''" json:"name"`          //ユーザ名
 }
 
+func GetProfile(userID string) (Profile, error) {
+	var profile Profile
+
+	// ユーザ情報を取得
+	err := dbconn.Where(&Profile{
+		UserID: userID,
+	}).First(&profile).Error
+
+	// エラー処理
+	if err != nil {
+		logger.PrintErr("ユーザ情報取得エラー", err)
+		return Profile{}, err
+	}
+
+	return profile, nil
+}
+
+func SaveProfile(profile Profile) error {
+	return dbconn.Save(&profile).Error
+}
+
 func (Profile) TableName() string {
 	return "Profile"
 }
 
 // デバッグ用
 func DebugProfile() {
-	user_id := "e3abf90d-4bcf-4c3b-bbde-37694b1611b3"
-	system_game_id := "f5b632cb-707d-f450-eece-f119534b724c"
-	admin_game_id := "01e32526-1c27-c9a9-2b5b-d158b0f50c83"
+	// user_id := "e3abf90d-4bcf-4c3b-bbde-37694b1611b3"
+	// system_game_id := "f5b632cb-707d-f450-eece-f119534b724c"
+	// admin_game_id := "01e32526-1c27-c9a9-2b5b-d158b0f50c83"
 
 	//書き込み
 	result := dbconn.Save(&Profile{
@@ -47,11 +68,24 @@ func DebugProfile() {
 
 	logger.PrintErr("プロフィール保存成功")
 
+	// ユーザー2のプロフィール作成
+	result = dbconn.Save(&Profile{
+		UserID:    user_id2,
+		RecordID:  "第2回優勝",
+		Comment:   "よろしくお願いします。",
+		Latitude:  35.23,
+		Longitude: 135.25,
+		Size:      100,
+		RegionID:  "関東地方",
+		SysGame:   system_game_id2,
+		AdmGame:   admin_game_id,
+	})
+
 	//取得コード
-	returnData := Sample{}
+	returnData := Profile{}
 
 	//取得する
-	result = dbconn.Where(&Sample{
+	result = dbconn.Where(&Profile{
 		UserID: user_id,
 	}).First(&returnData)
 

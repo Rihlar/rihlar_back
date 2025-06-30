@@ -7,11 +7,40 @@ import (
 
 // テーブル定義
 type Team struct {
-	TeamID    string    `gorm:"primaryKey;size:36" json:"teamID"`                                           // チームID
-	GameID    string    `gorm:"not null;size:36" json:"gameID"`                                             // ゲームID
-	Members   []Member  `gorm:"foreignKey:TeamID;references:TeamID;constraint:OnUpdate:CASCADE,OnDelete:CASCADE;" json:"members"` //　チームメンバー
-	CreatedAT time.Time `gorm:"autoCreateTime" json:"createdAT"`                                                // ゲーム作成時
-	Points    int       `gorm:"not null" json:"points"`                                                         // チーム合計ポイント
+	TeamID    string    `gorm:"primaryKey;size:50" json:"teamID"`                                                                 // チームID
+	GameID    string    `gorm:"not null;size:50" json:"gameID"`                                                                   // ゲームID
+	Members   []Member  `gorm:"foreignKey:TeamID,GameID;references:TeamID,GameID;constraint:OnUpdate:CASCADE,OnDelete:CASCADE;" json:"members"` //　チームメンバー
+	CreatedAT time.Time `gorm:"autoCreateTime" json:"createdAT"`                                                                  // ゲーム作成時
+	Points    int       `gorm:"not null" json:"points"`                                                                           // チーム合計ポイント
+}
+
+// チームを作成する
+func CreateTeam(team Team) error {
+	return dbconn.Create(&team).Error
+}
+
+// TODO デバッグ用 メンバーを追加する
+func (team *Team) AddMember(member Member) error {
+	return dbconn.Model(team).Association("Members").Append(&member)
+}
+
+// チームを取得する
+func (game *Game) GetTeam(teamID string) (Team, error) {
+	// 取得する
+	returnData := Team{}
+
+	// 取得
+	err := dbconn.Where(&Team{
+		GameID: game.GameID,
+		TeamID: teamID,
+	}).First(&returnData).Error
+
+	// エラー処理
+	if err != nil {
+		return Team{}, err
+	}
+
+	return returnData, nil
 }
 
 // テーブル名
@@ -36,7 +65,7 @@ func DebugTeam() {
 
 	// エラー処理
 	if result.Error != nil {
-		logger.PrintErr("チーム保存エラー",result.Error)
+		logger.PrintErr("チーム保存エラー", result.Error)
 		return
 	}
 
@@ -47,12 +76,12 @@ func DebugTeam() {
 
 	// 取得する
 	result = dbconn.Where(&Team{
-		TeamID:   teamid,
+		TeamID: teamid,
 	}).First(&returnData)
 
 	// エラー処理
 	if result.Error != nil {
-		logger.PrintErr("チーム取得エラー",result.Error)
+		logger.PrintErr("チーム取得エラー", result.Error)
 		return
 	}
 

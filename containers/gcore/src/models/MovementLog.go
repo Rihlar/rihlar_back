@@ -11,13 +11,26 @@ type MovementLog struct {
 	Latitude  float64 `gorm:"double" json:"latitude"`               // 緯度
 	Longitude float64 `gorm:"double" json:"longitude"`              // 経度
 	Steps     int64   `json:"steps"`                                // 歩数
-	GameID    string  `gorm:"primaryKey;varchar(36)" json:"gameID"` // ゲームID
+	GameID    string  `gorm:"primaryKey;varchar(50)" json:"gameID"` // ゲームID
 	TimeStamp int64   `gorm:"primaryKey" json:"timeStamp"`          //保存時間
 }
 
 // テーブル名
 func (MovementLog) TableName() string {
 	return "movementLog"
+}
+
+// 歩いたログを保存する (緯度経度 歩数)
+func (member *Member) SaveMovementLog(Latitude, Longitude float64, Steps int64) error {
+	// 歩いた記録をする
+	return dbconn.Save(&MovementLog{
+		UserID:    member.UserID,
+		Latitude:  Latitude,
+		Longitude: Longitude,
+		Steps:     Steps,
+		GameID:    member.GameID,
+		TimeStamp: time.Now().Unix(),
+	}).Error
 }
 
 func DebugMovementLog() {

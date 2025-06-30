@@ -6,8 +6,8 @@ import (
 
 // テーブル定義
 type Member struct {
-	GameID string `gorm:"primaryKey;size:36" json:"gameID"` // ゲームID（複合主キー）
-	TeamID string `gorm:"not null;size:36" json:"teamID"`   // チームID
+	GameID string `gorm:"primaryKey;size:50" json:"gameID"` // ゲームID（複合主キー）
+	TeamID string `gorm:"not null;size:50" json:"teamID"`   // チームID
 	UserID string `gorm:"primaryKey" json:"userID"`         // ユーザーID（複合主キー）
 	Points int    `gorm:"not null" json:"points"`           // ポイント
 }
@@ -135,7 +135,7 @@ func GetMyRanking(userId string, gameId string) (int, error) {
 func GetMyPoints(userId string, gameId string) (Member, error) {
 	var user Member
 
-	// First() は条件に合う最初のレコードを取得し、見つからなければ error が返る　
+	// First() は条件に合う最初のレコードを取得し、見つからなければ error が返る
 	err := dbconn.Where("user_id = ? AND game_id = ?", userId, gameId).Take(&user).Error
 	if err != nil {
 		return Member{}, err

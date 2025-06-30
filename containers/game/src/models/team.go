@@ -7,8 +7,8 @@ import (
 
 // テーブル定義
 type Team struct {
-	TeamID    string    `gorm:"primaryKey;size:36" json:"teamID"`                                                                 // チームID
-	GameID    string    `gorm:"not null;size:36" json:"gameID"`                                                                   // ゲームID
+	TeamID    string    `gorm:"primaryKey;size:50" json:"teamID"`                                                                 // チームID
+	GameID    string    `gorm:"not null;size:50" json:"gameID"`                                                                   // ゲームID
 	Members   []Member  `gorm:"foreignKey:TeamID;references:TeamID;constraint:OnUpdate:CASCADE,OnDelete:CASCADE;" json:"members"` //　チームメンバー
 	CreatedAT time.Time `gorm:"autoCreateTime" json:"createdAT"`                                                                  // ゲーム作成時
 	Points    int       `gorm:"not null" json:"points"`                                                                           // チーム合計ポイント
