@@ -1,0 +1,24 @@
+@base_url = https://localhost:8943/user
+
+@user_id = e3abf90d-4bcf-4c3b-bbde-37694b1611b3
+
+
+
+### プロフィール取得
+GET {{base_url}}/profile/{{user_id}}
+Content-Type: application/json
+
+###プロフィール編集
+PUT {{base_url}}/profile/{{user_id}}
+Content-Type: application/json
+
+{
+  "name": "テスト太郎",
+  "record_id": "記録1",
+  "comment": "これはテスト用のコメントです。",
+  "region_id": "関東地方",
+  "system_game_id": "f5b632cb-707d-f450-eece-f119534b724a",
+  "admin_game_id": "01e32526-1c27-c9a9-2b5b-d158b0f50c80"
+}
+
+###
