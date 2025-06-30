@@ -26,11 +26,7 @@ func GetMyRankingHandler(ctx echo.Context) error {
 	logger.Println("Successful myRanking get.")
 	
 	// レスポンス
-	ctx.JSON(http.StatusCreated, echo.Map{
-		"helpData": ranking,
+	return ctx.JSON(http.StatusOK, echo.Map{
+		"Data": ranking,
 	})
-
-	logger.Println(ranking)
-
-	return nil
 }
