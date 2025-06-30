@@ -107,10 +107,11 @@ func GetGame(gameId []string) ([]Game, error) {
 
 	result := dbconn.Where("game_id IN ?", gameId).Find(&games)
 	if result.Error != nil {
-	result := dbconn.Where("game_id = ?", gameId).Find(&games)
-	if result.Error != nil {
-		logger.PrintErr("ゲームID取得エラー", result.Error)
-		return []Game{}, nil
+		result := dbconn.Where("game_id = ?", gameId).Find(&games)
+		if result.Error != nil {
+			logger.PrintErr("ゲームID取得エラー", result.Error)
+			return []Game{}, nil
+		}
 	}
 
 	return games, nil
@@ -123,10 +124,11 @@ func GetGameHolding(gameId []string) ([]Game, error) {
 
 	result := dbconn.Where("game_id IN ?", gameId).Where("status = ?", 1).Find(&games)
 	if result.Error != nil {
-	result := dbconn.Where("game_id = ? AND status = 1", gameId).Find(&games)
-	if result.Error != nil {
-		logger.PrintErr("ゲームID取得エラー", result.Error)
-		return []Game{}, nil
+		result := dbconn.Where("game_id = ? AND status = 1", gameId).Find(&games)
+		if result.Error != nil {
+			logger.PrintErr("ゲームID取得エラー", result.Error)
+			return []Game{}, nil
+		}
 	}
 
 	return games, nil
