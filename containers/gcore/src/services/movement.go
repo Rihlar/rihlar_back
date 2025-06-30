@@ -29,6 +29,7 @@ type ProcessChunkArgs struct {
 	Games     []models.Game `json:"games`     // 管理ゲームID
 }
 
+
 func ReportMovement(args MovementArgs) error {
 	// プロファイルを取得する
 	profile, err := models.GetProfile(args.UserID)
@@ -82,8 +83,22 @@ func ReportMovement(args MovementArgs) error {
 		return err
 	}
 
+	// 円のレベルアップ処理
+	err = LevelUpCircle(ProcessCircleArgs{
+		UserID:    args.UserID,
+		Latitude:  args.Latitude,
+		Longitude: args.Longitude,
+		Games:     []models.Game{admGame, sysGame},
+	})
+
+	// エラー処理
+	if err != nil {
+		return err
+	}
+
 	return nil
 }
+
 
 // 歩いたログを記録する関数
 func SaveMovementLog(args SaveMovementLogArgs) error {
