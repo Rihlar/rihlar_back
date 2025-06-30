@@ -4,12 +4,16 @@
 
 @circle_id =4535e17b-b38c-4449-9902-10861ee3b49b
 
+@game_id = f36eb7ce-4e24-4805-99a5-b3ae3468708a
+
 
 # test
 GET {{base_url}}/
 
 ### ランキング取得
 GET {{base_url}}/ranking/personal/{{user_id}}
+### ランキングTOP10
+GET {{base_url}}/ranking/top/{{game_id}}
 
 ### 円の詳細取得
 GET {{base_url}}/circle/{{circle_id}}

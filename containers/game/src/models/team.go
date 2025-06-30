@@ -31,7 +31,7 @@ func DebugTeam() {
 		GameID:    gameid,
 		Members:   []Member{},
 		CreatedAT: time.Time{},
-		Points:    0,
+		Points:    515,
 	})
 
 	// 使ってないよって言われるので＿使ってます
@@ -40,7 +40,7 @@ func DebugTeam() {
 		GameID:    gameid,
 		Members:   []Member{},
 		CreatedAT: time.Time{},
-		Points:    0,
+		Points:    60,
 	})
 
 	_ = dbconn.Save(&Team{
@@ -48,7 +48,7 @@ func DebugTeam() {
 		GameID:    gameid,
 		Members:   []Member{},
 		CreatedAT: time.Time{},
-		Points:    0,
+		Points:    200,
 	})
 
 	_ = dbconn.Save(&Team{
@@ -82,4 +82,23 @@ func DebugTeam() {
 	}
 
 	logger.Println("チーム取得成功")
+}
+
+// ランキング上位取得
+func GetRanking(gameId string) ([]Team, error) {
+	var rankings []Team
+
+	result := dbconn.
+		Where("game_id = ?", gameId).
+		Order("points DESC").
+		Limit(2).	// データ件数がそんなにないので2位までしかとってない
+		Find(&rankings)
+
+	if result.Error != nil {
+		logger.PrintErr("ランキング上位取得エラー", result.Error)
+		return nil, result.Error
+	}
+
+	return rankings, nil
+
 }
