@@ -1,0 +1,444 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Leafletで四角形とピン、円を描画（座標入力対応）</title>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+        integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="" />
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+        #map {
+            height: 600px; /* マップの表示高さを設定 */
+            width: 100%;
+            border: 1px solid #ccc;
+            margin-top: 20px;
+        }
+        .input-section {
+            margin-bottom: 20px;
+            padding: 15px;
+            border: 1px solid #e0e0e0;
+            border-radius: 8px;
+            background-color: #f9f9f9;
+        }
+        .input-section h2 {
+            margin-top: 0;
+            color: #333;
+            font-size: 1.2em;
+            border-bottom: 1px solid #eee;
+            padding-bottom: 5px;
+            margin-bottom: 15px;
+        }
+        .input-group {
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+        }
+        .input-group label {
+            display: inline-block;
+            width: 120px;
+            margin-right: 10px;
+            font-weight: bold;
+        }
+        .input-group input[type="number"] {
+            flex-grow: 1; /* 残りのスペースを埋める */
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+        button {
+            padding: 8px 15px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            margin-right: 5px;
+            margin-top: 10px; /* ボタンと入力欄の間にスペース */
+        }
+        button:hover {
+            background-color: #0056b3;
+        }
+        .clear-buttons {
+            margin-top: 20px;
+            padding-top: 15px;
+            border-top: 1px dashed #e0e0e0;
+        }
+        .message { /* メッセージ表示用に汎用クラスに変更 */
+            color: red;
+            margin-top: 5px; /* マージンを調整 */
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <h1>Leafletで地図に描画</h1>
+
+    <div class="input-section">
+        <h2>四角形の座標入力</h2>
+        <div class="input-group">
+            <label for="topLeftLat">左上 緯度:</label>
+            <input type="number" id="topLeftLat" value="" step="0.0001">
+        </div>
+        <div class="input-group">
+            <label for="topLeftLng">左上 経度:</label>
+            <input type="number" id="topLeftLng" value="" step="0.0001">
+        </div>
+        <div class="input-group">
+            <label for="bottomRightLat">右下 緯度:</label>
+            <input type="number" id="bottomRightLat" value="" step="0.0001">
+        </div>
+        <div class="input-group">
+            <label for="bottomRightLng">右下 経度:</label>
+            <input type="number" id="bottomRightLng" value="" step="0.0001">
+        </div>
+        <button id="drawRectangleButton">四角形を描画</button>
+        <div id="message_rectangle" class="message"></div>
+    </div>
+
+    <div class="input-section">
+        <h2>ピンの座標入力</h2>
+        <div class="input-group">
+            <label for="pinLat">ピン 緯度:</label>
+            <input type="number" id="pinLat" value="" step="0.0001">
+        </div>
+        <div class="input-group">
+            <label for="pinLng">ピン 経度:</label>
+            <input type="number" id="pinLng" value="" step="0.0001">
+        </div>
+        <button id="addPinButton">ピンを立てる</button>
+        <div id="message_pin" class="message"></div>
+    </div>
+
+    <div class="input-section">
+        <h2>円の座標入力</h2>
+        <div class="input-group">
+            <label for="circleLat">中心 緯度:</label>
+            <input type="number" id="circleLat" value="" step="0.0001">
+        </div>
+        <div class="input-group">
+            <label for="circleLng">中心 経度:</label>
+            <input type="number" id="circleLng" value="" step="0.0001">
+        </div>
+        <div class="input-group">
+            <label for="circleRadius">半径 (メートル):</label>
+            <input type="number" id="circleRadius" value="" min="1" step="1">
+        </div>
+        <button id="drawCircleButton">円を描画</button>
+        <div id="message_circle" class="message"></div>
+    </div>
+
+    <div class="clear-buttons">
+        <button id="clearAllButton">すべてクリア</button>
+    </div>
+
+    <div id="map"></div>
+
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
+        integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+
+    <script>
+        // マップと入力要素の参照（DOMContentLoadedのスコープ外に定義）
+        let map;
+
+        // 四角形入力要素
+        const topLeftLatInput = document.getElementById('topLeftLat');
+        const topLeftLngInput = document.getElementById('topLeftLng');
+        const bottomRightLatInput = document.getElementById('bottomRightLat');
+        const bottomRightLngInput = document.getElementById('bottomRightLng');
+        const messageRectangleDiv = document.getElementById('message_rectangle');
+
+        // ピン入力要素
+        const pinLatInput = document.getElementById('pinLat');
+        const pinLngInput = document.getElementById('pinLng');
+        const messagePinDiv = document.getElementById('message_pin');
+
+        // 円入力要素
+        const circleLatInput = document.getElementById('circleLat');
+        const circleLngInput = document.getElementById('circleLng');
+        const circleRadiusInput = document.getElementById('circleRadius');
+        const messageCircleDiv = document.getElementById('message_circle');
+
+        let drawnRectangles = []; // 描画された矩形を格納する配列
+        let drawnMarkers = [];    // 描画されたピン（マーカー）を格納する配列
+        let drawnCircles = [];    // 描画された円を格納する配列
+
+        /**
+         * localStorageに四角形の座標を保存する関数
+         */
+        function saveRectangleCoordinates() {
+            localStorage.setItem('rect_topLeftLat', topLeftLatInput.value);
+            localStorage.setItem('rect_topLeftLng', topLeftLngInput.value);
+            localStorage.setItem('rect_bottomRightLat', bottomRightLatInput.value);
+            localStorage.setItem('rect_bottomRightLng', bottomRightLngInput.value);
+        }
+
+        /**
+         * localStorageから四角形の座標をロードし、入力フィールドに設定する関数
+         */
+        function loadRectangleCoordinates() {
+            const savedTopLeftLat = localStorage.getItem('rect_topLeftLat');
+            const savedTopLeftLng = localStorage.getItem('rect_topLeftLng');
+            const savedBottomRightLat = localStorage.getItem('rect_bottomRightLat');
+            const savedBottomRightLng = localStorage.getItem('rect_bottomRightLng');
+
+            if (savedTopLeftLat !== null) topLeftLatInput.value = savedTopLeftLat;
+            if (savedTopLeftLng !== null) topLeftLngInput.value = savedTopLeftLng;
+            if (savedBottomRightLat !== null) bottomRightLatInput.value = savedBottomRightLat;
+            if (savedBottomRightLng !== null) bottomRightLngInput.value = savedBottomRightLng;
+        }
+
+        /**
+         * localStorageにピンの座標を保存する関数
+         */
+        function savePinCoordinates() {
+            localStorage.setItem('pin_lat', pinLatInput.value);
+            localStorage.setItem('pin_lng', pinLngInput.value);
+        }
+
+        /**
+         * localStorageからピンの座標をロードし、入力フィールドに設定する関数
+         */
+        function loadPinCoordinates() {
+            const savedPinLat = localStorage.getItem('pin_lat');
+            const savedPinLng = localStorage.getItem('pin_lng');
+
+            if (savedPinLat !== null) pinLatInput.value = savedPinLat;
+            if (savedPinLng !== null) pinLngInput.value = savedPinLng;
+        }
+
+        /**
+         * localStorageに円の座標と半径を保存する関数
+         */
+        function saveCircleCoordinates() {
+            localStorage.setItem('circle_lat', circleLatInput.value);
+            localStorage.setItem('circle_lng', circleLngInput.value);
+            localStorage.setItem('circle_radius', circleRadiusInput.value);
+        }
+
+        /**
+         * localStorageから円の座標と半径をロードし、入力フィールドに設定する関数
+         */
+        function loadCircleCoordinates() {
+            const savedCircleLat = localStorage.getItem('circle_lat');
+            const savedCircleLng = localStorage.getItem('circle_lng');
+            const savedCircleRadius = localStorage.getItem('circle_radius');
+
+            if (savedCircleLat !== null) circleLatInput.value = savedCircleLat;
+            if (savedCircleLng !== null) circleLngInput.value = savedCircleLng;
+            if (savedCircleRadius !== null) circleRadiusInput.value = savedCircleRadius;
+        }
+
+        /**
+         * 指定された左上と右下の座標からLeafletマップに矩形を描画する関数
+         * @param {Array<number>} topLeftCoords - 左上の緯度・経度 [lat, lng]
+         * @param {Array<number>} bottomRightCoords - 右下の緯度・経度 [lat, lng]
+         * @param {Object} [options={}] - 矩形のスタイルオプション (LeafletのPathオプション)
+         */
+        function drawRectangle(topLeftCoords, bottomRightCoords, options = {}) {
+            if (typeof L === 'undefined' || !map) {
+                console.error("Leaflet (L) or map is not defined. Make sure leaflet.js is loaded and map is initialized.");
+                return null;
+            }
+
+            const bounds = L.latLngBounds(topLeftCoords, bottomRightCoords);
+            const rectangle = L.rectangle(bounds, options).addTo(map);
+            drawnRectangles.push(rectangle);
+            map.fitBounds(bounds); // 矩形全体が見えるようにマップを調整
+            return rectangle;
+        }
+
+        /**
+         * 指定された座標にLeafletマップにピン（マーカー）を立てる関数
+         * @param {Array<number>} coords - ピンの緯度・経度 [lat, lng]
+         * @param {Object} [options={}] - マーカーのオプション (LeafletのMarkerオプション)
+         */
+        function addPin(coords, options = {}) {
+            if (typeof L === 'undefined' || !map) {
+                console.error("Leaflet (L) or map is not defined. Make sure leaflet.js is loaded and map is initialized.");
+                return null;
+            }
+
+            const marker = L.marker(coords, options).addTo(map);
+            drawnMarkers.push(marker);
+            map.panTo(coords); // ピンの中心にマップを移動
+            return marker;
+        }
+
+        /**
+         * 指定された中心座標と半径からLeafletマップに円を描画する関数
+         * @param {Array<number>} centerCoords - 円の中心の緯度・経度 [lat, lng]
+         * @param {number} radius - 円の半径 (メートル単位)
+         * @param {Object} [options={}] - 円のスタイルオプション (LeafletのPathOptions)
+         */
+        function drawCircle(centerCoords, radius, options = {}) {
+            if (typeof L === 'undefined' || !map) {
+                console.error("Leaflet (L) or map is not defined. Make sure leaflet.js is loaded and map is initialized.");
+                return null;
+            }
+
+            const circle = L.circle(centerCoords, {
+                radius: radius, // 半径をメートルで指定
+                color: options.color || 'blue',
+                fillColor: options.fillColor || '#03f',
+                fillOpacity: options.fillOpacity || 0.2,
+                weight: options.weight || 2
+            }).addTo(map);
+            drawnCircles.push(circle);
+            map.fitBounds(circle.getBounds()); // 円全体が見えるようにマップを調整
+            return circle;
+        }
+
+
+        // --- ページの読み込みが完了したときに実行 ---
+        document.addEventListener('DOMContentLoaded', function() {
+            // Leafletマップの初期化
+            map = L.map('map').setView([35.681236, 139.767125], 13); // 東京駅周辺を初期表示
+
+            // OpenStreetMapレイヤーの追加
+            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+            }).addTo(map);
+
+            // localStorageから入力値をロード
+            loadRectangleCoordinates();
+            loadPinCoordinates();
+            loadCircleCoordinates();
+
+            // --- イベントリスナー ---
+
+            // 四角形描画ボタン
+            document.getElementById('drawRectangleButton').addEventListener('click', function() {
+                const topLeftLat = parseFloat(topLeftLatInput.value);
+                const topLeftLng = parseFloat(topLeftLngInput.value);
+                const bottomRightLat = parseFloat(bottomRightLatInput.value);
+                const bottomRightLng = parseFloat(bottomRightLngInput.value);
+
+                // 入力値の検証
+                if (isNaN(topLeftLat) || isNaN(topLeftLng) || isNaN(bottomRightLat) || isNaN(bottomRightLng)) {
+                    messageRectangleDiv.textContent = 'すべての座標を入力してください。';
+                    return;
+                }
+                if (topLeftLat <= bottomRightLat) {
+                    messageRectangleDiv.textContent = '左上の緯度は右下の緯度より大きくしてください。';
+                    return;
+                }
+                if (topLeftLng >= bottomRightLng) {
+                     messageRectangleDiv.textContent = '左上の経度は右下の経度より小さくしてください。';
+                    return;
+                }
+
+                messageRectangleDiv.textContent = ''; // メッセージをクリア
+
+                // 描画オプション
+                const options = {
+                    color: 'purple',
+                    weight: 3,
+                    fillColor: '#8A2BE2', // 紫色
+                    fillOpacity: 0.2
+                };
+
+                drawRectangle([topLeftLat, topLeftLng], [bottomRightLat, bottomRightLng], options);
+                saveRectangleCoordinates(); // 入力値をlocalStorageに保存
+            });
+
+            // ピン追加ボタン
+            document.getElementById('addPinButton').addEventListener('click', function() {
+                const pinLat = parseFloat(pinLatInput.value);
+                const pinLng = parseFloat(pinLngInput.value);
+
+                if (isNaN(pinLat) || isNaN(pinLng)) {
+                    messagePinDiv.textContent = 'ピンの緯度と経度を入力してください。';
+                    return;
+                }
+
+                messagePinDiv.textContent = ''; // メッセージをクリア
+
+                // ピンのオプション
+                const options = {
+                    title: `緯度: ${pinLat}, 経度: ${pinLng}` // マーカーにホバーすると表示されるタイトル
+                };
+
+                addPin([pinLat, pinLng], options);
+                savePinCoordinates(); // 入力値をlocalStorageに保存
+            });
+
+            // 円描画ボタン
+            document.getElementById('drawCircleButton').addEventListener('click', function() {
+                const circleLat = parseFloat(circleLatInput.value);
+                const circleLng = parseFloat(circleLngInput.value);
+                const circleRadius = parseFloat(circleRadiusInput.value);
+
+                if (isNaN(circleLat) || isNaN(circleLng) || isNaN(circleRadius) || circleRadius <= 0) {
+                    messageCircleDiv.textContent = '中心点の緯度・経度、および正の半径を入力してください。';
+                    return;
+                }
+
+                messageCircleDiv.textContent = ''; // メッセージをクリア
+
+                // 円の描画オプション
+                const options = {
+                    color: 'darkgreen',
+                    weight: 2,
+                    fillColor: '#008000', // 緑色
+                    fillOpacity: 0.15
+                };
+
+                drawCircle([circleLat, circleLng], circleRadius, options);
+                saveCircleCoordinates(); // 入力値をlocalStorageに保存
+            });
+
+
+            // すべてクリアボタン
+            document.getElementById('clearAllButton').addEventListener('click', function() {
+                // すべての矩形をマップから削除
+                drawnRectangles.forEach(rect => {
+                    map.removeLayer(rect);
+                });
+                drawnRectangles = [];
+
+                // すべてのピンをマップから削除
+                drawnMarkers.forEach(marker => {
+                    map.removeLayer(marker);
+                });
+                drawnMarkers = [];
+
+                // すべての円をマップから削除
+                drawnCircles.forEach(circle => {
+                    map.removeLayer(circle);
+                });
+                drawnCircles = [];
+
+                messageRectangleDiv.textContent = ''; // 四角形メッセージをクリア
+                messagePinDiv.textContent = '';       // ピンメッセージをクリア
+                messageCircleDiv.textContent = '';    // 円メッセージをクリア
+
+                // localStorageからすべての保存値を削除（任意：必要であればコメントを外してください）
+                // localStorage.removeItem('rect_topLeftLat');
+                // localStorage.removeItem('rect_topLeftLng');
+                // localStorage.removeItem('rect_bottomRightLat');
+                // localStorage.removeItem('rect_bottomRightLng');
+                // localStorage.removeItem('pin_lat');
+                // localStorage.removeItem('pin_lng');
+                // localStorage.removeItem('circle_lat');
+                // localStorage.removeItem('circle_lng');
+                // localStorage.removeItem('circle_radius');
+
+                // 入力フィールドもクリアしたい場合（任意：必要であればコメントを外してください）
+                // topLeftLatInput.value = '';
+                // topLeftLngInput.value = '';
+                // bottomRightLatInput.value = '';
+                // bottomRightLngInput.value = '';
+                // pinLatInput.value = '';
+                // pinLngInput.value = '';
+                // circleLatInput.value = '';
+                // circleLngInput.value = '';
+                // circleRadiusInput.value = '';
+            });
+        });
+    </script>
+</body>
+</html>

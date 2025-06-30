@@ -2,6 +2,7 @@ package main
 
 import (
 	"gcore/controllers"
+	"gcore/location"
 	"gcore/middlewares"
 	"gcore/models"
 	"gcore/services"
@@ -12,6 +13,9 @@ import (
 )
 
 func main() {
+	// location 初期化
+	location.Init()
+
 	// モデル初期化
 	models.Init()
 
@@ -36,6 +40,9 @@ func main() {
 			"result": "hello world",
 		})
 	}, middlewares.RequireAuth)
+
+	// ルーティングの設定を追加
+	router = InitRouter(router)
 
 	router.Logger.Fatal(router.Start(":8090"))
 }

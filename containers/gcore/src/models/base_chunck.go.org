@@ -1,0 +1,101 @@
+package models
+
+import (
+
+)
+
+// テーブル定義
+type BaseChunk struct {
+	GridID    string  `gorm:"primaryKey" json:"gridID"`               // グリッドID
+	LeftTopLat float64 `gorm:"double" json:"leftTopLat"`               // 左上緯度
+	LeftTopLon float64 `gorm:"double" json:"leftTopLon"`               // 左上経度
+	LeftBotLat float64 `gorm:"double" json:"leftBotLat"`               // 左下緯度
+	LeftBotLon float64 `gorm:"double" json:"leftBotLon"`               // 左下経度
+	RightTopLat float64 `gorm:"double" json:"rightTopLat"`             // 右上緯度
+	RightTopLon float64 `gorm:"double" json:"rightTopLon"`             // 右上経度
+	RightBotLat float64 `gorm:"double" json:"rightBotLat"`             // 右下緯度
+	RightBotLon float64 `gorm:"double" json:"rightBotLon"`             // 右下経度
+	RegionID  string  `gorm:"varchar(50);primaryKey" json:"regionID"` // ゲーム開催地域
+}
+
+// テーブル名
+func (BaseChunk) TableName() string {
+	return "chunks"
+}
+
+// TODO デバッグ用 ゲーム用のリージョンを作成する関数
+func (game *Game) FillRegion(region Region) error {
+	// // グリッド生成
+	// grids := location.GenerateGrid(region.StartLat, region.StartLon, region.EndLat, region.EndLon, GridMeter)
+
+	// for _, grid := range grids {
+	// 	// チャンクをキャッシュに保存する
+	// 	err := location.SaveChunk(region.RegionID, grid.ID, grid.Center.Lat, grid.Center.Lon)
+
+	// 	// エラー処理
+	// 	if err != nil {
+	// 		return err
+	// 	}
+
+	// 	// 円の検索用データをキャッシュに保存する
+	// 	// 左上の座標
+	// 	err = location.SaveCircleChunk(region.RegionID, grid.ID + "|left_top", grid.TopRight.Lat, grid.TopRight.Lon)
+
+	// 	// エラー処理
+	// 	if err != nil {
+	// 		return err
+	// 	}
+
+	// 	// 左下の座標
+	// 	err = location.SaveCircleChunk(region.RegionID, grid.ID + "|left_bottom", grid.BottomRight.Lat, grid.BottomRight.Lon)
+
+	// 	// エラー処理
+	// 	if err != nil {
+	// 		return err
+	// 	}
+
+	// 	// 右上の座標
+	// 	err = location.SaveCircleChunk(region.RegionID, grid.ID + "|right_top", grid.TopLeft.Lat, grid.TopLeft.Lon)
+
+	// 	// エラー処理
+	// 	if err != nil {
+	// 		return err
+	// 	}
+
+	// 	// 右下の座標
+	// 	err = location.SaveCircleChunk(region.RegionID, grid.ID + "|right_bottom", grid.BottomLeft.Lat, grid.BottomLeft.Lon)
+
+	// 	// エラー処理
+	// 	if err != nil {
+	// 		return err
+	// 	}
+
+	// 	// // チャンクを保存する
+	// 	// err = dbconn.Create(&BaseChunk{
+	// 	// 	LeftTopLat: grid.TopLeft.Lat,
+	// 	// 	LeftTopLon: grid.TopLeft.Lon,
+	// 	// 	LeftBotLat: grid.BottomLeft.Lat,
+	// 	// 	LeftBotLon: grid.BottomLeft.Lon,
+	// 	// 	RightTopLat: grid.TopRight.Lat,
+	// 	// 	RightTopLon: grid.TopRight.Lon,
+	// 	// 	RightBotLat: grid.BottomRight.Lat,
+	// 	// 	RightBotLon: grid.BottomRight.Lon,
+	// 	// 	RegionID:  region.RegionID,
+	// 	// 	GridID:    grid.ID,
+	// 	// }).Error
+
+	// 	// // エラー処理
+	// 	// if err != nil {
+	// 	// 	logger.PrintErr("チャンク保存エラー", err)
+	// 	// 	return err
+	// 	// }
+	// }
+
+	return nil
+}
+
+
+
+func DebugBaseChunk() {
+}
+
