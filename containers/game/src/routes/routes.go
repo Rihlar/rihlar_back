@@ -14,5 +14,9 @@ func InitRoutes(router *echo.Echo) *echo.Echo {
 	//円詳細取得
 	router.GET("/circle/:circle_id", controllers.GetCircleDeteileHandler)
 
+
+	//adminゲーム作成
+	router.POST("game/create", controllers.CreateAdminGameHandler)
+
 	return router
 }

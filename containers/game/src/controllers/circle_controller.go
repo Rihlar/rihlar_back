@@ -17,7 +17,7 @@ func GetCircleDeteileHandler(ctx echo.Context) error {
 
 	// 円の詳細取得
 	circle, err := circleService.GetCircleDeteile(id)
-		if err != nil {
+	if err != nil {
 		logger.PrintErr("円取得エラー", circle)
 		return err
 	}
