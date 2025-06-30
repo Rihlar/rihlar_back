@@ -14,8 +14,11 @@ GET {{base_url}}/ranking/personal/{{user_id}}
 ### 円の詳細取得
 GET {{base_url}}/circle/{{circle_id}}
 
+### 終了済みゲーム一覧
+GET {{base_url}}/endgame/{{user_id}}
 
-
+### 参加している全てのゲーム一覧取得
+GET {{base_url}}/joingame/{{user_id}}
 
 ### adminゲーム作成
 POST {{base_url}}/game/create

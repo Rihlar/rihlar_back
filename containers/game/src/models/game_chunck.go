@@ -5,9 +5,9 @@ import "game/logger"
 // テーブル定義
 type GameChunk struct {
 	ChunkID string `gorm:"primaryKey" json:"chunkID"`  // チャンクID
-	GameID  string `gorm:"varchar(36)" json:"gameID"`  // ゲームID
-	ImageID string `gorm:"varchar(36)" json:"imageID"` // イメージID
-	OwnerID string `gorm:"varchar(36)" json:"ownerID"` // オーナーID
+	GameID  string `gorm:"varchar(50)" json:"gameID"`  // ゲームID
+	ImageID string `gorm:"varchar(50)" json:"imageID"` // イメージID
+	OwnerID string `gorm:"varchar(50)" json:"ownerID"` // オーナーID
 	Level   int    `gorm:"not null" json:"level"`      // 防衛レベル
 }
 
