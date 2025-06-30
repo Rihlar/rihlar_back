@@ -33,6 +33,25 @@ func (game *Game) GetMemberByUserID(userid string) (Member, error) {
 	return returnData, nil
 }
 
+// レベル2の円を取得する関数
+func (member *Member) GetLevelTwoCircles() ([]Circle, error) {
+	// 取得する
+	returnDatas := []Circle{}
+
+	// 取得する
+	err := dbconn.Where(&Circle{
+		UserID: member.UserID,
+		Level:   2,
+	}).Find(&returnDatas).Error
+
+	// エラー処理
+	if err != nil {
+		return []Circle{}, err
+	}
+
+	return returnDatas, nil
+}
+
 // 点数を更新する関数
 func (member *Member) GetOwnerdChunks() ([]GameChunk, error) {
 	// チャンクを取得する
