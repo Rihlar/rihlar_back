@@ -29,6 +29,19 @@ func CacheCircle(data CircleData) error {
 	return nil
 }
 
+// キャッシュから削除する関数
+func DeleteCircle(data CircleData) error {
+	// データをキャッシュする
+	result := redisConn.ZRem(context.Background(),data.UserID, data.CircleID)
+
+	// エラー処理
+	if result.Err() != nil {
+		return result.Err()
+	}
+
+	return nil
+}
+
 type SearchResult struct {
 	CircleID string  //円のID
 	Distance float64 //距離

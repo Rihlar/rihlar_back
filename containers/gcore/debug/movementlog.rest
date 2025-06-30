@@ -20,7 +20,7 @@ Content-Type: application/json
 {
     "latitude": 35.7365646305852,
     "longitude": 139.80954685258914,
-    "steps": 10
+    "steps": 3000
 }
 
 #

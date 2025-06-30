@@ -217,6 +217,22 @@ func LevelUpCircle(args ProcessCircleArgs) error {
 			continue
 		}
 
+		// レベルが2以外なら
+		if circle.Level != 2 {
+			// キャッシュから削除
+			err := location.DeleteCircle(location.CircleData{
+				CircleID: NearCiecle.CircleID,
+				UserID:   args.UserID,
+			})
+
+			// エラー処理
+			if err != nil {
+				logger.PrintErr("delete circle error:", err)
+				continue
+			}
+			continue
+		}
+
 		logger.Println("Size:", circle.Size, "Distance:", NearCiecle.Distance)
 
 		if circle.Size < int(NearCiecle.Distance) {
