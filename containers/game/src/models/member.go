@@ -33,9 +33,9 @@ func DebugMember() {
 	})
 
 	_ = dbconn.Save(&Member{
-		GameID: gameid,
-		TeamID: teamid,
-		UserID: "user-uuid-1",
+		GameID: "a7510bcb-d5b8-414b-84ef-d4c663452e43",
+		TeamID: "608bf57c-427c-423f-8f45-a9f42d337dc9",
+		UserID: userid,
 		Points: 5,
 	})
 
@@ -145,7 +145,7 @@ func GetMyPoints(userId string, gameId string) (Member, error) {
 }
 
 // ユーザーの全てのゲームを取得する
-func GetPlaingGames(userUuid string) ([]string, error) {
+func GetJoinGames(userUuid string) ([]string, error) {
 	// 結果格納用
 	var games []Member
 
