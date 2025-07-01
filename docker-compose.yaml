@@ -23,9 +23,6 @@ services:
             - ./auth/src:/root/src
             - ./auth/icons:/assets/icons
         restart: always
-        depends_on:
-            mysql:
-                condition: service_healthy
     
     # ユーザーコンテナ
     user:
@@ -42,8 +39,6 @@ services:
             - ./containers/user/src:/root/src
         restart: always
         depends_on:
-            mysql:
-                condition: service_healthy
             auth:
                 condition: service_started
     
@@ -62,8 +57,6 @@ services:
             - ./containers/game/src:/root/src
         restart: always
         depends_on:
-            mysql:
-                condition: service_healthy
             auth:
                 condition: service_started
     
@@ -99,11 +92,6 @@ services:
             - dbdata:/var/lib/mysql
             - ./database/my.cnf:/etc/mysql/conf.d/my.cnf
             - ./database/script/init.sql:/docker-entrypoint-initdb.d/init.sql 
-        healthcheck:
-            test: ["CMD", "mysqladmin", "ping", "-h", "db", "-u", "root", "-proot"]
-            interval: 5s
-            timeout: 10s
-            retries: 5
     redis:
         hostname: redis
         image: redis:latest
