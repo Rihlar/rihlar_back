@@ -1,11 +1,10 @@
 @base_url = https://localhost:8943/game
 
-@user_id = e3abf90d-4bcf-4c3b-bbde-37694b1611b3
+@user_id = userid-8a5fafff-0b2e-4f2b-b011-da21a5a724cd
 
 @circle_id =4535e17b-b38c-4449-9902-10861ee3b49b
 
-@game_id = f36eb7ce-4e24-4805-99a5-b3ae3468708a
-
+@game_id = adminGame-7ffcbc90-e8fe-4d9c-8c40-f9f94167dd07
 
 # test
 GET {{base_url}}/
@@ -14,6 +13,11 @@ GET {{base_url}}/
 GET {{base_url}}/ranking/personal/{{user_id}}
 ### ランキングTOP10
 GET {{base_url}}/ranking/top/{{game_id}}
+UserID: userid-8a5fafff-0b2e-4f2b-b011-da21a5a724cd
+
+### 上位3位の円を取得する
+GET {{base_url}}/ranking/top/{{game_id}}
+UserID: userid-8a5fafff-0b2e-4f2b-b011-da21a5a724cd
 
 ### 円の詳細取得
 GET {{base_url}}/circle/{{circle_id}}

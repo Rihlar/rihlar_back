@@ -105,6 +105,7 @@ func ProcessCreateCircle(args GamesCreateCircleArgs) ([]string, error) {
 			CircleID:  circleIdStr,
 			GameID:    game.GameID,
 			UserID:    member.UserID,
+			TeamID:    member.TeamID,
 			Size:      int(args.CircleSize),
 			Level:     2,
 			Latitude:  args.Latitude,

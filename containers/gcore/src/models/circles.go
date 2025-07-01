@@ -9,6 +9,7 @@ import (
 type Circle struct {
 	CircleID  string    `gorm:"primaryKey" json:"circlesID"`        // サークルID
 	GameID    string    `gorm:"varchar(50) not null" json:"gameID"` // ゲームID
+	TeamID    string    `gorm:"varchar(50) not null" json:"teamID"` // チームID
 	UserID    string    `gorm:"varchar(50) not null" json:"userID"` // ユーザーID
 	Size      int       `gorm:"not null" json:"size"`               // サークルサイズ
 	Level     int       `gorm:"not null" json:"level"`              // 防衛レベル

@@ -9,6 +9,7 @@ import (
 type Circle struct {
 	CircleID  string    `gorm:"primaryKey" json:"circlesID"`        // サークルID
 	GameID    string    `gorm:"varchar(50) not null" json:"gameID"` // ゲームID
+	TeamID    string    `gorm:"varchar(50) not null" json:"teamID"` // チームID
 	UserID    string    `gorm:"varchar(50) not null" json:"userID"` // ユーザーID
 	Size      int       `gorm:"not null" json:"size"`               // サークルサイズ
 	Level     int       `gorm:"not null" json:"level"`              // 防衛レベル
@@ -16,6 +17,7 @@ type Circle struct {
 	Longitude float64   `gorm:"double" json:"longitude"`            // 経度
 	CreatedAT time.Time `gorm:"autoCreateTime" json:"createdAT"`    // 作成時
 	ImageID   string    `gorm:"varchar(50)" json:"imageID"`         // イメージID
+	Steps     int64     `json:"steps"`                              // 歩数
 }
 
 // テーブル名
@@ -81,4 +83,22 @@ func GetCircleDeteile(circleId string) (Circle, error) {
 	}
 
 	return circleDeteile, nil
+}
+
+// チームのサークルを取得
+func GetCircleByTeamId(teamId string) ([]Circle, error) {
+	var circles []Circle
+
+	// 取得
+	err := dbconn.Where(&Circle{
+		TeamID: teamId,
+	}).Find(&circles).Error
+
+	// エラー処理
+	if err != nil {
+		logger.PrintErr("サークル取得エラー", err)
+		return []Circle{}, err
+	}
+
+	return circles, nil
 }
