@@ -29,7 +29,6 @@ type ProcessChunkArgs struct {
 	Games     []models.Game `json:"games`     // 管理ゲームID
 }
 
-
 func ReportMovement(args MovementArgs) error {
 	// プロファイルを取得する
 	profile, err := models.GetProfile(args.UserID)
@@ -100,7 +99,6 @@ func ReportMovement(args MovementArgs) error {
 	return nil
 }
 
-
 // 歩いたログを記録する関数
 func SaveMovementLog(args SaveMovementLogArgs) error {
 	// ゲームを回す
@@ -128,7 +126,7 @@ func ProcessChunk(args ProcessChunkArgs) error {
 	// ゲームを回す
 	for _, game := range args.Games {
 		// 一番近いチャンクを取得
-		chunk,err := game.GetChunkByLatLon(args.Latitude, args.Longitude)
+		chunk, err := game.GetChunkByLatLon(args.Latitude, args.Longitude)
 
 		// エラー処理
 		if err != nil {
@@ -154,4 +152,52 @@ func ProcessChunk(args ProcessChunkArgs) error {
 	}
 
 	return nil
+}
+
+type MovementLog struct {
+	Latitude  float64 `json:"latitude"`
+	Longitude float64 `json:"longitude"`
+	Steps     int64   `json:"steps"`
+	TimeStamp int64   `json:"timeStamp"`
+}
+
+// 歩いた記録を取得する
+func GetReportedMovement(gameId, userId string) ([]MovementLog,error) {
+	// ゲームを取得する
+	game, err := models.GetGame(gameId)
+
+	// エラー処理
+	if err != nil {
+		return []MovementLog{}, err
+	}
+
+	// メンバーオブジェクト取得
+	member, err := game.GetMemberByUserID(userId)
+
+	// エラー処理
+	if err != nil {
+		return []MovementLog{}, err
+	}
+
+	// 歩いたログを保存する
+	movementLogs, err := member.GetReportedMovement()
+
+	// エラー処理
+	if err != nil {
+		return []MovementLog{}, err
+	}
+
+	returnDatas := []MovementLog{}
+
+	for _, movementLog := range movementLogs {
+		// 返却用に変換
+		returnDatas = append(returnDatas, MovementLog{
+			Latitude:  movementLog.Latitude,
+			Longitude: movementLog.Longitude,
+			Steps:     movementLog.Steps,
+			TimeStamp: movementLog.TimeStamp,
+		})
+	}
+
+	return returnDatas, nil
 }

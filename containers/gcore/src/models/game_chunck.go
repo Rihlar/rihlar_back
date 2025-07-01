@@ -15,6 +15,7 @@ type GameChunk struct {
 	EndLat   float64 `gorm:"not null" json:"endLat"`     // 終了緯度
 	EndLon   float64 `gorm:"not null" json:"endLon"`     // 終了経度
 	Level    int     `gorm:"not null" json:"level"`      // 防衛レベル
+	
 }
 
 // テーブル名

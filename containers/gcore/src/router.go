@@ -12,8 +12,12 @@ func InitRouter(router *echo.Echo) *echo.Echo {
 	// 移動を報告するエンドポイント
 	router.POST("/report/movement", controllers.ReportMovement)
 
+	// 移動を取得するエンドポイント
+	router.GET("/get/movement", controllers.GetReportedMovement)
+
 	// 円を作成するエンドポイント
 	router.POST("/create/circle", controllers.CreateCircle)
+
 
 	return router
 }
