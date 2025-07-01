@@ -75,8 +75,6 @@ services:
             - ./containers/gcore/src:/root/src
         restart: always
         depends_on:
-            mysql:
-                condition: service_healthy
             auth:
                 condition: service_started
 
