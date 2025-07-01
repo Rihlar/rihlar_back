@@ -225,6 +225,26 @@ func (game *Game) GetCircleChunkByLatLon(lat, lon, radius float64) ([]GameChunk,
 	return returnChunks, nil
 }
 
+// ランキング上位取得
+func (game *Game) GetRanking(maxRank int) ([]Team, error) {
+	var rankings []Team
+
+	result := dbconn.Debug().
+		Where(Team{
+			GameID:    game.GameID,
+		}).
+		Order("points DESC").
+		Limit(maxRank).
+		Find(&rankings)
+
+	if result.Error != nil {
+		logger.PrintErr("ランキング上位取得エラー", result.Error)
+		return nil, result.Error
+	}
+
+	return rankings, nil
+}
+
 // デバック用
 func DebugGame() {
 	// デバッグ用のコードをここに書く

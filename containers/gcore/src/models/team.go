@@ -43,6 +43,29 @@ func (game *Game) GetTeam(teamID string) (Team, error) {
 	return returnData, nil
 }
 
+// チームのポイントを反映する
+func (team *Team) ReflectPoints() error {
+	// メンバーを取得する
+	err := dbconn.Model(team).Association("Members").Find(&team.Members)
+
+	// エラー処理
+	if err != nil {
+		return err
+	}
+
+	// チームのポイントを初期化する
+	team.Points = 0
+
+	// メンバーを反映する
+	for _, member := range team.Members {
+		team.Points += member.Points
+	}
+
+	// チームのポイントを更新する
+	return dbconn.Model(team).Update("points", team.Points).Error
+}
+
+
 // テーブル名
 func (Team) TableName() string {
 	return "Teams"

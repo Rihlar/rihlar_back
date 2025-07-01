@@ -81,7 +81,7 @@ func (member *Member) UpdatePoints(points int) error {
 }
 
 // 所有中のチャンクをポイントに反映する関数
-func (member *Member) ReflectPoints() error {
+func (member *Member) ReflectPoints(updateTeam bool) error {
 	// 所有中のチャンクを取得する
 	chunks, err := member.GetOwnerdChunks()
 
@@ -96,6 +96,27 @@ func (member *Member) ReflectPoints() error {
 	// エラー処理
 	if err != nil {
 		return err
+	}
+
+	if updateTeam {
+		// ゲームを取得する
+		game, err := GetGame(member.GameID)
+
+		// エラー処理
+		if err != nil {
+			return err
+		}
+
+		// チームを取得する
+		team, err := game.GetTeam(member.TeamID)
+
+		// エラー処理
+		if err != nil {
+			return err
+		}
+
+		// チームのポイントを反映する
+		return team.ReflectPoints()
 	}
 
 	return nil

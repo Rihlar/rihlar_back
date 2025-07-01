@@ -74,7 +74,7 @@ func (gc *GameChunk) ChangeOwner(ownerid string) error {
 	}
 
 	// 前のユーザーのポイントを更新する
-	err = beforeOwner.ReflectPoints()
+	err = beforeOwner.ReflectPoints(true)
 
 	// エラー処理
 	if err != nil {
@@ -82,7 +82,7 @@ func (gc *GameChunk) ChangeOwner(ownerid string) error {
 	}
 
 	// 新しいユーザーのポイントを更新する
-	err = afterOwner.ReflectPoints()
+	err = afterOwner.ReflectPoints(true)
 
 	// エラー処理
 	if err != nil {
