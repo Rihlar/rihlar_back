@@ -1,24 +1,65 @@
 @base_url = https://localhost:8943/user
 
-@user_id = e3abf90d-4bcf-4c3b-bbde-37694b1611b3
-
-
+@user_id = userid-e3abf90d-4bcf-4c3b-bbde-37694b1611b3
 
 ### プロフィール取得
-GET {{base_url}}/profile/{{user_id}}
+GET {{base_url}}/profile HTTP/1.1
+UserID: {{user_id}}
 Content-Type: application/json
 
+###プロフィール作成
+POST {{base_url}}/profile
+Content-Type: application/json
+
+{
+  "name": "テスト太郎2",
+  "record_id": "記録2",
+  "comment": "これはテスト用のコメントです。",
+  "region_id": "北海道",
+  "system_game_id": "",
+  "admin_game_id": ""
+}
+
 ###プロフィール編集
-PUT {{base_url}}/profile/{{user_id}}
+PUT {{base_url}}/profile
+Userid: {{user_id}}
 Content-Type: application/json
 
 {
   "name": "テスト太郎",
-  "record_id": "記録1",
+  "record_id": "記録2",
   "comment": "これはテスト用のコメントです。",
-  "region_id": "関東地方",
   "system_game_id": "f5b632cb-707d-f450-eece-f119534b724a",
   "admin_game_id": "01e32526-1c27-c9a9-2b5b-d158b0f50c80"
 }
 
-###
+### プライバシー取得
+GET  {{base_url}}/privacy
+Userid: {{user_id}}
+Content-Type: application/json
+
+### プライバシー編集
+
+PUT  {{base_url}}/privacy
+Content-Type: application/json
+Userid: {{user_id}}
+
+{
+  "latitude": 35.2020,
+  "longitude": 135.21,
+  "size": 300
+}
+
+###　所属地域の取得
+GET  {{base_url}}/region
+Content-Type: application/json
+Userid: {{user_id}}
+
+### 所属地域の編集
+PUT {{base_url}}/region
+Content-Type: application/json
+Userid: {{user_id}}
+
+{
+  "region_id": "関西地方"
+}
