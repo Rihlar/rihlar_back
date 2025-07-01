@@ -33,6 +33,23 @@ func (member *Member) SaveMovementLog(Latitude, Longitude float64, Steps int64) 
 	}).Error
 }
 
+func (member *Member) GetReportedMovement() ([]MovementLog,error) {
+	returnDatas := []MovementLog{}
+
+	// 歩いた記録を取得する
+	err := dbconn.Where(&MovementLog{
+		UserID: member.UserID,
+		GameID: member.GameID,
+	}).Order("time_stamp ASC").Find(&returnDatas).Error
+
+	// エラー処理
+	if err != nil {
+		return []MovementLog{}, err
+	}
+
+	return returnDatas, nil
+}
+
 func DebugMovementLog() {
 	// デバッグ用のコードをここに書く
 

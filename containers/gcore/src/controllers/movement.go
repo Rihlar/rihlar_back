@@ -40,3 +40,24 @@ func ReportMovement(ctx echo.Context) error {
 		"result": "success",
 	})
 }
+
+// 歩いたデータを記録するエンドポイント
+func GetReportedMovement(ctx echo.Context) error {
+	// TODO 後ほどミドルウェアからの取得に変更する
+	userId := ctx.Request().Header.Get("UserID")
+	gameId := ctx.Request().Header.Get("GameID")
+
+	// サービスを呼び出す
+	movementLogs, err := services.GetReportedMovement(gameId, userId)
+
+	// エラー処理
+	if err != nil {
+		logger.PrintErr(err)
+		return ctx.JSON(http.StatusInternalServerError, echo.Map{"error": "internal server error"})
+	}
+
+	return ctx.JSON(http.StatusOK, echo.Map{
+		"result": "success",
+		"data": movementLogs,
+	})
+}
