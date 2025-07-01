@@ -18,6 +18,8 @@ func InitRouter(router *echo.Echo) *echo.Echo {
 	// 円を作成するエンドポイント
 	router.POST("/create/circle", controllers.CreateCircle)
 
+	// TOP10を取得するエンドポイント
+	router.GET("/get/top", controllers.GetRanking)
 
 	return router
 }

@@ -58,10 +58,15 @@ Content-Type: application/json
     "steps": 10
 }
 
-
-
 ### 歩いたデータを取得する
 GET {{base_url}}/get/movement HTTP/1.1
+UserID : userid-50452766-49e8-4dd9-84a1-d02ee1c2425c
+GameID : gameid-8a5fafff-0b2e-4f2b-b011-da21a5a724cd
+Content-Type: application/json
+
+
+### ランキングを取得する
+GET {{base_url}}/get/top HTTP/1.1
 UserID : userid-50452766-49e8-4dd9-84a1-d02ee1c2425c
 GameID : gameid-8a5fafff-0b2e-4f2b-b011-da21a5a724cd
 Content-Type: application/json
