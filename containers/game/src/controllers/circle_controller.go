@@ -31,3 +31,29 @@ func GetCircleDeteileHandler(ctx echo.Context) error {
 	})
 
 }
+
+// 上位３位の円を取得する
+func GetRankingTopHandler(ctx echo.Context) error {
+	// ゲームの特定する
+	id := ctx.Param("game_id")
+
+	// TODO UserID の取得 (後々ミドルウェアからの取得に変更する)
+	userid := ctx.Request().Header.Get("UserID")
+
+	logger.Println("UserID: ", userid)
+
+	// サービスに渡す
+	ranking, err := rankingService.GetRankingTop(userid,id)
+	if err != nil {
+		logger.PrintErr("ランキング取得エラー", ranking)
+		return err
+	}
+
+	// 成功ログ
+	logger.Println("Successful Ranking get.")
+	
+	// レスポンス
+	return ctx.JSON(http.StatusOK, echo.Map{
+		"Data": ranking,
+	})
+}

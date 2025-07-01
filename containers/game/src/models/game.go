@@ -100,6 +100,43 @@ func DebugGame() {
 	logger.Println("げーむ取得成功")
 }
 
+// メンバーを取得
+func (game *Game) GetMemberByUserID(userid string) (Member, error) {
+	// 取得する
+	returnData := Member{}
+
+	// 取得する
+	err := dbconn.Where(&Member{
+		UserID: userid,
+		GameID: game.GameID,
+	}).First(&returnData).Error
+
+	// エラー処理
+	if err != nil {
+		return Member{}, err
+	}
+
+	return returnData, nil
+}
+
+// ランキング上位取得
+func (game *Game) GetRanking() ([]Team, error) {
+	var rankings []Team
+
+	result := dbconn.
+		Where("game_id = ?", game.GameID).
+		Order("points DESC").
+		Find(&rankings)
+
+	if result.Error != nil {
+		logger.PrintErr("ランキング上位取得エラー", result.Error)
+		return nil, result.Error
+	}
+
+	return rankings, nil
+}
+
+
 // ゲームの詳細取得
 func GetGame(gameId []string) ([]Game, error) {
 	// 結果格納用
@@ -147,4 +184,20 @@ func GetEndGames(gameId []string) ([]Game, error) {
 	}
 
 	return games, nil
+}
+
+// ID からゲームを取得
+func GetGameByID(gameId string) (Game, error) {
+	var game Game
+
+	result := dbconn.Where(&Game{
+		GameID: gameId,
+	}).First(&game)
+
+	if result.Error != nil {
+		logger.PrintErr("ゲームID取得エラー", result.Error)
+		return Game{}, result.Error
+	}
+
+	return game, nil
 }

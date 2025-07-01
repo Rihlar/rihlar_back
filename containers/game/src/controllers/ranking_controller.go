@@ -31,23 +31,4 @@ func GetMyRankingHandler(ctx echo.Context) error {
 	})
 }
 
-// ランキングのtop10を取得
-func GetRankingTopHandler(ctx echo.Context) error {
-	// ゲームの特定する
-	id := ctx.Param("game_id")
 
-	// サービスに渡す
-	ranking, err := rankingService.GetRankingTop(id)
-	if err != nil {
-		logger.PrintErr("ランキング取得エラー", ranking)
-		return err
-	}
-
-	// 成功ログ
-	logger.Println("Successful Ranking get.")
-	
-	// レスポンス
-	return ctx.JSON(http.StatusOK, echo.Map{
-		"Data": ranking,
-	})
-}

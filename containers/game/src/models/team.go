@@ -19,6 +19,31 @@ func (Team) TableName() string {
 	return "Teams"
 }
 
+func (game *Game) GetTeamByUserID(UserID string) (Team, error) {
+	// 取得する
+	returnData := Team{}
+
+	// メンバーを取得
+	member, err := game.GetMemberByUserID(UserID)
+
+	// エラー処理
+	if err != nil {
+		return Team{}, err
+	}
+
+	// 取得する
+	err = dbconn.Where(&Team{
+		TeamID: member.TeamID,
+	}).First(&returnData).Error
+
+	// エラー処理
+	if err != nil {
+		return Team{}, err
+	}
+
+	return returnData, nil
+}
+
 func DebugTeam() {
 	// デバッグ用のコードをここに書く
 
@@ -82,23 +107,4 @@ func DebugTeam() {
 	}
 
 	logger.Println("チーム取得成功")
-}
-
-// ランキング上位取得
-func GetRanking(gameId string) ([]Team, error) {
-	var rankings []Team
-
-	result := dbconn.
-		Where("game_id = ?", gameId).
-		Order("points DESC").
-		Limit(2).	// データ件数がそんなにないので2位までしかとってない
-		Find(&rankings)
-
-	if result.Error != nil {
-		logger.PrintErr("ランキング上位取得エラー", result.Error)
-		return nil, result.Error
-	}
-
-	return rankings, nil
-
 }

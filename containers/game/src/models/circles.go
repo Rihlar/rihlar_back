@@ -84,3 +84,21 @@ func GetCircleDeteile(circleId string) (Circle, error) {
 
 	return circleDeteile, nil
 }
+
+// チームのサークルを取得
+func GetCircleByTeamId(teamId string) ([]Circle, error) {
+	var circles []Circle
+
+	// 取得
+	err := dbconn.Where(&Circle{
+		TeamID: teamId,
+	}).Find(&circles).Error
+
+	// エラー処理
+	if err != nil {
+		logger.PrintErr("サークル取得エラー", err)
+		return []Circle{}, err
+	}
+
+	return circles, nil
+}
