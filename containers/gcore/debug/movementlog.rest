@@ -1,17 +1,15 @@
-@base_url = https://localhost:8943/gcore
+@base_url = https://rihlar-test.kokomeow.com/gcore
 
 ### 関西
 POST {{base_url}}/report/movement HTTP/1.1
 UserID : userid-8a5fafff-0b2e-4f2b-b011-da21a5a724cd
 Content-Type: application/json
 
-{
-    "latitude": 34.70649578495347,
+{    "latitude": 34.70649578495347,
     "longitude": 135.50326868815958,
     "steps": 10
 }
 
-#
 ### 東京 (リージョン以外 ユーザー1)
 POST {{base_url}}/report/movement HTTP/1.1
 UserID : userid-8a5fafff-0b2e-4f2b-b011-da21a5a724cd
@@ -23,7 +21,6 @@ Content-Type: application/json
     "steps": 3000
 }
 
-#
 ### 東京 (リージョン以外 ユーザー2)
 POST {{base_url}}/report/movement HTTP/1.1
 UserID : userid-50452766-49e8-4dd9-84a1-d02ee1c2425c
@@ -35,7 +32,6 @@ Content-Type: application/json
     "steps": 10
 }
 
-#
 ### 東京 ユーザー 円を作成
 POST {{base_url}}/create/circle HTTP/1.1
 UserID : userid-8a5fafff-0b2e-4f2b-b011-da21a5a724cd
@@ -63,7 +59,6 @@ GET {{base_url}}/get/movement HTTP/1.1
 UserID : userid-50452766-49e8-4dd9-84a1-d02ee1c2425c
 GameID : gameid-8a5fafff-0b2e-4f2b-b011-da21a5a724cd
 Content-Type: application/json
-
 
 ### ランキングを取得する
 GET {{base_url}}/get/top HTTP/1.1
