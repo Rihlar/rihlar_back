@@ -247,134 +247,49 @@ func (game *Game) GetRanking(maxRank int) ([]Team, error) {
 
 // デバック用
 func DebugGame() {
-	// デバッグ用のコードをここに書く
-
-	// admin のゲームを作成する
-	debugAdminGame()
-
-	// system のゲームを作成する
-	debugSystemGame()
-
-	// ゲームを作成したのでデバッグ用のユーザーをゲームに追加する
-	debugGameUser()
-
-	// メンバーを追加するをテストする
-	DebugAddMember(admin_game_id, teamID, user_id)
-	DebugAddMember(admin_game_id, teamID2, user_id2)
-	DebugAddMember(system_game_id, sysTeamID, user_id)
-	DebugAddMember(system_game_id2, sysTeamID, user_id2)
+	// テスト用のゲームデータを入れる
+	CreateTestGames()
 }
 
-// 管理者が作成したゲームのデバッグをする
-func debugAdminGame() {
-	// ゲームを作成する
-	err := SaveGame(Game{
-		GameID:    admin_game_id,
+func CreateTestGames() {
+	// システムゲームを作成する
+	for _, sysgame := range SysGameIDs {
+		CreateGame(Game{
+			GameID:    sysgame,
+			StartTime: time.Now(),
+			EndTime:   time.Now().AddDate(0,0,20),
+			Flag:      0,
+			Type:      0,
+			Status:    1,
+			RegionID:  RegionId,
+		})
+	}
+
+	// admin ゲームを作成する
+	CreateGame(Game{
+		GameID:    AdminGameId1,
 		StartTime: time.Now(),
-		EndTime:   time.Now().AddDate(0, 0, 5),
+		EndTime:   time.Now().AddDate(0,0,20),
 		Flag:      0,
 		Type:      1,
-		Teams:     []Team{},
-		Status:    0,
-		RegionID:  regionid,
-	})
-
-	if err != nil {
-		logger.PrintErr("ゲーム作成エラー", err)
-		return
-	}
-
-	logger.Println("ゲーム作成成功")
-}
-
-// システムが作成したゲームのデバッグをする
-func debugSystemGame() {
-	// ゲームを作成する
-	err := SaveGame(Game{
-		GameID:    system_game_id,
-		StartTime: time.Now(),
-		EndTime:   time.Now().AddDate(0, 0, 5),
-		Flag:      0,
-		Type:      0,
-		Teams:     []Team{},
 		Status:    1,
-		RegionID:  regionid,
+		RegionID:  RegionId,
 	})
 
-	if err != nil {
-		logger.PrintErr("ゲーム作成エラー", err)
-		return
-	}
+	// ユーザーをシステムゲームに追加していく
+	for index, sysgame := range SysGameIDs {
+		// チームIDを生成する
+		teamId,_ := utils.Genid()
 
-	logger.Println("ゲーム作成成功")
+		DebugAddMember(sysgame, teamId, UserIDs[index])
 
-	// 二つ目のシステムゲームを作成
-	err = SaveGame(Game{
-		GameID:    system_game_id2,
-		StartTime: time.Now(),
-		EndTime:   time.Now().AddDate(0, 0, 5),
-		Flag:      0,
-		Type:      0,
-		Teams:     []Team{},
-		Status:    1,
-		RegionID:  regionid,
-	})
-
-	if err != nil {
-		logger.PrintErr("ゲーム作成エラー", err)
-		return
+		// admin ゲームに追加していく
+		DebugAddMember(AdminGameId1, teamId, UserIDs[index])
 	}
 }
 
-// ゲームにユーザーを追加する
-func debugGameUser() {
-	// ユーザーID
-
-	// プロファイルを取得する
-	profile, err := GetProfile(user_id)
-
-	// エラー処理
-	if err != nil {
-		logger.PrintErr("プロファイル取得エラー", err)
-		return
-	}
-
-	// プロファイルを更新する
-	profile.SysGame = system_game_id
-	profile.AdmGame = admin_game_id
-
-	// プロファイルを保存する
-	err = SaveProfile(profile)
-
-	// エラー処理
-	if err != nil {
-		logger.PrintErr("プロファイル保存エラー", err)
-		return
-	}
-
-	// 二人目のプロファイルを更新する
-	profile2, err := GetProfile(user_id2)
-
-	// エラー処理
-	if err != nil {
-		logger.PrintErr("プロファイル取得エラー", err)
-		return
-	}
-
-	// プロファイルを更新する
-	profile2.SysGame = system_game_id2
-	profile2.AdmGame = admin_game_id
-
-	// プロファイルを保存する
-	err = SaveProfile(profile2)
-
-	// エラー処理
-	if err != nil {
-		logger.PrintErr("プロファイル保存エラー", err)
-		return
-	}
-
-	logger.Println("プロファイル保存成功")
+func CreateGame(game Game) error {
+	return dbconn.Create(&game).Error
 }
 
 // 一人のゲーム追加をデバッグする

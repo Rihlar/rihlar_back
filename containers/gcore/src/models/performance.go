@@ -7,16 +7,7 @@ import (
 )
 
 func DebugPerformance() {
-	// リージョンを取得する
-	region, err := GetRegionByID(regionid)
 
-	// エラー処理
-	if err != nil {
-		return
-	}
-
-	// Grid 生成する
-	PerformanceFillRegion(region)
 }
 
 // TODO デバッグ用 ゲーム用のリージョンを作成する関数

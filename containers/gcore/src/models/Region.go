@@ -38,7 +38,7 @@ var (
 			EndLon:     139.5,
 		},
 		{
-			RegionID:   "regionId-1f4a85c9-c8bd-4f34-818b-aef81dfe47b6",
+			RegionID:   RegionId,
 			RegionName: "関西",
 			StartLat:   35.8,
 			StartLon:   134.0,

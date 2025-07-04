@@ -32,7 +32,7 @@ func Debug() {
 	DeleteAndMigrate(Profile{})
 
 	// デバッグのコードを呼び出す
-	DebugSample()
+	// DebugSample()
 
 	DebugProfile()
 	// DebugTeam()
@@ -45,9 +45,9 @@ func Debug() {
 	DebugGame()
 
 	// DebugBaseChunk()
-	DebugGameChunk()
+	// DebugGameChunk()
 
-	DebugPerformance()
+	// DebugPerformance()
 	// DebugCircle()
 	// DebugMovementLog()
 }
