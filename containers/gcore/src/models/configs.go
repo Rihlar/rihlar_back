@@ -176,7 +176,7 @@ var CircleDatas []GlobalActionHistoryEntry
 var AllWalkRecords []WalkRecord
 
 func init() {
-	rand.Seed(time.Now().UnixNano())
+	rand.Seed(11111111111)
 
 	loc, _ := time.LoadLocation("Asia/Tokyo")
 	now := time.Now().In(loc)
@@ -252,7 +252,7 @@ func init() {
 				lon = MinLon + rand.Float64()*(MaxLon-MinLon)
 			}
 
-			steps := rand.Intn(901) + 100
+			steps := rand.Intn(10000) + 1000
 			timestamp := startTime.Add(time.Duration(rand.Int63n(now.Sub(startTime).Nanoseconds())) * time.Nanosecond)
 
 			CircleDatas = append(CircleDatas, GlobalActionHistoryEntry{
