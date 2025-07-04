@@ -2,17 +2,19 @@ package models
 
 import (
 	"gcore/logger"
+	"gcore/utils"
 	"time"
 )
 
 // テーブル定義
 type MovementLog struct {
-	UserID    string  `gorm:"primaryKey" json:"userID"`             // ユーザID
-	Latitude  float64 `gorm:"double" json:"latitude"`               // 緯度
-	Longitude float64 `gorm:"double" json:"longitude"`              // 経度
-	Steps     int64   `json:"steps"`                                // 歩数
-	GameID    string  `gorm:"primaryKey;varchar(50)" json:"gameID"` // ゲームID
-	TimeStamp int64   `gorm:"primaryKey" json:"timeStamp"`          //保存時間
+	MovementId string  `gorm:"primaryKey" json:"movementId"`
+	UserID     string  `gorm:"primaryKey" json:"userID"`             // ユーザID
+	Latitude   float64 `gorm:"double" json:"latitude"`               // 緯度
+	Longitude  float64 `gorm:"double" json:"longitude"`              // 経度
+	Steps      int64   `json:"steps"`                                // 歩数
+	GameID     string  `gorm:"primaryKey;varchar(50)" json:"gameID"` // ゲームID
+	TimeStamp  int64   `gorm:"primaryKey" json:"timeStamp"`          //保存時間
 }
 
 // テーブル名
@@ -21,19 +23,23 @@ func (MovementLog) TableName() string {
 }
 
 // 歩いたログを保存する (緯度経度 歩数)
-func (member *Member) SaveMovementLog(Latitude, Longitude float64, Steps int64) error {
+func (member *Member) SaveMovementLog(Latitude, Longitude float64, Steps int64,timeStamp int64) error {
+	// id を生成する
+	movementId,_ := utils.Genid()
+
 	// 歩いた記録をする
 	return dbconn.Save(&MovementLog{
+		MovementId: movementId,
 		UserID:    member.UserID,
 		Latitude:  Latitude,
 		Longitude: Longitude,
 		Steps:     Steps,
 		GameID:    member.GameID,
-		TimeStamp: time.Now().Unix(),
+		TimeStamp: timeStamp,
 	}).Error
 }
 
-func (member *Member) GetReportedMovement() ([]MovementLog,error) {
+func (member *Member) GetReportedMovement() ([]MovementLog, error) {
 	returnDatas := []MovementLog{}
 
 	// 歩いた記録を取得する

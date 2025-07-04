@@ -16,6 +16,7 @@ func CreateTestData() {
 			Steps:     int64(history.Steps),
 			Latitude:  history.Latitude,
 			Longitude: history.Longitude,
+			TimeStamp: history.Timestamp.Unix(),
 		})
 	}
 

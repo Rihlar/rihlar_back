@@ -50,6 +50,8 @@ const (
 	RecordsPerUser = 100 // 各ユーザーごとの行動履歴件数 (基本件数)
 	AdditionalRecordsPerUser = 10 // 各ユーザーごとに追加する行動履歴件数 (circleDatas用)
 	DuplicateLatLngRatio = 0.2 // 約20%の履歴で緯度経度を重複させる
+
+	WalkRecordsPerUser = 50 // 各ユーザーごとの歩数記録件数
 )
 
 // AllUserNames は定義されている全てのユーザー名のリストです。
@@ -157,12 +159,21 @@ type GlobalActionHistoryEntry struct {
 	Timestamp time.Time
 }
 
+// WalkRecord はユーザーの歩数記録を表す構造体です。
+type WalkRecord struct {
+	UserID    string
+	Steps     int
+	Timestamp time.Time // タイムスタンプを追加
+}
+
 // AllUsersActionHistory は全てのユーザーの基本的な行動履歴をまとめた単一のリストです
 var AllUsersActionHistory []GlobalActionHistoryEntry
 
 // CircleDatas は各ユーザーの追加の行動履歴 (10件) をまとめたリストです。
-// 通常の行動履歴とは区別して使用されることを想定しています。
 var CircleDatas []GlobalActionHistoryEntry
+
+// AllWalkRecords は全てのユーザーの歩数記録をまとめた単一のリストです。
+var AllWalkRecords []WalkRecord
 
 func init() {
 	rand.Seed(time.Now().UnixNano())
@@ -172,19 +183,17 @@ func init() {
 	// タイムスタンプ生成の基準となる日時 (例: 現在から1ヶ月前)
 	startTime := now.AddDate(0, -1, 0)
 
+	// --- GlobalActionHistoryEntry と CircleDatas の生成 ---
 	for _, userID := range UserIDs {
-		// このユーザーの履歴で、緯度経度を共有するためのマップ
 		sharedLocations := make(map[int]struct {
 			Latitude  float64
 			Longitude float64
 		})
 
-		// 共有する緯度経度を事前にいくつか生成
-		// 基本履歴と追加履歴の両方で共有できるように考慮
 		totalRecordsForUser := RecordsPerUser + AdditionalRecordsPerUser
 		numSharedLocations := int(float64(totalRecordsForUser) * DuplicateLatLngRatio)
 		if numSharedLocations == 0 && totalRecordsForUser > 0 {
-			numSharedLocations = 1 // 少なくとも1つは共有地点を作る
+			numSharedLocations = 1
 		}
 		for i := 0; i < numSharedLocations; i++ {
 			lat := MinLat + rand.Float64()*(MaxLat-MinLat)
@@ -195,12 +204,10 @@ func init() {
 			}{Latitude: lat, Longitude: lon}
 		}
 
-		// RecordsPerUser件の基本的な行動履歴を生成し、AllUsersActionHistoryに追加
 		for i := 0; i < RecordsPerUser; i++ {
 			var lat float64
 			var lon float64
 
-			// 一定の確率で既存の緯度経度を再利用
 			if rand.Float64() < DuplicateLatLngRatio && len(sharedLocations) > 0 {
 				keys := make([]int, 0, len(sharedLocations))
 				for k := range sharedLocations {
@@ -227,12 +234,10 @@ func init() {
 			})
 		}
 
-		// AdditionalRecordsPerUser件の追加行動履歴を生成し、CircleDatasに追加
 		for i := 0; i < AdditionalRecordsPerUser; i++ {
 			var lat float64
 			var lon float64
 
-			// こちらも一定の確率で既存の緯度経度を再利用
 			if rand.Float64() < DuplicateLatLngRatio && len(sharedLocations) > 0 {
 				keys := make([]int, 0, len(sharedLocations))
 				for k := range sharedLocations {
@@ -258,9 +263,22 @@ func init() {
 				Timestamp: timestamp,
 			})
 		}
+
+		// --- WalkRecord の生成 (タイムスタンプを含む) ---
+		for i := 0; i < WalkRecordsPerUser; i++ {
+			steps := rand.Intn(10000) + 1000 // 1000歩から11000歩の範囲で生成
+			// タイムスタンプは過去1ヶ月間の範囲でランダムに生成
+			timestamp := startTime.Add(time.Duration(rand.Int63n(now.Sub(startTime).Nanoseconds())) * time.Nanosecond)
+
+			AllWalkRecords = append(AllWalkRecords, WalkRecord{
+				UserID:    userID,
+				Steps:     steps,
+				Timestamp: timestamp,
+			})
+		}
 	}
 
-	// 生成された履歴の一部を表示して確認 (オプション)
+	// --- 生成された履歴の表示 (オプション) ---
 	fmt.Println("--- 全ユーザーの基本行動履歴の例 (最初の10件) ---")
 	for i, entry := range AllUsersActionHistory {
 		if i >= 10 {
@@ -282,4 +300,15 @@ func init() {
 	}
 	fmt.Printf("\n全追加行動履歴 (CircleDatas) 件数: %d件 (1ユーザーあたり %d 件)\n",
 		len(CircleDatas), AdditionalRecordsPerUser)
+
+	fmt.Println("\n--- 全ユーザーの歩数記録 (WalkRecords) の例 (最初の10件) ---")
+	for i, record := range AllWalkRecords {
+		if i >= 10 {
+			break
+		}
+		fmt.Printf("  記録 %d: UserID: %s, 歩数 %d, タイムスタンプ %s\n",
+			i+1, record.UserID, record.Steps, record.Timestamp.Format("2006-01-02 15:04:05"))
+	}
+	fmt.Printf("\n全歩数記録 (WalkRecords) 件数: %d件 (1ユーザーあたり %d 件)\n",
+		len(AllWalkRecords), WalkRecordsPerUser)
 }
