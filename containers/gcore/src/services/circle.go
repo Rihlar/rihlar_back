@@ -73,8 +73,24 @@ type GamesCreateCircleArgs struct {
 
 
 func StepToSize(steps int64) float64 {
+	if steps < 999 {
+		return 50
+	}
+
+	if steps < 2999 {
+		return 100
+	}
+
+	if steps < 5999 {
+		return 200
+	}
+
+	if steps < 9999 {
+		return 300
+	}
+
 	// TODO 最終的にここで計算する (メートルを返す)
-	return float64(CircleMinSize) //float64(steps * 10.0)
+	return 400 //float64(steps * 10.0)
 }
 
 // 円のデータを保存してチャンクを更新する関数 (円のIDリスト,エラー)
