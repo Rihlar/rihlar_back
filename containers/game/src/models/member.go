@@ -33,7 +33,7 @@ func DebugMember() {
 	})
 
 	_ = dbconn.Save(&Member{
-		GameID: "a7510bcb-d5b8-414b-84ef-d4c663452e43",
+		GameID: "adminGame-7ffcbc90-e8fe-4d9c-8c40-f9f94167dd07",
 		TeamID: "608bf57c-427c-423f-8f45-a9f42d337dc9",
 		UserID: userid,
 		Points: 5,
