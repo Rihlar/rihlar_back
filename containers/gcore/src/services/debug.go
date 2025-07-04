@@ -30,6 +30,8 @@ func CreateTestData() {
 	}
 
 	for _, circle := range models.CircleDatas {
+		logger.Println("歩いた歩数", circle.Steps)
+
 		ProcessCreateCircle(GamesCreateCircleArgs{
 			UserID:     circle.UserID,
 			Steps:      int64(circle.Steps),
@@ -40,3 +42,4 @@ func CreateTestData() {
 		})
 	}
 }
+
