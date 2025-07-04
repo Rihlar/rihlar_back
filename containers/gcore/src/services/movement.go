@@ -3,6 +3,7 @@ package services
 import (
 	"gcore/logger"
 	"gcore/models"
+	"time"
 )
 
 // 歩いたことを報告する引数
@@ -11,6 +12,7 @@ type MovementArgs struct {
 	Steps     int64   `json:"steps`     // 歩数
 	Latitude  float64 `json:"latitude`  // 緯度
 	Longitude float64 `json:"longitude` // 経度
+	TimeStamp int64   `json:"timeStamp`
 }
 
 type SaveMovementLogArgs struct {
@@ -20,6 +22,7 @@ type SaveMovementLogArgs struct {
 	Steps     int64         `json:"steps`     // 歩数
 	Latitude  float64       `json:"latitude`  // 緯度
 	Longitude float64       `json:"longitude` // 経度
+	TimeStamp int64         `json:"timeStamp`
 }
 
 type ProcessChunkArgs struct {
@@ -54,6 +57,11 @@ func ReportMovement(args MovementArgs) error {
 		return err
 	}
 
+	// タイムスタンプがなかったら
+	if args.TimeStamp == 0 {
+		args.TimeStamp = time.Now().Unix()
+	}
+
 	// 行動記録を保存する
 	err = SaveMovementLog(SaveMovementLogArgs{
 		UserID:    args.UserID,
@@ -62,6 +70,7 @@ func ReportMovement(args MovementArgs) error {
 		Steps:     args.Steps,
 		Latitude:  args.Latitude,
 		Longitude: args.Longitude,
+		TimeStamp: args.TimeStamp,
 	})
 
 	// エラー処理
@@ -112,7 +121,7 @@ func SaveMovementLog(args SaveMovementLogArgs) error {
 		}
 
 		// 歩いたログを保存する
-		if err := member.SaveMovementLog(args.Latitude, args.Longitude, args.Steps); err != nil {
+		if err := member.SaveMovementLog(args.Latitude, args.Longitude, args.Steps, args.TimeStamp); err != nil {
 			logger.PrintErr(err)
 			return err
 		}

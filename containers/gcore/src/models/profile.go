@@ -43,56 +43,29 @@ func (Profile) TableName() string {
 
 // デバッグ用
 func DebugProfile() {
-	// user_id := "e3abf90d-4bcf-4c3b-bbde-37694b1611b3"
-	// system_game_id := "f5b632cb-707d-f450-eece-f119534b724c"
-	// admin_game_id := "01e32526-1c27-c9a9-2b5b-d158b0f50c83"
-
-	//書き込み
-	result := dbconn.Save(&Profile{
-		UserID:    user_id,
-		RecordID:  "第一回優勝",
-		Comment:   "よろしくお願いします。",
-		Latitude:  35.23,
-		Longitude: 135.25,
-		Size:      100,
-		RegionID:  "関東地方",
-		SysGame:   system_game_id,
-		AdmGame:   admin_game_id,
-	})
-
-	//エラー処理
-	if result.Error != nil {
-		logger.PrintErr("プロフィール保存エラー", result.Error)
-		return
-	}
-
-	logger.PrintErr("プロフィール保存成功")
-
-	// ユーザー2のプロフィール作成
-	result = dbconn.Save(&Profile{
-		UserID:    user_id2,
-		RecordID:  "第2回優勝",
-		Comment:   "よろしくお願いします。",
-		Latitude:  35.23,
-		Longitude: 135.25,
-		Size:      100,
-		RegionID:  "関東地方",
-		SysGame:   system_game_id2,
-		AdmGame:   admin_game_id,
-	})
-
-	//取得コード
-	returnData := Profile{}
-
-	//取得する
-	result = dbconn.Where(&Profile{
-		UserID: user_id,
-	}).First(&returnData)
-
-	if result.Error != nil {
-		logger.PrintErr("プロフィール取得エラー", result.Error)
-		return
-	}
+	// プロファイルを作成する
+	CreateTestProfiles()
 
 	logger.Println("プロフィール取得成功")
+}
+
+func CreateTestProfiles() {
+	for index, userid := range UserIDs {
+		CreateProfile(Profile{
+			UserID:    userid,
+			RecordID:  "",
+			Comment:   "",
+			Latitude:  0,
+			Longitude: 0,
+			Size:      0,
+			RegionID:  "",
+			SysGame:   SysGameIDs[index],
+			AdmGame:   AdminGameId1,
+			Name:      AllUserNames[index],
+		})
+	}
+}
+
+func CreateProfile(data Profile) error {
+	return dbconn.Create(&data).Error
 }

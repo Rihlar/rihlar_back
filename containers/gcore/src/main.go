@@ -28,6 +28,9 @@ func main() {
 	// コントローラー初期化
 	controllers.Init()
 
+	// デバッグ実行
+	services.Debug()
+
 	// ルーター
 	router := echo.New()
 
