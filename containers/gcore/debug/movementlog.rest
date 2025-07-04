@@ -3,7 +3,7 @@
 
 ### 関西
 POST {{base_url}}/report/movement HTTP/1.1
-UserID : userid-8a5fafff-0b2e-4f2b-b011-da21a5a724cd
+UserID : userid-79541130-3275-4b90-8677-01323045aca5
 Content-Type: application/json
 
 {    "latitude": 34.70649578495347,
