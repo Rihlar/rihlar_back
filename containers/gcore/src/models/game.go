@@ -281,10 +281,13 @@ func CreateTestGames() {
 		// チームIDを生成する
 		teamId,_ := utils.Genid()
 
-		DebugAddMember(sysgame, teamId, UserIDs[index])
+		DebugAddMember(sysgame, "teamid-" + teamId, UserIDs[index])
+
+		// チームIDを生成する
+		teamId2,_ := utils.Genid()
 
 		// admin ゲームに追加していく
-		DebugAddMember(AdminGameId1, teamId, UserIDs[index])
+		DebugAddMember(AdminGameId1, "teamid-" + teamId2, UserIDs[index])
 	}
 }
 

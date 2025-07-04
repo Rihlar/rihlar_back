@@ -1,5 +1,11 @@
 package models
 
+import (
+	"fmt"
+	"math/rand"
+	"time"
+)
+
 const (
 	// Admin ゲーム一覧
 	AdminGameId1 = "gameid-413a287b-213c-414f-a287-c1397db8f9bf"
@@ -33,8 +39,17 @@ const (
 	UserID12 = "userid-d0e1f2a3-b4c5-6789-0abc-def012345678"
 
 	RegionId = "regionId-c161edb9-6aff-4244-8749-707bff2fa3be"
+	GridMeter = 100
 
-    GridMeter = 100
+	// 緯度経度生成のための範囲
+	MinLat = 33.5 // 南限
+	MaxLat = 35.8 // 北限
+	MinLon = 134.0 // 西限
+	MaxLon = 137.5 // 東限
+
+	RecordsPerUser = 100 // 各ユーザーごとの行動履歴件数 (基本件数)
+	AdditionalRecordsPerUser = 10 // 各ユーザーごとに追加する行動履歴件数 (circleDatas用)
+	DuplicateLatLngRatio = 0.2 // 約20%の履歴で緯度経度を重複させる
 )
 
 // AllUserNames は定義されている全てのユーザー名のリストです。
@@ -99,4 +114,172 @@ var UserNameToIDMap = map[string]string{
 	"Judy":    UserID10,
 	"Kevin":   UserID11,
 	"Liam":    UserID12,
+}
+
+// UserPointsMap は各ユーザーIDに紐づくポイントのマップです。
+var UserPointsMap = map[string]int{
+	UserID1: 1500, // Alice
+	UserID2: 2300, // Bob
+	UserID3: 800,  // Charlie
+	UserID4: 3100, // David
+	UserID5: 1200, // Eve
+	UserID6: 2800, // Frank
+	UserID7: 950,  // Grace
+	UserID8: 1900, // Heidi
+	UserID9: 600,  // Ivan
+	UserID10: 2500, // Judy
+	UserID11: 1750, // Kevin
+	UserID12: 1050, // Liam
+}
+
+// AllUserPoints は定義されている全てのユーザーのポイントのリストです。
+var AllUserPoints = []int{
+	1500, // UserID1 (Alice)
+	2300, // UserID2 (Bob)
+	800,  // UserID3 (Charlie)
+	3100, // UserID4 (David)
+	1200, // UserID5 (Eve)
+	2800, // UserID6 (Frank)
+	950,  // UserID7 (Grace)
+	1900, // UserID8 (Heidi)
+	600,  // UserID9 (Ivan)
+	2500, // UserID10 (Judy)
+	1750, // UserID11 (Kevin)
+	1050, // UserID12 (Liam)
+}
+
+// GlobalActionHistoryEntry は行動履歴の単一エントリを表す構造体です
+type GlobalActionHistoryEntry struct {
+	UserID    string
+	Latitude  float64
+	Longitude float64
+	Steps     int
+	Timestamp time.Time
+}
+
+// AllUsersActionHistory は全てのユーザーの基本的な行動履歴をまとめた単一のリストです
+var AllUsersActionHistory []GlobalActionHistoryEntry
+
+// CircleDatas は各ユーザーの追加の行動履歴 (10件) をまとめたリストです。
+// 通常の行動履歴とは区別して使用されることを想定しています。
+var CircleDatas []GlobalActionHistoryEntry
+
+func init() {
+	rand.Seed(time.Now().UnixNano())
+
+	loc, _ := time.LoadLocation("Asia/Tokyo")
+	now := time.Now().In(loc)
+	// タイムスタンプ生成の基準となる日時 (例: 現在から1ヶ月前)
+	startTime := now.AddDate(0, -1, 0)
+
+	for _, userID := range UserIDs {
+		// このユーザーの履歴で、緯度経度を共有するためのマップ
+		sharedLocations := make(map[int]struct {
+			Latitude  float64
+			Longitude float64
+		})
+
+		// 共有する緯度経度を事前にいくつか生成
+		// 基本履歴と追加履歴の両方で共有できるように考慮
+		totalRecordsForUser := RecordsPerUser + AdditionalRecordsPerUser
+		numSharedLocations := int(float64(totalRecordsForUser) * DuplicateLatLngRatio)
+		if numSharedLocations == 0 && totalRecordsForUser > 0 {
+			numSharedLocations = 1 // 少なくとも1つは共有地点を作る
+		}
+		for i := 0; i < numSharedLocations; i++ {
+			lat := MinLat + rand.Float64()*(MaxLat-MinLat)
+			lon := MinLon + rand.Float64()*(MaxLon-MinLon)
+			sharedLocations[i] = struct {
+				Latitude  float64
+				Longitude float64
+			}{Latitude: lat, Longitude: lon}
+		}
+
+		// RecordsPerUser件の基本的な行動履歴を生成し、AllUsersActionHistoryに追加
+		for i := 0; i < RecordsPerUser; i++ {
+			var lat float64
+			var lon float64
+
+			// 一定の確率で既存の緯度経度を再利用
+			if rand.Float64() < DuplicateLatLngRatio && len(sharedLocations) > 0 {
+				keys := make([]int, 0, len(sharedLocations))
+				for k := range sharedLocations {
+					keys = append(keys, k)
+				}
+				selectedKey := keys[rand.Intn(len(keys))]
+				loc := sharedLocations[selectedKey]
+				lat = loc.Latitude
+				lon = loc.Longitude
+			} else {
+				lat = MinLat + rand.Float64()*(MaxLat-MinLat)
+				lon = MinLon + rand.Float64()*(MaxLon-MinLon)
+			}
+
+			steps := rand.Intn(901) + 100
+			timestamp := startTime.Add(time.Duration(rand.Int63n(now.Sub(startTime).Nanoseconds())) * time.Nanosecond)
+
+			AllUsersActionHistory = append(AllUsersActionHistory, GlobalActionHistoryEntry{
+				UserID:    userID,
+				Latitude:  lat,
+				Longitude: lon,
+				Steps:     steps,
+				Timestamp: timestamp,
+			})
+		}
+
+		// AdditionalRecordsPerUser件の追加行動履歴を生成し、CircleDatasに追加
+		for i := 0; i < AdditionalRecordsPerUser; i++ {
+			var lat float64
+			var lon float64
+
+			// こちらも一定の確率で既存の緯度経度を再利用
+			if rand.Float64() < DuplicateLatLngRatio && len(sharedLocations) > 0 {
+				keys := make([]int, 0, len(sharedLocations))
+				for k := range sharedLocations {
+					keys = append(keys, k)
+				}
+				selectedKey := keys[rand.Intn(len(keys))]
+				loc := sharedLocations[selectedKey]
+				lat = loc.Latitude
+				lon = loc.Longitude
+			} else {
+				lat = MinLat + rand.Float64()*(MaxLat-MinLat)
+				lon = MinLon + rand.Float64()*(MaxLon-MinLon)
+			}
+
+			steps := rand.Intn(901) + 100
+			timestamp := startTime.Add(time.Duration(rand.Int63n(now.Sub(startTime).Nanoseconds())) * time.Nanosecond)
+
+			CircleDatas = append(CircleDatas, GlobalActionHistoryEntry{
+				UserID:    userID,
+				Latitude:  lat,
+				Longitude: lon,
+				Steps:     steps,
+				Timestamp: timestamp,
+			})
+		}
+	}
+
+	// 生成された履歴の一部を表示して確認 (オプション)
+	fmt.Println("--- 全ユーザーの基本行動履歴の例 (最初の10件) ---")
+	for i, entry := range AllUsersActionHistory {
+		if i >= 10 {
+			break
+		}
+		fmt.Printf("  履歴 %d: UserID: %s, 緯度 %.4f, 経度 %.4f, 歩数 %d, タイムスタンプ %s\n",
+			i+1, entry.UserID, entry.Latitude, entry.Longitude, entry.Steps, entry.Timestamp.Format("2006-01-02 15:04:05"))
+	}
+	fmt.Printf("\n全基本行動履歴件数: %d件 (1ユーザーあたり %d 件)\n",
+		len(AllUsersActionHistory), RecordsPerUser)
+
+	fmt.Println("\n--- 全ユーザーの追加行動履歴 (CircleDatas) の例 (最初の10件) ---")
+	for i, entry := range CircleDatas {
+		if i >= 10 {
+			break
+		}
+		fmt.Printf("  履歴 %d: UserID: %s, 緯度 %.4f, 経度 %.4f, 歩数 %d, タイムスタンプ %s\n",
+			i+1, entry.UserID, entry.Latitude, entry.Longitude, entry.Steps, entry.Timestamp.Format("2006-01-02 15:04:05"))
+	}
+	fmt.Printf("\n全追加行動履歴 (CircleDatas) 件数: %d件 (1ユーザーあたり %d 件)\n",
+		len(CircleDatas), AdditionalRecordsPerUser)
 }
