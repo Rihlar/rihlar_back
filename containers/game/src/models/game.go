@@ -27,7 +27,7 @@ func DebugGame() {
 	// デバッグ用のコードをここに書く
 
 	gameid := "f36eb7ce-4e24-4805-99a5-b3ae3468708a"
-	regionid := "f6b4e846-1e99-45a1-a7a7-1858a9f94d28" // kansai
+	regionid := "regionId-1f4a85c9-c8bd-4f34-818b-aef81dfe47b6" // kansai
 
 	// 書き込み　開始中ゲーム
 	result := dbconn.Save(&Game{

@@ -42,7 +42,7 @@ func DebugCircle() {
 		Level:     1,
 		Latitude:  34.706414954712386,
 		Longitude: 135.50363863029338,
-		CreatedAT: time.Time{},
+		CreatedAT: time.Now(),
 		ImageID:   imageid,
 	})
 

@@ -55,7 +55,7 @@ func DebugTeam() {
 		TeamID:    teamid,
 		GameID:    gameid,
 		Members:   []Member{},
-		CreatedAT: time.Time{},
+		CreatedAT: time.Now(),
 		Points:    515,
 	})
 
@@ -64,7 +64,7 @@ func DebugTeam() {
 		TeamID:    "4098a6fc-cae8-435d-a24a-48167ec3f3c8",
 		GameID:    gameid,
 		Members:   []Member{},
-		CreatedAT: time.Time{},
+		CreatedAT: time.Now(),
 		Points:    60,
 	})
 
@@ -72,7 +72,7 @@ func DebugTeam() {
 		TeamID:    "e6913e1e-9188-4b21-acfa-aa91ad75d14f",
 		GameID:    gameid,
 		Members:   []Member{},
-		CreatedAT: time.Time{},
+		CreatedAT: time.Now(),
 		Points:    200,
 	})
 
@@ -80,7 +80,7 @@ func DebugTeam() {
 		TeamID:    "608bf57c-427c-423f-8f45-a9f42d337dc9",
 		GameID:    "a7510bcb-d5b8-414b-84ef-d4c663452e43",
 		Members:   []Member{},
-		CreatedAT: time.Time{},
+		CreatedAT: time.Now(),
 		Points:    0,
 	})
 
