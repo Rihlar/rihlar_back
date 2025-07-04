@@ -39,8 +39,8 @@ func (GameService) GetJoinGames(userId string) ([]models.Game, error) {
 
 	logger.Println(allGames)
 
-	// ゲームの情報を取得
-	games, err := models.GetGame(allGames)
+	// 現在開催中ゲームの情報を取得
+	games, err := models.GetGameHolding(allGames)
 		if err != nil {
 		logger.PrintErr("Game does not exist", err)
 		return []models.Game{}, err

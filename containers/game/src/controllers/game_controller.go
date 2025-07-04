@@ -32,7 +32,7 @@ func GetEndGamesHandler(ctx echo.Context) error {
 	})
 }
 
-// 参加中のゲーム一覧取得
+// 参加中のゲーム取得
 func GetJoinGamesHandler(ctx echo.Context) error {
 	// ユーザーの特定する
 	id := ctx.Param("user_id")

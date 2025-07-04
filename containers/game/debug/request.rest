@@ -25,5 +25,5 @@ GET {{base_url}}/circle/{{circle_id}}
 ### 終了済みゲーム一覧
 GET {{base_url}}/endgame/{{user_id}}
 
-### 参加している全てのゲーム一覧取得
+###   開催中のゲーム一覧取得
 GET {{base_url}}/joingame/{{user_id}}

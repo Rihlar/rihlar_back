@@ -24,79 +24,6 @@ func (Game) TableName() string {
 
 // デバック用
 func DebugGame() {
-	// デバッグ用のコードをここに書く
-
-	gameid := "f36eb7ce-4e24-4805-99a5-b3ae3468708a"
-	regionid := "f6b4e846-1e99-45a1-a7a7-1858a9f94d28" // kansai
-
-	// 書き込み　開始中ゲーム
-	result := dbconn.Save(&Game{
-		GameID:    gameid,
-		StartTime: time.Now().AddDate(0, 0, 1),
-		EndTime:   time.Now().AddDate(0, 0, 5),
-		Flag:      0,
-		Type:      1,
-		Teams:     []Team{},
-		Status:    1,
-		RegionID:  regionid,
-	})
-
-	_ = dbconn.Save(&Game{
-		GameID:    "a7510bcb-d5b8-414b-84ef-d4c663452e43",
-		StartTime: time.Now().AddDate(0, 0, 1),
-		EndTime:   time.Now().AddDate(0, 0, 3),
-		Flag:      0,
-		Type:      1,
-		Teams:     []Team{},
-		Status:    2,
-		RegionID:  regionid,
-	})
-
-	_ = dbconn.Save(&Game{
-		GameID:    "3b7f30f3-5abe-41e6-8ea6-fc8fdc45a51c",
-		StartTime: time.Now().AddDate(0, 0, 4),
-		EndTime:   time.Now().AddDate(0, 0, 6),
-		Flag:      0,
-		Type:      1,
-		Teams:     []Team{},
-		Status:    2,
-		RegionID:  regionid,
-	})
-
-	// systemゲーム
-	_ = dbconn.Save(&Game{
-		GameID:    "ec2d55e6-d89b-4821-8933-ef2d4bb18703",
-		StartTime: time.Now().AddDate(0, 0, 7),
-		EndTime:   time.Now().AddDate(0, 0, 9),
-		Flag:      0,
-		Type:      0,
-		Teams:     []Team{},
-		Status:    1,
-		RegionID:  regionid,
-	})
-
-	// エラー処理
-	if result.Error != nil {
-		logger.PrintErr("ゲーム保存エラー", result.Error)
-		return
-	}
-
-	logger.Println("ゲーム保存成功")
-
-	// 取得コード
-	returnData := Game{}
-
-	// 取得する
-	result = dbconn.Where(&Game{
-		GameID: gameid,
-	}).First(&returnData)
-
-	// エラー処理
-	if result.Error != nil {
-		logger.PrintErr("ゲームID取得エラー", result.Error)
-		return
-	}
-
 	logger.Println("げーむ取得成功")
 }
 
@@ -136,7 +63,6 @@ func (game *Game) GetRanking() ([]Team, error) {
 	return rankings, nil
 }
 
-
 // ゲームの詳細取得
 func GetGame(gameId []string) ([]Game, error) {
 	// 結果格納用
@@ -144,11 +70,8 @@ func GetGame(gameId []string) ([]Game, error) {
 
 	result := dbconn.Where("game_id IN ?", gameId).Find(&games)
 	if result.Error != nil {
-		result := dbconn.Where("game_id = ?", gameId).Find(&games)
-		if result.Error != nil {
-			logger.PrintErr("ゲームID取得エラー", result.Error)
-			return []Game{}, nil
-		}
+		logger.PrintErr("ゲームID取得エラー", result.Error)
+		return []Game{}, nil
 	}
 
 	return games, nil
@@ -161,11 +84,7 @@ func GetGameHolding(gameId []string) ([]Game, error) {
 
 	result := dbconn.Where("game_id IN ?", gameId).Where("status = ?", 1).Find(&games)
 	if result.Error != nil {
-		result := dbconn.Where("game_id = ? AND status = 1", gameId).Find(&games)
-		if result.Error != nil {
-			logger.PrintErr("ゲームID取得エラー", result.Error)
 			return []Game{}, nil
-		}
 	}
 
 	return games, nil
