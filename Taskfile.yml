@@ -56,6 +56,22 @@ tasks:
       - task: up
       - task: dbreset
       # - task: dashb
+  # データベースのダンプを取得
+  dumpdb:
+    cmds:
+      - mkdir -p ./dumps
+      - docker compose exec mysql mysqldump -u root -p maindb --password=$DBPassword > ./dumps/maindb.sql
+    env:
+      DBPassword: root
+
+  # ダンプをリストア
+  restore:
+    cmds:
+      - mkdir -p ./dumps
+      - docker compose exec -T mysql mysql -u root -p$DBPassword -D maindb < ./dumps/maindb.sql
+    env:
+      DBPassword: root
+
   # dashb:
   #   cmds:
   #     - docker compose exec dashboard npm i --verbose --force

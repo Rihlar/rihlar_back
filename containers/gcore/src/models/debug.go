@@ -34,15 +34,15 @@ func Debug() {
 	// デバッグのコードを呼び出す
 	// DebugSample()
 
-	DebugProfile()
+	// DebugProfile()
 	// DebugTeam()
 	// DebugMember()
 
 	// ゲームで使用するリージョンを作成する
-	DebugRegion()
+	// DebugRegion()
 
 	// ゲームをデバッグする
-	DebugGame()
+	// DebugGame()
 
 	// DebugBaseChunk()
 	// DebugGameChunk()
@@ -51,4 +51,3 @@ func Debug() {
 	// DebugCircle()
 	// DebugMovementLog()
 }
-
