@@ -2,6 +2,8 @@ package models
 
 import (
 	"game/logger"
+
+	"gorm.io/gorm"
 )
 
 // テーブル定義
@@ -90,4 +92,36 @@ func GetJoinGames(userUuid string) ([]string, error) {
 		gameIds = append(gameIds, game.GameID)
 	}
 	return gameIds, nil
+}
+
+// メンバーを検索する関数
+func SearchMember(userId string, gameId string) (Member, error) {
+	var member Member
+
+	result := dbconn.Where(Member{
+		GameID: gameId,
+		UserID: userId,
+	}).First(&member)
+	if result.Error != nil {
+		return Member{}, result.Error
+	}
+
+	return member, nil
+}
+
+func ExistsMember(userId string, gameId string) (bool, error) {
+	member, err := SearchMember(userId, gameId)
+	
+	// 見つからなければfalse
+	if err == gorm.ErrRecordNotFound {
+		// 見つからなければfalse
+		return false, nil
+	}
+
+	// エラー処理
+	if err != nil {
+		return false, err
+	}
+
+	return member.UserID != "", nil
 }

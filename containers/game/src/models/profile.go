@@ -20,11 +20,32 @@ func (Profile) TableName() string {
 	return "Profile"
 }
 
+// プロファイルを取得する
+func GetProfile(userID string) (*Profile, error) {
+	profile := &Profile{}
+
+	// ユーザ情報を取得
+	err := dbconn.Where(&Profile{
+		UserID:    userID,
+	}).First(profile).Error
+
+	// エラー処理
+	if err != nil {
+		return nil, err
+	}
+	
+	return profile, nil
+}
+
+// プロファイルを保存する
+func SaveProfile(profile *Profile) error {
+	return dbconn.Save(profile).Error
+}
+
 // デバッグ用
 func DebugProfile() {
-	user_id := "e3abf90d-4bcf-4c3b-bbde-37694b1611b3"
+	user_id := "userid-e3abf90d-4bcf-4c3b-bbde-37694b1611b3"
 	system_game_id := "f5b632cb-707d-f450-eece-f119534b724c"
-	admin_game_id := "01e32526-1c27-c9a9-2b5b-d158b0f50c83"
 
 	//書き込み
 	result := dbconn.Save(&Profile{
@@ -36,7 +57,7 @@ func DebugProfile() {
 		Size:      100,
 		RegionID:  "関東地方",
 		SysGame:   system_game_id,
-		AdmGame:   admin_game_id,
+		AdmGame:   "",
 	})
 
 	//エラー処理

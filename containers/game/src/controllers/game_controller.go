@@ -52,3 +52,25 @@ func GetJoinGamesHandler(ctx echo.Context) error {
 		"Data": joinGames,
 	})
 }
+
+// ゲームに参加するエンドポイント
+func JoinGameHandler(ctx echo.Context) error {
+	// TODO 後ほどミドルウェアからの取得に変更する
+	userId := ctx.Request().Header.Get("UserID")
+	gameId := ctx.Request().Header.Get("GameID")
+
+	// サービスに渡す
+	err := gameService.JoinGame(userId, gameId)
+	if err != nil {
+		logger.PrintErr("ゲームに参加エラー", err)
+		return err
+	}
+
+	// 成功ログ
+	logger.Println("Successful game join.")
+	
+	// レスポンス
+	return ctx.JSON(http.StatusOK, echo.Map{
+		"Data": "success",
+	})
+}
