@@ -18,7 +18,6 @@ var (
 
 func Init() {
 	// データベースを開く
-	
 	// データベースの接続情報
 	dsn := os.Getenv("DATABASE_DSN")
 

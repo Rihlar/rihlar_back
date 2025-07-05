@@ -1,8 +1,8 @@
 package models
 
-import (
-	// "game/logger"
-)
+// import "game/logger"
+
+// "game/logger"
 
 // テーブルを削除してマイグレートする関数
 func DeleteAndMigrate(table interface{}) error {
@@ -41,4 +41,3 @@ func Debug() {
 	DebugMovementLog()
 	DebugProfile()
 }
-

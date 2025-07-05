@@ -1,8 +1,10 @@
 package services
 
 import (
+	"errors"
 	"game/logger"
 	"game/models"
+	"game/utils"
 )
 
 type GameService struct{}
@@ -47,4 +49,88 @@ func (GameService) GetJoinGames(userId string) ([]models.Game, error) {
 	}
 
 	return games, nil
+}
+
+// ゲームに参加するエンドポイント
+func (GameService) JoinGame(userId string, gameId string) error {
+	// メンバーが存在するか判定
+	exists, err := models.ExistsMember(userId, gameId)
+
+	// エラー処理
+	if err != nil {
+		return err
+	}
+
+	// 存在している場合 (参加済みの場合)
+	if exists {
+		// エラーを返す
+		return errors.New("you have already joined this game")
+	}
+
+	// プロファイル取得
+	profile, err := models.GetProfile(userId)
+
+	// エラー処理
+	if err != nil {
+		return err
+	}
+
+	// ゲームを更新
+	profile.AdmGame = gameId
+
+	// 更新
+	err = models.SaveProfile(profile)
+
+	// エラー処理
+	if err != nil {
+		return err
+	}
+
+	// チームのIDを生成する
+	teamId,_ := utils.Genid()
+	
+	team := models.Team{
+		TeamID:    "teamid-" + teamId,
+		GameID:    gameId,
+		Points:    0,
+	}
+
+	// チームを作成する
+	err = models.CreateTeam(team)
+
+	// エラー処理
+	if err != nil {
+		return err
+	}
+
+	// ゲームを取得する
+	game, err := models.GetGame(gameId)
+
+	// エラー処理
+	if err != nil {
+		return err
+	}
+
+	// チームを追加する
+	err = game.AddTeam(team)
+
+	// エラー処理
+	if err != nil {
+		return err
+	}
+
+	// チームにメンバーを追加
+	err = team.AddMember(models.Member{
+		GameID: gameId,
+		TeamID: teamId,
+		UserID: userId,
+		Points: 0,
+	})
+
+	// エラー処理
+	if err != nil {
+		return err
+	}
+
+	return nil
 }

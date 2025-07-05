@@ -17,6 +17,9 @@ func InitRoutes(router *echo.Echo) *echo.Echo {
 
 	// rankingTop10
 	// router.GET("/ranking/top/:game_id", controllers.GetRankingTopHandler)
+
+	// ゲームに参加するエンドポイント
+	router.POST("/join", controllers.JoinGameHandler)
 	
 	//円詳細取得
 	router.GET("/circle/:circle_id", controllers.GetCircleDeteileHandler)

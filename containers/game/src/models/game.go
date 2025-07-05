@@ -24,7 +24,27 @@ func (Game) TableName() string {
 
 // デバック用
 func DebugGame() {
-	logger.Println("げーむ取得成功")
+	// ゲームを作成する関数
+	CreateGame(Game{
+		GameID:    "gameid-996e5916-28b7-4222-ad5c-b332c1f892ec",
+		StartTime: time.Now(),
+		EndTime:   time.Now().AddDate(0,0,20),
+		Flag:      0,
+		Type:      1,
+		Status:    1,
+		RegionID:  "regionId-ef5aa179-53e0-481d-b64d-ae7654049a88",
+	})
+}
+
+// ゲームを作成する関数
+func CreateGame(game Game) error {
+	// 書き込み
+	return dbconn.Save(&game).Error
+}
+
+// TODO デバッグ用 チームを追加する
+func (game *Game) AddTeam(team Team) error {
+	return dbconn.Model(game).Association("Teams").Append(&team)
 }
 
 // メンバーを取得
@@ -41,6 +61,31 @@ func (game *Game) GetMemberByUserID(userid string) (Member, error) {
 	// エラー処理
 	if err != nil {
 		return Member{}, err
+	}
+
+	return returnData, nil
+}
+
+func (game *Game) GetTeamByUserID(UserID string) (Team, error) {
+	// 取得する
+	returnData := Team{}
+
+	// メンバーを取得
+	member, err := game.GetMemberByUserID(UserID)
+
+	// エラー処理
+	if err != nil {
+		return Team{}, err
+	}
+
+	// 取得する
+	err = dbconn.Where(&Team{
+		TeamID: member.TeamID,
+	}).First(&returnData).Error
+
+	// エラー処理
+	if err != nil {
+		return Team{}, err
 	}
 
 	return returnData, nil
@@ -64,7 +109,7 @@ func (game *Game) GetRanking() ([]Team, error) {
 }
 
 // ゲームの詳細取得
-func GetGame(gameId []string) ([]Game, error) {
+func GetGames(gameId []string) ([]Game, error) {
 	// 結果格納用
 	var games []Game
 
@@ -75,6 +120,23 @@ func GetGame(gameId []string) ([]Game, error) {
 	}
 
 	return games, nil
+}
+
+// ゲームを取得
+func GetGame(gameId string) (Game, error) {
+	var game Game
+
+	// 取得する
+	err := dbconn.Where(&Game{
+		GameID: gameId,
+	}).First(&game).Error
+
+	// エラー処理
+	if err != nil {
+		return Game{}, err
+	}
+
+	return game, nil
 }
 
 // 開催中のゲーム取得
