@@ -28,6 +28,9 @@ func InitRoutes(router *echo.Echo) *echo.Echo {
 
 	// ゲームの一覧を取得するエンドポイント
 	router.GET("/list", controllers.GetGameListHandler, middlewares.RequireLabel([]string{"admin"}))
+
+	// ゲームを削除するエンドポイント
+	router.DELETE("/delete", controllers.DeleteGameHandler, middlewares.RequireLabel([]string{"admin"}))
 	
 	//円詳細取得
 	router.GET("/circle/:circle_id", controllers.GetCircleDeteileHandler)

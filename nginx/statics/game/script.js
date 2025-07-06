@@ -206,13 +206,33 @@ document.addEventListener('DOMContentLoaded', () => {
              * ゲームを削除するAPIシミュレーション
              * @param {string} gameId - 削除するゲームのID
              */
-            deleteGameAPI: (gameId) => {
+            deleteGameAPI: async (gameId) => { // async を追加
                 console.log("API: Deleting game...", gameId);
-                const initialLength = backendData.games.length;
-                backendData.games = backendData.games.filter(game => game.game_id !== gameId); // game_id を使用
-                saveBackendData();
-                if (backendData.games.length === initialLength) {
-                    throw new Error("Game not found for deletion.");
+                const token = await auth.getToken(); // トークンを取得
+
+                try {
+                    const response = await fetch('/game/delete', { // DELETE リクエスト
+                        method: 'DELETE',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'Authorization': `${token}`,
+                            'GameID': gameId // GameID ヘッダーを追加
+                        },
+                    });
+
+                    if (!response.ok) {
+                        throw new Error(`HTTP error! status: ${response.status}`);
+                    }
+
+                    // 成功レスポンスをログに出力
+                    const data = await response.json();
+                    console.log("Game deletion response:", data);
+
+                    // バックエンドで削除されるため、クライアントサイドのデータ操作は不要
+                    // loadGames() が呼び出し元でリストを再ロードする
+                } catch (error) {
+                    console.error("Failed to delete game via API:", error);
+                    throw error;
                 }
             },
 
@@ -455,10 +475,10 @@ document.addEventListener('DOMContentLoaded', () => {
             };
         });
         document.querySelectorAll('.delete-btn').forEach(button => {
-            button.onclick = (e) => {
-                openConfirmModal('本当にこのゲームを削除しますか？', () => {
+            button.onclick = async (e) => { // async を追加
+                openConfirmModal('本当にこのゲームを削除しますか？', async () => { // async を追加
                     try {
-                        backendService.deleteGameAPI(e.target.dataset.id);
+                        await backendService.deleteGameAPI(e.target.dataset.id); // await を追加
                         loadGames(); // 削除後にリストを再ロード
                         hideModal(confirmModal, confirmModalContent);
                     } catch (error) {

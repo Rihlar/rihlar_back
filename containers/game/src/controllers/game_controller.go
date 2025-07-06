@@ -115,3 +115,24 @@ func GetGameListHandler(ctx echo.Context) error {
 		"Data": games,
 	})
 }
+
+// ゲームを削除する
+func DeleteGameHandler(ctx echo.Context) error {
+	// ゲームIDを取得
+	gameId := ctx.Request().Header.Get("GameID")
+
+	// サービスに渡す
+	err := gameService.DeleteGame(gameId)
+	if err != nil {
+		logger.PrintErr("ゲーム削除エラー", err)
+		return err
+	}
+
+	// 成功ログ
+	logger.Println("Successful game delete.")
+
+	// レスポンス
+	return ctx.JSON(http.StatusOK, echo.Map{
+		"Data": "success",
+	})
+}

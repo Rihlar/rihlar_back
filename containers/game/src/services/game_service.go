@@ -295,3 +295,17 @@ func getMembersFromGame(game models.Game) ([]GameMember, error) {
 
 	return returnMembers, nil
 }
+
+// ゲームを削除
+func (GameService) DeleteGame(gameId string) error {
+	// ゲームを取得
+	game, err := models.GetGame(gameId)
+
+	// エラー処理
+	if err != nil {
+		return err
+	}
+
+	// 削除する
+	return game.DeleteGame()
+}

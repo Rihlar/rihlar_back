@@ -47,6 +47,11 @@ func (game *Game) AddTeam(team Team) error {
 	return dbconn.Model(game).Association("Teams").Append(&team)
 }
 
+// ゲームを消す関数
+func (game *Game) DeleteGame() error {
+	return dbconn.Delete(game).Error
+}
+
 // 全てのゲームを取得
 func GetAllGames() ([]Game, error) {
 	// 結果格納用
