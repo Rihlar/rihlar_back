@@ -327,19 +327,41 @@ document.addEventListener('DOMContentLoaded', () => {
              * @param {number} memberIndex - 削除するメンバーのインデックス
              * @returns {Array} 更新されたメンバーリスト
              */
-            removeMemberAPI: (gameId, memberIndex) => {
+            removeMemberAPI: async (gameId, memberIndex) => { // async を追加
                 console.log("API: Removing member from game...", gameId, memberIndex);
-                const gameIndex = backendData.games.findIndex(game => game.game_id === gameId); // game_id を使用
-                if (gameIndex !== -1 && backendData.games[gameIndex].members) {
-                    if (memberIndex >= 0 && memberIndex < backendData.games[gameIndex].members.length) {
-                        backendData.games[gameIndex].members.splice(memberIndex, 1);
-                        saveBackendData();
-                        return [...backendData.games[gameIndex].members];
-                    } else {
-                        throw new Error("Member index out of bounds.");
+                const token = await auth.getToken(); // トークンを取得
+                const game = backendData.games.find(g => g.game_id === gameId);
+
+                if (!game || !game.members || memberIndex < 0 || memberIndex >= game.members.length) {
+                    throw new Error("Game or member not found for deletion.");
+                }
+
+                const userIdToDelete = game.members[memberIndex].user_id;
+
+                try {
+                    const response = await fetch('/game/member/delete', { // DELETE リクエスト
+                        method: 'DELETE',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'Authorization': `${token}`,
+                            'GameID': gameId,   // GameID ヘッダーを追加
+                            'UserID': userIdToDelete // UserID ヘッダーを追加
+                        },
+                    });
+
+                    if (!response.ok) {
+                        throw new Error(`HTTP error! status: ${response.status}`);
                     }
-                } else {
-                    throw new Error("Game not found or no members for removal.");
+
+                    const data = await response.json();
+                    console.log("Member deletion response:", data);
+
+                    // バックエンドで削除されるため、クライアントサイドのデータ操作は不要
+                    // loadGames() が呼び出し元でリストを再ロードする
+                    return data; // APIレスポンスを返す
+                } catch (error) {
+                    console.error("Failed to delete member via API:", error);
+                    throw error;
                 }
             },
 
@@ -687,11 +709,12 @@ document.addEventListener('DOMContentLoaded', () => {
             });
             // メンバー削除ボタンにイベントリスナーを追加
             document.querySelectorAll('.remove-member-btn').forEach(button => {
-                button.onclick = (e) => {
+                button.onclick = async (e) => { // async を追加
                     const memberIndex = parseInt(e.target.dataset.index);
-                    openConfirmModal('本当にこのメンバーを削除しますか？', () => { // Added confirmation for member deletion
+                    openConfirmModal('本当にこのメンバーを削除しますか？', async () => { // async を追加
                         try {
-                            backendService.removeMemberAPI(currentMembersGameId, memberIndex);
+                            // backendService.removeMemberAPI を呼び出し
+                            await backendService.removeMemberAPI(currentMembersGameId, memberIndex);
                             // 削除後、メンバーリストとゲームリストを再ロード
                             loadGames(); // Reloads all games, which includes updated member lists
                             const game = games.find(g => g.game_id === currentMembersGameId); // Fetch updated game object
