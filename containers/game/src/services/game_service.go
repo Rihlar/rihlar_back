@@ -5,6 +5,7 @@ import (
 	"game/logger"
 	"game/models"
 	"game/utils"
+	"time"
 )
 
 type GameService struct{}
@@ -21,7 +22,7 @@ func (GameService) GetEndGames(userId string) ([]models.Game, error) {
 
 	// 終了済みゲームの一覧取得
 	games, err := models.GetEndGames(allGames)
-		if err != nil {
+	if err != nil {
 		logger.PrintErr("Unable to get game", err)
 		return []models.Game{}, err
 	}
@@ -43,7 +44,7 @@ func (GameService) GetJoinGames(userId string) ([]models.Game, error) {
 
 	// 現在開催中ゲームの情報を取得
 	games, err := models.GetGameHolding(allGames)
-		if err != nil {
+	if err != nil {
 		logger.PrintErr("Game does not exist", err)
 		return []models.Game{}, err
 	}
@@ -87,12 +88,12 @@ func (GameService) JoinGame(userId string, gameId string) error {
 	}
 
 	// チームのIDを生成する
-	teamId,_ := utils.Genid()
-	
+	teamId, _ := utils.Genid()
+
 	team := models.Team{
-		TeamID:    "teamid-" + teamId,
-		GameID:    gameId,
-		Points:    0,
+		TeamID: "teamid-" + teamId,
+		GameID: gameId,
+		Points: 0,
 	}
 
 	// チームを作成する
@@ -133,4 +134,45 @@ func (GameService) JoinGame(userId string, gameId string) error {
 	}
 
 	return nil
+}
+
+type CreateGameArgs struct {
+	Name         string `json:"name"`
+	RegionID     string `json:"region_id"`
+	StartTime    int64  `json:"start_time"`
+	DulationDate int    `json:"dulation_date"`
+}
+
+func (GameService) CreateGame(args CreateGameArgs) error {
+	// リージョンを取得する
+	region, err := models.GetRegionByID(args.RegionID)
+
+	// エラー処理
+	if err != nil {
+		return err
+	}
+
+	// ゲームIDを生成する
+	gameid, err := utils.Genid()
+	if err != nil {
+		return err
+	}
+
+	// リージョンIDを更新する
+	args.RegionID = region.RegionID
+
+	// unix 時間を変換する
+	startTime := time.Unix(0,args.StartTime)
+	endTime := startTime.AddDate(0, 0, args.DulationDate)
+
+	// ゲームを作成する
+	return models.CreateGame(models.Game{
+		GameID:    "gameid-" + gameid,
+		StartTime: startTime,
+		EndTime:   endTime,
+		Flag:      0,
+		Type:      0,
+		Status:    0,
+		RegionID:  args.RegionID,
+	})
 }

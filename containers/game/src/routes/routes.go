@@ -3,10 +3,12 @@ package routes
 // エンドポイントのルーティング
 import (
 	"game/controllers"
+	"game/middlewares"
+
 	"github.com/labstack/echo/v4"
 )
 
-// ルーティング　
+// ルーティング
 func InitRoutes(router *echo.Echo) *echo.Echo {
 
 	//ranking取得
@@ -17,6 +19,9 @@ func InitRoutes(router *echo.Echo) *echo.Echo {
 
 	// rankingTop10
 	// router.GET("/ranking/top/:game_id", controllers.GetRankingTopHandler)
+
+	// ゲームを作成するエンドポイント
+	router.POST("/create", controllers.CreateGameHandler,middlewares.RequireLabel([]string{"admin"}))
 
 	// ゲームに参加するエンドポイント
 	router.POST("/join", controllers.JoinGameHandler)

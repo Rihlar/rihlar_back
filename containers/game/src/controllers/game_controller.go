@@ -10,7 +10,6 @@ import (
 
 var gameService = services.GameService{} // サービスの実体を作る。
 
-
 // 終了済みゲーム一覧
 func GetEndGamesHandler(ctx echo.Context) error {
 	// ユーザーの特定する
@@ -25,7 +24,7 @@ func GetEndGamesHandler(ctx echo.Context) error {
 
 	// 成功ログ
 	logger.Println("Successful endgames get.")
-	
+
 	// レスポンス
 	return ctx.JSON(http.StatusOK, echo.Map{
 		"Data": endGame,
@@ -46,7 +45,7 @@ func GetJoinGamesHandler(ctx echo.Context) error {
 
 	// 成功ログ
 	logger.Println("Successful joinGames get.")
-	
+
 	// レスポンス
 	return ctx.JSON(http.StatusOK, echo.Map{
 		"Data": joinGames,
@@ -68,7 +67,31 @@ func JoinGameHandler(ctx echo.Context) error {
 
 	// 成功ログ
 	logger.Println("Successful game join.")
-	
+
+	// レスポンス
+	return ctx.JSON(http.StatusOK, echo.Map{
+		"Data": "success",
+	})
+}
+
+// ゲームを作成する関数
+func CreateGameHandler(ctx echo.Context) error {
+	// bodyを取得
+	var args services.CreateGameArgs
+	if err := ctx.Bind(&args); err != nil {
+		return err
+	}
+
+	// サービスに渡す
+	err := gameService.CreateGame(args)
+	if err != nil {
+		logger.PrintErr("ゲーム作成エラー", err)
+		return err
+	}
+
+	// 成功ログ
+	logger.Println("Successful game create.")
+
 	// レスポンス
 	return ctx.JSON(http.StatusOK, echo.Map{
 		"Data": "success",
