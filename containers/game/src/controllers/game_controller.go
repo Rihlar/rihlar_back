@@ -97,3 +97,21 @@ func CreateGameHandler(ctx echo.Context) error {
 		"Data": "success",
 	})
 }
+
+// ゲーム一覧
+func GetGameListHandler(ctx echo.Context) error {
+	// サービスに渡す
+	games, err := gameService.GetGameList()
+	if err != nil {
+		logger.PrintErr("ゲーム一覧取得エラー", err)
+		return err
+	}
+
+	// 成功ログ
+	logger.Println("Successful game list get.")
+
+	// レスポンス
+	return ctx.JSON(http.StatusOK, echo.Map{
+		"Data": games,
+	})
+}

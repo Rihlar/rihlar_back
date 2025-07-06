@@ -162,7 +162,7 @@ func (GameService) CreateGame(args CreateGameArgs) error {
 	args.RegionID = region.RegionID
 
 	// unix 時間を変換する
-	startTime := time.Unix(0,args.StartTime)
+	startTime := time.Unix(0, args.StartTime)
 	endTime := startTime.AddDate(0, 0, args.DulationDate)
 
 	// ゲームを作成する
@@ -175,4 +175,123 @@ func (GameService) CreateGame(args CreateGameArgs) error {
 		Status:    0,
 		RegionID:  args.RegionID,
 	})
+}
+
+type GameMember struct {
+	UserID   string `json:"user_id"`
+	UserName string `json:"user_name"`
+	Points   int    `json:"points"`
+}
+
+type GameTeam struct {
+	TeamID string `json:"team_id"`
+	Points int    `json:"points"`
+}
+
+type GameData struct {
+	GameID       string       `json:"game_id"`
+	Name         string       `json:"name"`
+	RegionID     string       `json:"region_id"`
+	Status       int          `json:"status"`
+	StartTime    int64        `json:"start_time"`
+	DulationDate int          `json:"dulation_date"`
+	Members      []GameMember `json:"members"`
+	Teams        []GameTeam   `json:"teams"`
+}
+
+// ゲームのリストを取得
+func (GameService) GetGameList() ([]GameData, error) {
+	// 全てのゲームを取得
+	games,err := models.GetAllGames()
+
+	// エラー処理
+	if err != nil {
+		return []GameData{}, err
+	}
+
+	returnData := []GameData{}
+
+	for _, game := range games {
+		// ゲームがシステムゲームの場合無視
+		if game.Type == 0 {
+			continue
+		}
+
+		// 日数の差分を取得
+		diff := game.EndTime.Sub(game.StartTime)
+
+		// チームを取得
+		teams, err := getTeamFromGame(game)
+
+		// エラー処理
+		if err != nil {
+			return []GameData{}, err
+		}
+
+		// メンバーを取得
+		members, err := getMembersFromGame(game)
+
+		// エラー処理
+		if err != nil {
+			return []GameData{}, err
+		}
+
+		returnData = append(returnData, GameData{
+			GameID:       game.GameID,
+			Name:         game.GameID,
+			RegionID:     game.RegionID,
+			StartTime:    game.StartTime.Unix(),
+			Status:       game.Status,
+			DulationDate: int(diff.Hours()) / 24,
+			Members:      members,
+			Teams:        teams,
+		})
+	}
+
+	return returnData, nil
+}
+
+// ゲームのチームを取得
+func getTeamFromGame(game models.Game) ([]GameTeam, error) {
+	// チームを取得
+	teams, err := game.GetTeams()
+
+	// エラー処理
+	if err != nil {
+		return []GameTeam{}, err
+	}
+
+	returnTeams := []GameTeam{}
+
+	for _, team := range teams {
+		returnTeams = append(returnTeams, GameTeam{
+			TeamID: team.TeamID,
+			Points: team.Points,
+		})
+	}
+
+	return returnTeams, nil
+}
+
+// メンバーを取得
+func getMembersFromGame(game models.Game) ([]GameMember, error) {
+	// チームを取得
+	members, err := game.GetMembers()
+
+	// エラー処理
+	if err != nil {
+		return []GameMember{}, err
+	}
+
+	returnMembers := []GameMember{}
+
+	for _, member := range members {
+		returnMembers = append(returnMembers, GameMember{
+			UserID:   member.UserID,
+			UserName: "",
+			Points:   member.Points,
+		})
+	}
+
+	return returnMembers, nil
 }

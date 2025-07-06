@@ -72,11 +72,18 @@ document.addEventListener('DOMContentLoaded', () => {
         { RegionID: "regionId-65051f6a-9e94-439d-a7f6-5c127ad0c885", RegionName: "東北" },
         { RegionID: "regionId-fb145c05-e0e5-4f22-86e1-9f40326faf31", RegionName: "関東" },
         { RegionID: "regionId-16d687a3-8eab-4b36-8563-b62514823fe8", RegionName: "中部" },
-        { RegionID: "c161edb9-6aff-4244-8749-707bff2fa3be", RegionName: "関西" },
+        { RegionID: "regionId-c161edb9-6aff-4244-8749-707bff2fa3be", RegionName: "関西" },
         { RegionID: "regionId-005344a4-523d-4aab-9d1e-d232322cf54e", RegionName: "中国" },
         { RegionID: "regionId-3501902d-8bab-40cd-926f-30c53d80efc5", RegionName: "四国" },
         { RegionID: "regionId-ef5aa179-53e0-481d-b64d-ae7654049a88", RegionName: "九州" },
     ];
+
+    // ステータス数値と表示文字列のマッピング
+    const statusMap = {
+        0: '予定',      // 開始前
+        1: '開催中',    // 開催中
+        2: '終了'       // 終了済
+    };
 
     // ====================================================================
     // バックエンドAPIシミュレーション関数群 (Promiseではなく実体を返す)
@@ -99,9 +106,47 @@ document.addEventListener('DOMContentLoaded', () => {
              * 全てのゲームを取得するAPIシミュレーション
              * @returns {Array} ゲームデータの配列
              */
-            fetchGamesAPI: () => {
-                console.log("API: Fetching all games...");
-                return [...backendData.games]; // データのコピーを返す
+            fetchGamesAPI: async () => { // async を追加
+                console.log("API: Fetching all games from /game/list...");
+                const token = await auth.getToken(); // トークンを取得
+
+                try {
+                    const response = await fetch('/game/list', { // await を追加
+                        method: 'GET',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'Authorization': `${token}` // Authorization ヘッダーを追加
+                        },
+                    });
+
+                    if (!response.ok) {
+                        throw new Error(`HTTP error! status: ${response.status}`);
+                    }
+
+                    const data = await response.json(); // await を追加
+                    console.log("Fetched game list:", data);
+
+                    // APIのレスポンス形式に合わせてデータを整形
+                    const fetchedGames = data.Data.map(game => ({
+                        game_id: game.game_id,
+                        name: game.name,
+                        region_id: game.region_id,
+                        status: statusMap[game.status], // 数値を文字列に変換
+                        start_time: game.start_time, // Unix timestamp in seconds
+                        dulation_date: game.dulation_date,
+                        members: game.members || [], // membersはオブジェクトの配列
+                        teams: game.teams || [],     // teamsはオブジェクトの配列
+                        // gameTypeはバックエンドから提供されないため、フロントエンドで推測
+                        gameType: (game.teams && game.teams.length > 0) ? 'team' : 'personal' // チームの有無で判断
+                    }));
+
+                    backendData.games = fetchedGames; // 取得したデータをローカルストレージに保存
+                    saveBackendData();
+                    return [...backendData.games]; // データのコピーを返す
+                } catch (error) {
+                    console.error("Error fetching games:", error);
+                    throw error; // エラーを再スローして呼び出し元で処理させる
+                }
             },
 
             /**
@@ -123,14 +168,35 @@ document.addEventListener('DOMContentLoaded', () => {
                 const token = await auth.getToken();
 
                 // ここで実際のfetch()呼び出しをシミュレート
-                fetch('/game/create', { method: 'POST', headers: { 'Content-Type': 'application/json', 'Authorization': `${token}` }, body: JSON.stringify(apiPayload) })
-                    .then(response => response.json())
-                    .then(data => {
-                        console.log(data);
-                    });
+                const response = await fetch('/game/create', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `${token}`
+                    },
+                    body: JSON.stringify(apiPayload)
+                });
+
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+
+                const data = await response.json();
+                console.log(data);
 
                 // シミュレーションのため、直接データを追加
-                const gameWithId = { ...newGameData, id: Date.now().toString() };
+                // 実際のAPIでは、APIが返すデータにIDなどが含まれるため、そちらを使用するのが望ましい
+                const gameWithId = {
+                    game_id: data.game_id || Date.now().toString(), // APIが返すIDを使用
+                    name: newGameData.name,
+                    region_id: newGameData.region,
+                    start_time: new Date(newGameData.time).getTime(),
+                    dulation_date: newGameData.duration,
+                    gameType: newGameData.gameType,
+                    status: '予定', // 新規作成時は「予定」
+                    members: [], // 新規作成時は空
+                    teams: []    // 新規作成時は空
+                };
                 backendData.games.push(gameWithId);
                 saveBackendData();
                 return gameWithId; // UIに返すデータは、追加されたゲームオブジェクト
@@ -143,7 +209,7 @@ document.addEventListener('DOMContentLoaded', () => {
             deleteGameAPI: (gameId) => {
                 console.log("API: Deleting game...", gameId);
                 const initialLength = backendData.games.length;
-                backendData.games = backendData.games.filter(game => game.id !== gameId);
+                backendData.games = backendData.games.filter(game => game.game_id !== gameId); // game_id を使用
                 saveBackendData();
                 if (backendData.games.length === initialLength) {
                     throw new Error("Game not found for deletion.");
@@ -153,18 +219,46 @@ document.addEventListener('DOMContentLoaded', () => {
             /**
              * ゲームのステータスを更新するAPIシミュレーション
              * @param {string} gameId - 更新するゲームのID
-             * @param {string} newStatus - 新しいステータス ('予定', '開催中', '終了')
+             * @param {number} newStatusValue - 新しいステータス値 (0:予定, 1:開催中, 2:終了)
              * @returns {Object} 更新されたゲームのデータ
              */
-            updateGameStatusAPI: (gameId, newStatus) => {
-                console.log("API: Updating game status...", gameId, newStatus);
-                const gameIndex = backendData.games.findIndex(game => game.id === gameId);
-                if (gameIndex !== -1) {
-                    backendData.games[gameIndex].status = newStatus;
-                    saveBackendData();
-                    return backendData.games[gameIndex];
-                } else {
-                    throw new Error("Game not found for status update.");
+            updateGameStatusAPI: async (gameId, newStatusValue) => { // async を追加
+                console.log("API: Updating game status...", gameId, newStatusValue);
+                const token = await auth.getToken(); // トークンを取得
+
+                try {
+                    // 仮のステータス更新エンドポイントへのPOSTリクエスト
+                    const response = await fetch('/game/update_status', { // 仮のAPIエンドポイント
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'Authorization': `${token}`
+                        },
+                        body: JSON.stringify({
+                            game_id: gameId,
+                            status: newStatusValue
+                        })
+                    });
+
+                    if (!response.ok) {
+                        throw new Error(`HTTP error! status: ${response.status}`);
+                    }
+
+                    const data = await response.json();
+                    console.log("Status update response:", data);
+
+                    // クライアントサイドのデータを更新 (APIレスポンスから直接更新)
+                    const gameIndex = backendData.games.findIndex(game => game.game_id === gameId);
+                    if (gameIndex !== -1) {
+                        backendData.games[gameIndex].status = statusMap[newStatusValue]; // 数値を文字列に変換して更新
+                        saveBackendData();
+                        return backendData.games[gameIndex];
+                    } else {
+                        throw new Error("Game not found for status update (client-side update failed).");
+                    }
+                } catch (error) {
+                    console.error("Failed to update game status via API:", error);
+                    throw error;
                 }
             },
 
@@ -175,7 +269,7 @@ document.addEventListener('DOMContentLoaded', () => {
              */
             fetchTeamsAPI: (gameId) => {
                 console.log("API: Fetching teams for game...", gameId);
-                const game = backendData.games.find(g => g.id === gameId);
+                const game = backendData.games.find(g => g.game_id === gameId); // game_id を使用
                 if (game) {
                     return [...(game.teams || [])]; // データのコピーを返す
                 } else {
@@ -186,15 +280,16 @@ document.addEventListener('DOMContentLoaded', () => {
             /**
              * 特定のゲームにメンバーを追加するAPIシミュレーション
              * @param {string} gameId - メンバーを追加するゲームのID
-             * @param {string} memberName - 追加するメンバーの名前
+             * @param {Object} memberData - 追加するメンバーのデータ (user_id, user_name, points)
              * @returns {Array} 更新されたメンバーリスト
              */
-            addMemberAPI: (gameId, memberName) => {
-                console.log("API: Adding member to game...", gameId, memberName);
-                const gameIndex = backendData.games.findIndex(game => game.id === gameId);
+            addMemberAPI: (gameId, memberData) => {
+                console.log("API: Adding member to game...", gameId, memberData);
+                const gameIndex = backendData.games.findIndex(game => game.game_id === gameId);
                 if (gameIndex !== -1) {
-                    if (!backendData.games[gameIndex].members.includes(memberName)) {
-                        backendData.games[gameIndex].members.push(memberName);
+                    // user_id で重複チェック
+                    if (!backendData.games[gameIndex].members.some(m => m.user_id === memberData.user_id)) {
+                        backendData.games[gameIndex].members.push(memberData);
                         saveBackendData();
                         return [...backendData.games[gameIndex].members];
                     } else {
@@ -213,7 +308,7 @@ document.addEventListener('DOMContentLoaded', () => {
              */
             removeMemberAPI: (gameId, memberIndex) => {
                 console.log("API: Removing member from game...", gameId, memberIndex);
-                const gameIndex = backendData.games.findIndex(game => game.id === gameId);
+                const gameIndex = backendData.games.findIndex(game => game.game_id === gameId); // game_id を使用
                 if (gameIndex !== -1 && backendData.games[gameIndex].members) {
                     if (memberIndex >= 0 && memberIndex < backendData.games[gameIndex].members.length) {
                         backendData.games[gameIndex].members.splice(memberIndex, 1);
@@ -235,7 +330,7 @@ document.addEventListener('DOMContentLoaded', () => {
              */
             removeTeamAPI: (gameId, teamIndex) => {
                 console.log("API: Removing team from game...", gameId, teamIndex);
-                const gameIndex = backendData.games.findIndex(game => game.id === gameId);
+                const gameIndex = backendData.games.findIndex(game => game.game_id === gameId); // game_id を使用
                 if (gameIndex !== -1 && backendData.games[gameIndex].teams) {
                     if (teamIndex >= 0 && teamIndex < backendData.games[gameIndex].teams.length) {
                         backendData.games[gameIndex].teams.splice(teamIndex, 1);
@@ -273,9 +368,9 @@ document.addEventListener('DOMContentLoaded', () => {
     };
 
     // ゲームデータをロード (API経由)
-    const loadGames = () => {
+    const loadGames = async () => { // async を追加
         try {
-            games = backendService.fetchGamesAPI(); // Promiseではなく直接データを取得
+            games = await backendService.fetchGamesAPI(); // await を追加
             renderGames(); // ゲームリストをレンダリング
         } catch (error) {
             console.error("Failed to load games:", error);
@@ -316,7 +411,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 game.status === '開催中' ? 'border-gray-700' :
                     'border-gray-900'
                 }`;
-            gameCard.dataset.id = game.id; // データIDを設定して詳細表示に利用
+            gameCard.dataset.id = game.game_id; // game_id を使用
 
             gameCard.innerHTML = `
                 <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-4">
@@ -326,18 +421,18 @@ document.addEventListener('DOMContentLoaded', () => {
                         'status-終了'
                 }">${game.status}</span>
                 </div>
-                <p class="text-gray-700 mb-2"><strong>リージョン:</strong> ${getRegionNameById(game.region)}</p>
-                <p class="text-gray-700 mb-2"><strong>開催時間:</strong> ${new Date(game.time).toLocaleString('ja-JP', {
+                <p class="text-gray-700 mb-2"><strong>リージョン:</strong> ${getRegionNameById(game.region_id)}</p>
+                <p class="text-gray-700 mb-2"><strong>開催時間:</strong> ${new Date(game.start_time * 1000).toLocaleString('ja-JP', { // 秒をミリ秒に変換
                     year: 'numeric', month: 'numeric', day: 'numeric',
                     hour: '2-digit', minute: '2-digit', hour12: false
                 })}</p>
-                <p class="text-gray-700 mb-2"><strong>開催期間:</strong> ${game.duration} 日間</p>
+                <p class="text-gray-700 mb-2"><strong>開催期間:</strong> ${game.dulation_date} 日間</p>
                 <p class="text-gray-700 mb-4"><strong>ゲームタイプ:</strong> ${game.gameType === 'personal' ? '個人のゲーム' : 'チームのゲーム'}</p>
                 <div class="flex flex-wrap gap-3 mt-4">
-                    <button data-id="${game.id}" class="delete-btn bg-red-500 hover:bg-red-600 text-white font-semibold py-2 px-4 rounded-lg shadow-sm transition duration-200">削除</button>
-                    <button data-id="${game.id}" class="members-btn bg-gray-600 hover:bg-gray-700 text-white font-semibold py-2 px-4 rounded-lg shadow-sm transition duration-200">メンバー (${game.members ? game.members.length : 0})</button>
-                    ${game.status === '予定' || game.status === '終了' ? `<button data-id="${game.id}" class="start-btn bg-gray-700 hover:bg-gray-800 text-white font-semibold py-2 px-4 rounded-lg shadow-sm transition duration-200">開始</button>` : ''}
-                    ${game.status === '開催中' ? `<button data-id="${game.id}" class="end-btn bg-gray-600 hover:bg-gray-700 text-white font-semibold py-2 px-4 rounded-lg shadow-sm transition duration-300">終了</button>` : ''}
+                    <button data-id="${game.game_id}" class="delete-btn bg-red-500 hover:bg-red-600 text-white font-semibold py-2 px-4 rounded-lg shadow-sm transition duration-200">削除</button>
+                    <button data-id="${game.game_id}" class="members-btn bg-gray-600 hover:bg-gray-700 text-white font-semibold py-2 px-4 rounded-lg shadow-sm transition duration-200">メンバー (${game.members ? game.members.length : 0})</button>
+                    ${game.status === '予定' || game.status === '終了' ? `<button data-id="${game.game_id}" class="start-btn bg-gray-700 hover:bg-gray-800 text-white font-semibold py-2 px-4 rounded-lg shadow-sm transition duration-200">開始</button>` : ''}
+                    ${game.status === '開催中' ? `<button data-id="${game.game_id}" class="end-btn bg-gray-600 hover:bg-gray-700 text-white font-semibold py-2 px-4 rounded-lg shadow-sm transition duration-300">終了</button>` : ''}
                 </div>
             `;
             gameListDiv.appendChild(gameCard);
@@ -377,9 +472,9 @@ document.addEventListener('DOMContentLoaded', () => {
             button.onclick = (e) => openMembersModal(e.target.dataset.id);
         });
         document.querySelectorAll('.start-btn').forEach(button => {
-            button.onclick = (e) => {
+            button.onclick = async (e) => { // async を追加
                 try {
-                    backendService.updateGameStatusAPI(e.target.dataset.id, '開催中');
+                    await backendService.updateGameStatusAPI(e.target.dataset.id, 1); // ステータスを「開催中」(1)に更新
                     loadGames(); // ステータス更新後にリストを再ロード
                 } catch (error) {
                     console.error("Failed to start game:", error);
@@ -388,9 +483,9 @@ document.addEventListener('DOMContentLoaded', () => {
             };
         });
         document.querySelectorAll('.end-btn').forEach(button => {
-            button.onclick = (e) => {
+            button.onclick = async (e) => { // async を追加
                 try {
-                    backendService.updateGameStatusAPI(e.target.dataset.id, '終了');
+                    await backendService.updateGameStatusAPI(e.target.dataset.id, 2); // ステータスを「終了」(2)に更新
                     loadGames(); // ステータス更新後にリストを再ロード
                 } catch (error) {
                     console.error("Failed to end game:", error);
@@ -415,7 +510,7 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     // ゲームフォームの送信処理 (作成のみ)
-    gameForm.addEventListener('submit', (e) => {
+    gameForm.addEventListener('submit', async (e) => {
         e.preventDefault();
         const gameName = gameNameInput.value;
         const gameRegion = gameRegionSelect.value; // 選択されたRegionIDを取得
@@ -444,7 +539,7 @@ document.addEventListener('DOMContentLoaded', () => {
         };
 
         try {
-            backendService.addGameAPI(newGameData); // API経由で新しいゲームを追加
+            await backendService.addGameAPI(newGameData);
             loadGames(); // 追加後にリストを再ロード
             hideModal(gameModal, gameModalContent);
         } catch (error) {
@@ -455,16 +550,16 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // ゲーム詳細モーダルを開く
     const openGameDetailsModal = (id) => {
-        const game = games.find(g => g.id === id);
+        const game = games.find(g => g.game_id === id); // game_id を使用
         if (game) {
             currentSelectedGameId = id;
             detailsModalGameName.textContent = game.name;
-            detailsModalRegion.textContent = getRegionNameById(game.region);
-            detailsModalTime.textContent = new Date(game.time).toLocaleString('ja-JP', {
+            detailsModalRegion.textContent = getRegionNameById(game.region_id); // region_id を使用
+            detailsModalTime.textContent = new Date(game.start_time * 1000).toLocaleString('ja-JP', { // 秒をミリ秒に変換
                 year: 'numeric', month: 'numeric', day: 'numeric',
                 hour: '2-digit', minute: '2-digit', hour12: false
             });
-            detailsModalDuration.textContent = game.duration;
+            detailsModalDuration.textContent = game.dulation_date; // dulation_date を使用
             detailsModalGameType.textContent = game.gameType === 'personal' ? '個人のゲーム' : 'チームのゲーム'; // ゲームタイプを表示
 
             try {
@@ -489,7 +584,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 const teamItem = document.createElement('div');
                 teamItem.className = 'flex justify-between items-center bg-gray-50 p-3 rounded-md shadow-sm';
                 teamItem.innerHTML = `
-                    <span class="text-gray-800 font-medium">チームID: ${team.teamId}</span>
+                    <span class="text-gray-800 font-medium">チームID: ${team.team_id}</span>
                     <span class="text-gray-600">ポイント: ${team.points}</span>
                     <button data-index="${index}" class="remove-team-btn text-red-500 hover:text-red-700 font-semibold text-sm">削除</button>
                 `;
@@ -499,15 +594,18 @@ document.addEventListener('DOMContentLoaded', () => {
             document.querySelectorAll('.remove-team-btn').forEach(button => {
                 button.onclick = (e) => {
                     const teamIndex = parseInt(e.target.dataset.index);
-                    try {
-                        backendService.removeTeamAPI(currentSelectedGameId, teamIndex);
-                        // 削除後、詳細モーダルを閉じずにチームリストのみ更新
-                        const updatedTeams = backendService.fetchTeamsAPI(currentSelectedGameId);
-                        renderTeams(updatedTeams);
-                    } catch (error) {
-                        console.error("Failed to remove team:", error);
-                        openConfirmModal('チームの削除に失敗しました。', () => hideModal(confirmModal, confirmModalContent), 'OK');
-                    }
+                    openConfirmModal('本当にこのチームを削除しますか？', () => { // Added confirmation for team deletion
+                        try {
+                            backendService.removeTeamAPI(currentSelectedGameId, teamIndex);
+                            // 削除後、詳細モーダルを閉じずにチームリストのみ更新
+                            const updatedTeams = backendService.fetchTeamsAPI(currentSelectedGameId);
+                            renderTeams(updatedTeams);
+                            hideModal(confirmModal, confirmModalContent); // Hide confirmation modal
+                        } catch (error) {
+                            console.error("Failed to remove team:", error);
+                            openConfirmModal('チームの削除に失敗しました。', () => hideModal(confirmModal, confirmModalContent), 'OK');
+                        }
+                    });
                 };
             });
         } else {
@@ -525,8 +623,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // メンバー一覧モーダルを開く
     const openMembersModal = (id) => {
         currentMembersGameId = id;
-        // メンバーリストはゲームオブジェクトに直接含まれているため、API呼び出しは不要
-        const game = games.find(g => g.id === currentMembersGameId);
+        const game = games.find(g => g.game_id === currentMembersGameId); // game_id を使用
         renderMembers(game ? game.members : []); // メンバーリストをレンダリング
         showModal(membersModal, membersModalContent);
     };
@@ -539,7 +636,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 const memberItem = document.createElement('div');
                 memberItem.className = 'flex justify-between items-center bg-gray-50 p-3 rounded-md shadow-sm';
                 memberItem.innerHTML = `
-                    <span class="text-gray-800">${member}</span>
+                    <span class="text-gray-800">${member.user_name || member.user_id}</span> <!-- Display user_name or user_id -->
                     <button data-index="${index}" class="remove-member-btn text-red-500 hover:text-red-700 font-semibold text-sm">削除</button>
                 `;
                 memberListDiv.appendChild(memberItem);
@@ -548,16 +645,19 @@ document.addEventListener('DOMContentLoaded', () => {
             document.querySelectorAll('.remove-member-btn').forEach(button => {
                 button.onclick = (e) => {
                     const memberIndex = parseInt(e.target.dataset.index);
-                    try {
-                        backendService.removeMemberAPI(currentMembersGameId, memberIndex);
-                        // 削除後、メンバーリストとゲームリストを再ロード
-                        loadGames();
-                        const game = games.find(g => g.id === currentMembersGameId);
-                        renderMembers(game ? game.members : []);
-                    } catch (error) {
-                        console.error("Failed to remove member:", error);
-                        openConfirmModal('メンバーの削除に失敗しました。', () => hideModal(confirmModal, confirmModalContent), 'OK');
-                    }
+                    openConfirmModal('本当にこのメンバーを削除しますか？', () => { // Added confirmation for member deletion
+                        try {
+                            backendService.removeMemberAPI(currentMembersGameId, memberIndex);
+                            // 削除後、メンバーリストとゲームリストを再ロード
+                            loadGames(); // Reloads all games, which includes updated member lists
+                            const game = games.find(g => g.game_id === currentMembersGameId); // Fetch updated game object
+                            renderMembers(game ? game.members : []); // Re-render members for the current game
+                            hideModal(confirmModal, confirmModalContent); // Hide confirmation modal
+                        } catch (error) {
+                            console.error("Failed to remove member:", error);
+                            openConfirmModal('メンバーの削除に失敗しました。', () => hideModal(confirmModal, confirmModalContent), 'OK');
+                        }
+                    });
                 };
             });
         } else {

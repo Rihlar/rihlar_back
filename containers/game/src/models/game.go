@@ -47,6 +47,57 @@ func (game *Game) AddTeam(team Team) error {
 	return dbconn.Model(game).Association("Teams").Append(&team)
 }
 
+// 全てのゲームを取得
+func GetAllGames() ([]Game, error) {
+	// 結果格納用
+	var games []Game
+
+	// 取得する
+	err := dbconn.Find(&games).Error
+
+	// エラー処理
+	if err != nil {
+		return []Game{}, err
+	}
+
+	return games, nil
+}
+
+// ゲームに属する全てのメンバー取得
+func (game *Game) GetMembers() ([]Member, error) {
+	// 結果格納用
+	var members []Member
+
+	// 取得する
+	err := dbconn.Where(&Member{
+		GameID: game.GameID,
+	}).Find(&members).Error
+
+	// エラー処理
+	if err != nil {
+		return []Member{}, err
+	}
+
+	return members, nil
+}
+
+func (game *Game) GetTeams() ([]Team, error) {
+	// 結果格納用
+	var teams []Team
+
+	// 取得する
+	err := dbconn.Where(&Team{
+		GameID: game.GameID,
+	}).Find(&teams).Error
+
+	// エラー処理
+	if err != nil {
+		return []Team{}, err
+	}
+
+	return teams, nil
+}
+
 // メンバーを取得
 func (game *Game) GetMemberByUserID(userid string) (Member, error) {
 	// 取得する
