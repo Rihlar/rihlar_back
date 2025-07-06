@@ -68,6 +68,43 @@ func GetAllGames() ([]Game, error) {
 	return games, nil
 }
 
+type SearchGameArgs struct {
+	IsSearchRegion bool
+	RegionID string
+
+	IsSearchStatus bool
+	Status   int
+}
+
+// ゲームを検索する関数
+func SearchGame(args SearchGameArgs) ([]Game, error) {
+	// 検索用
+	searchParam := Game{}
+
+	// 検索条件を設定する
+	if args.IsSearchRegion {
+		searchParam.RegionID = args.RegionID
+	}
+
+	// 検索条件を設定する
+	if args.IsSearchStatus {
+		searchParam.Status = args.Status
+	}
+
+	// 結果格納用
+	var games []Game
+
+	// 取得する
+	err := dbconn.Debug().Where(&searchParam).Find(&games).Error
+
+	// エラー処理
+	if err != nil {
+		return []Game{}, err
+	}
+
+	return games, nil
+}
+
 // ゲームを開始する
 func (game *Game) StartGame() error {
 	return dbconn.Model(game).Update("status", 1).Error

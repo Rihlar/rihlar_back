@@ -5,6 +5,7 @@ import (
 	"game/logger"
 	"game/models"
 	"game/utils"
+	"net/http"
 	"time"
 )
 
@@ -202,7 +203,7 @@ type GameData struct {
 // ゲームのリストを取得
 func (GameService) GetGameList() ([]GameData, error) {
 	// 全てのゲームを取得
-	games,err := models.GetAllGames()
+	games, err := models.GetAllGames()
 
 	// エラー処理
 	if err != nil {
@@ -311,7 +312,7 @@ func (GameService) DeleteGame(gameId string) error {
 }
 
 // ゲームを開始
-func (GameService) StartGame(gameId string) (error) {
+func (GameService) StartGame(gameId string) error {
 	// ゲームを取得
 	game, err := models.GetGame(gameId)
 
@@ -325,7 +326,7 @@ func (GameService) StartGame(gameId string) (error) {
 }
 
 // ゲームを終了
-func (GameService) EndGame(gameId string) (error) {
+func (GameService) EndGame(gameId string) error {
 	// ゲームを取得
 	game, err := models.GetGame(gameId)
 
@@ -339,7 +340,7 @@ func (GameService) EndGame(gameId string) (error) {
 }
 
 // チームを削除するエンドポイント
-func (GameService) DeleteTeam(gameId string, teamId string) (error) {
+func (GameService) DeleteTeam(gameId string, teamId string) error {
 	// ゲームを取得
 	game, err := models.GetGame(gameId)
 
@@ -353,7 +354,7 @@ func (GameService) DeleteTeam(gameId string, teamId string) (error) {
 }
 
 // メンバーを削除するエンドポイント
-func (GameService) DeleteMember(gameId string, userId string) (error) {
+func (GameService) DeleteMember(gameId string, userId string) error {
 	// ゲームを取得
 	game, err := models.GetGame(gameId)
 
@@ -364,4 +365,75 @@ func (GameService) DeleteMember(gameId string, userId string) (error) {
 
 	// 削除する
 	return game.DeleteMember(userId)
+}
+
+type StartedGameResult struct {
+	GameID    string `json:"game_id"`    // ゲームID
+	StartedAt int64  `json:"started_at"` // 開始日
+	RegionID  string `json:"region_id"`  // 開催地
+	EndAt     int64  `json:"end_at"`     // 終了日
+	Players   int    `json:"players"`    // 参加人数
+	IsJoined  bool   `json:"is_joined"`  // ゲームに参加しているか
+}
+
+// ユーザーのリージョンから開催中のゲームを取得する完遂
+func (GameService) GetStartedGames(userId string) (StartedGameResult, CustomError) {
+	// プロフィールを取得する
+	profile, err := models.GetProfile(userId)
+	if err != nil {
+		return StartedGameResult{}, CustomError{
+			Code:       http.StatusInternalServerError,
+			LogMessage: "プロフィール取得エラー",
+			ErrMessage: "プロフィール取得エラー",
+			Err:        err,
+		}
+	}
+
+	logger.Println("profile", profile)
+
+	// ゲームを検索する
+	games, err := models.SearchGame(models.SearchGameArgs{
+		IsSearchRegion: true,
+		RegionID:       profile.RegionID,
+		IsSearchStatus: true,
+		Status:         1,
+	})
+
+	// エラー処理
+	if err != nil {
+		return StartedGameResult{}, CustomError{
+			Code:       http.StatusInternalServerError,
+			LogMessage: "ゲーム検索エラー",
+			ErrMessage: "ゲーム検索エラー",
+			Err:        err,
+		}
+	}
+
+	// 現状一つだけなので
+	game := games[0]
+
+	// 全てのメンバー取得
+	members, err := game.GetMembers()
+
+	// エラー処理
+	if err != nil {
+		return StartedGameResult{}, CustomError{
+			Code:       http.StatusInternalServerError,
+			LogMessage: "メンバー取得エラー",
+			ErrMessage: "メンバー取得エラー",
+			Err:        err,
+		}
+	}
+
+	// メンバーの人数を計算
+	playerCount := len(members)
+
+	return StartedGameResult{
+		GameID:    game.GameID,
+		StartedAt: game.StartTime.Unix(),
+		RegionID:  game.RegionID,
+		EndAt:     game.EndTime.Unix(),
+		Players:   playerCount,
+		IsJoined:  true,
+	}, CustomError{}
 }
