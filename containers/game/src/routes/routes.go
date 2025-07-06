@@ -11,7 +11,7 @@ import (
 // ルーティング
 func InitRoutes(router *echo.Echo) *echo.Echo {
 	// 認証を必要とするように変更
-	// router.Use(middlewares.RequireAuth)
+	router.Use(middlewares.RequireAuth)
 
 	//ranking取得
 	router.GET("/ranking/personal/:user_id", controllers.GetMyRankingHandler)

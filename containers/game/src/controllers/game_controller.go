@@ -241,10 +241,7 @@ func DeleteMemberHandler(ctx echo.Context) error {
 // 開催中のゲームを取得する
 func GetStartedGamesHandler(ctx echo.Context) error {
 	// ユーザーIDを取得する
-	// userId := ctx.Get("UserID").(string)
-	
-	// TODO 後ほどミドルウェアからの取得に変更す
-	userId := ctx.Request().Header.Get("UserID")
+	userId := ctx.Get("UserID").(string)
 
 	// サービスに渡す
 	games, err := gameService.GetStartedGames(userId)
