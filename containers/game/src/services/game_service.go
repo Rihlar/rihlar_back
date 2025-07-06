@@ -393,6 +393,7 @@ func (GameService) GetStartedGames(userId string) (StartedGameResult, CustomErro
 
 	// ゲームを検索する
 	games, err := models.SearchGame(models.SearchGameArgs{
+		IsSearchSystem: false,
 		IsSearchRegion: true,
 		RegionID:       profile.RegionID,
 		IsSearchStatus: true,
@@ -406,6 +407,18 @@ func (GameService) GetStartedGames(userId string) (StartedGameResult, CustomErro
 			LogMessage: "ゲーム検索エラー",
 			ErrMessage: "ゲーム検索エラー",
 			Err:        err,
+		}
+	}
+
+	// ゲームがない場合
+	if len(games) == 0 {
+		return StartedGameResult{
+			IsJoined: false,
+		}, CustomError{
+			Code:       http.StatusNotFound,
+			LogMessage: "開催中のゲームがありません",
+			ErrMessage: "開催中のゲームがありません",
+			Err:        errors.New("開催中のゲームがありません"),
 		}
 	}
 

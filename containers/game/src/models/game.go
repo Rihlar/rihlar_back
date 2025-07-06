@@ -69,10 +69,12 @@ func GetAllGames() ([]Game, error) {
 }
 
 type SearchGameArgs struct {
-	IsSearchRegion bool
+	IsSearchSystem bool	// システムかどうか
+
+	IsSearchRegion bool	// リージョン検索
 	RegionID string
 
-	IsSearchStatus bool
+	IsSearchStatus bool	// ステータス検索
 	Status   int
 }
 
@@ -89,6 +91,14 @@ func SearchGame(args SearchGameArgs) ([]Game, error) {
 	// 検索条件を設定する
 	if args.IsSearchStatus {
 		searchParam.Status = args.Status
+	}
+
+	if args.IsSearchSystem {
+		// システムゲームを検索
+		searchParam.Type = 0
+	} else {
+		// 管理者ゲームを検索
+		searchParam.Type = 1
 	}
 
 	// 結果格納用
