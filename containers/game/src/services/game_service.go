@@ -171,7 +171,7 @@ func (GameService) CreateGame(args CreateGameArgs) error {
 		StartTime: startTime,
 		EndTime:   endTime,
 		Flag:      0,
-		Type:      0,
+		Type:      1,
 		Status:    0,
 		RegionID:  args.RegionID,
 	})
