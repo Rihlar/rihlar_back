@@ -1,0 +1,62 @@
+body {
+    font-family: 'Inter', sans-serif;
+    background-color: #f0f0f0;
+    /* Light gray background */
+    color: #333;
+    /* Dark gray text */
+}
+
+/* Custom scrollbar for better aesthetics */
+::-webkit-scrollbar {
+    width: 8px;
+}
+
+::-webkit-scrollbar-track {
+    background: #e0e0e0;
+    /* Lighter gray track */
+    border-radius: 10px;
+}
+
+::-webkit-scrollbar-thumb {
+    background: #888;
+    /* Medium gray thumb */
+    border-radius: 10px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: #555;
+    /* Darker gray on hover */
+}
+
+.modal-overlay {
+    background-color: rgba(0, 0, 0, 0.6);
+    /* Slightly darker overlay */
+}
+
+/* Monochrome status indicators */
+.status-予定 {
+    background-color: #e0e0e0;
+    color: #333;
+}
+
+/* Light gray, dark text */
+.status-開催中 {
+    background-color: #a0a0a0;
+    color: #fff;
+}
+
+/* Medium gray, white text */
+.status-終了 {
+    background-color: #606060;
+    color: #fff;
+}
+
+/* Dark gray, white text */
+.game-card-clickable {
+    cursor: pointer;
+    transition: transform 0.2s ease-in-out;
+}
+
+.game-card-clickable:hover {
+    transform: translateY(-5px);
+}
