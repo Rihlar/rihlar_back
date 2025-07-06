@@ -70,12 +70,12 @@ func GetAllGames() ([]Game, error) {
 
 // ゲームを開始する
 func (game *Game) StartGame() error {
-	return dbconn.Model(game).Update("status", 1).Error
+	return dbconn.Debug().Model(game).Update("status", 1).Error
 }
 
 // ゲームを終了する
 func (game *Game) EndGame() error {
-	return dbconn.Model(game).Update("status", 2).Error
+	return dbconn.Debug().Model(game).Update("status", 2).Error
 }
 
 // ゲームに属する全てのメンバー取得
