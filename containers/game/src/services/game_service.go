@@ -309,3 +309,31 @@ func (GameService) DeleteGame(gameId string) error {
 	// 削除する
 	return game.DeleteGame()
 }
+
+// ゲームを開始
+func (GameService) StartGame(gameId string) (error) {
+	// ゲームを取得
+	game, err := models.GetGame(gameId)
+
+	// エラー処理
+	if err != nil {
+		return err
+	}
+
+	// 開始する
+	return game.StartGame()
+}
+
+// ゲームを終了
+func (GameService) EndGame(gameId string) (error) {
+	// ゲームを取得
+	game, err := models.GetGame(gameId)
+
+	// エラー処理
+	if err != nil {
+		return err
+	}
+
+	// 終了する
+	return game.EndGame()
+}

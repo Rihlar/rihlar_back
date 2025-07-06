@@ -136,3 +136,45 @@ func DeleteGameHandler(ctx echo.Context) error {
 		"Data": "success",
 	})
 }
+
+// ゲームを開始するエンドポイント
+func StartGameHandler(ctx echo.Context) error {
+	// ゲームIDを取得
+	gameId := ctx.Request().Header.Get("GameID")
+
+	// サービスに渡す
+	err := gameService.StartGame(gameId)
+	if err != nil {
+		logger.PrintErr("ゲーム開始エラー", err)
+		return err
+	}
+
+	// 成功ログ
+	logger.Println("Successful game start.")
+
+	// レスポンス
+	return ctx.JSON(http.StatusOK, echo.Map{
+		"Data": "success",
+	})
+}
+
+// ゲームを終了するエンドポイント
+func EndGameHandler(ctx echo.Context) error {
+	// ゲームIDを取得
+	gameId := ctx.Request().Header.Get("GameID")
+
+	// サービスに渡す
+	err := gameService.EndGame(gameId)
+	if err != nil {
+		logger.PrintErr("ゲーム終了エラー", err)
+		return err
+	}
+
+	// 成功ログ
+	logger.Println("Successful game end.")
+
+	// レスポンス
+	return ctx.JSON(http.StatusOK, echo.Map{
+		"Data": "success",
+	})
+}

@@ -246,17 +246,24 @@ document.addEventListener('DOMContentLoaded', () => {
                 console.log("API: Updating game status...", gameId, newStatusValue);
                 const token = await auth.getToken(); // トークンを取得
 
+                let endpoint = '';
+                if (newStatusValue === 1) { // 開催中
+                    endpoint = '/game/start';
+                } else if (newStatusValue === 2) { // 終了
+                    endpoint = '/game/end';
+                } else {
+                    throw new Error("Invalid status value for update.");
+                }
+
                 try {
-                    // 仮のステータス更新エンドポイントへのPOSTリクエスト
-                    const response = await fetch('/game/update_status', { // 仮のAPIエンドポイント
-                        method: 'POST',
+                    const response = await fetch(endpoint, { // 動的にエンドポイントを変更
+                        method: 'PATCH', // PATCH メソッドを使用
                         headers: {
                             'Content-Type': 'application/json',
                             'Authorization': `${token}`
                         },
                         body: JSON.stringify({
-                            game_id: gameId,
-                            status: newStatusValue
+                            game_id: gameId // game_id をリクエストボディに含める
                         })
                     });
 
@@ -267,15 +274,9 @@ document.addEventListener('DOMContentLoaded', () => {
                     const data = await response.json();
                     console.log("Status update response:", data);
 
-                    // クライアントサイドのデータを更新 (APIレスポンスから直接更新)
-                    const gameIndex = backendData.games.findIndex(game => game.game_id === gameId);
-                    if (gameIndex !== -1) {
-                        backendData.games[gameIndex].status = statusMap[newStatusValue]; // 数値を文字列に変換して更新
-                        saveBackendData();
-                        return backendData.games[gameIndex];
-                    } else {
-                        throw new Error("Game not found for status update (client-side update failed).");
-                    }
+                    // クライアントサイドのデータ更新はloadGames()で行うため、ここでは不要
+                    // loadGames() が呼び出し元でリストを再ロードする
+                    return data; // APIレスポンスを返す
                 } catch (error) {
                     console.error("Failed to update game status via API:", error);
                     throw error;
