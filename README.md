@@ -44,3 +44,4 @@
 
 # Issue レスポンス
 参考: https://github.com/unSerori/juninry-api/blob/develop/README.md#api%E4%BB%95%E6%A7%98%E6%9B%B8%E3%81%A6%E3%82%93%E3%81%B7%E3%82%8C
+
