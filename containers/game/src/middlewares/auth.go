@@ -39,7 +39,9 @@ func RequireAuth(next echo.HandlerFunc) echo.HandlerFunc {
 }
 
 func RequireLabel(labels []string) echo.MiddlewareFunc {
-	return RequireLabelMiddleware{labels}.RequireAuth
+	return RequireLabelMiddleware{
+		Labels: labels,
+	}.RequireAuth
 }
 
 type RequireLabelMiddleware struct {
@@ -62,6 +64,10 @@ func (middleware RequireLabelMiddleware) RequireAuth(next echo.HandlerFunc) echo
 		if err != nil {
 			logger.PrintErr(err)
 			return ctx.JSON(http.StatusUnauthorized, echo.Map{"error": "unauthorized"})
+		}
+
+		if len(claim.Labels) == 0 {
+			return ctx.JSON(http.StatusForbidden, echo.Map{"error": "you don't have permission"})
 		}
 
 		// 特定のラベルを持っているか検証
