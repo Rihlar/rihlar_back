@@ -10,6 +10,8 @@ import (
 
 // ルーティング
 func InitRoutes(router *echo.Echo) *echo.Echo {
+	// 認証を必要とするように変更
+	router.Use(middlewares.RequireAuth)
 
 	//ranking取得
 	router.GET("/ranking/personal/:user_id", controllers.GetMyRankingHandler)
@@ -24,7 +26,7 @@ func InitRoutes(router *echo.Echo) *echo.Echo {
 	router.POST("/create", controllers.CreateGameHandler,middlewares.RequireLabel([]string{"admin"}))
 
 	// ゲームに参加するエンドポイント
-	router.POST("/join", controllers.JoinGameHandler)
+	router.POST("/join", controllers.JoinGameHandler,middlewares.RequireAuth)
 
 	// ゲームの一覧を取得するエンドポイント
 	router.GET("/list", controllers.GetGameListHandler, middlewares.RequireLabel([]string{"admin"}))

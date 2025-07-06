@@ -54,8 +54,9 @@ func GetJoinGamesHandler(ctx echo.Context) error {
 
 // ゲームに参加するエンドポイント
 func JoinGameHandler(ctx echo.Context) error {
-	// TODO 後ほどミドルウェアからの取得に変更する
-	userId := ctx.Request().Header.Get("UserID")
+	// UserID を取得
+	userId := ctx.Get("UserID").(string)
+
 	gameId := ctx.Request().Header.Get("GameID")
 
 	// サービスに渡す
