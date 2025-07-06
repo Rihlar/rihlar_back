@@ -138,10 +138,19 @@ func DeleteGameHandler(ctx echo.Context) error {
 	})
 }
 
+type ToggleGameStatusArgs struct {
+	GameId string `json:"game_id"`
+}
+
 // ゲームを開始するエンドポイント
 func StartGameHandler(ctx echo.Context) error {
 	// ゲームIDを取得
-	gameId := ctx.Request().Header.Get("GameID")
+	var args ToggleGameStatusArgs
+	if err := ctx.Bind(&args); err != nil {
+		return err
+	}
+
+	gameId := args.GameId
 
 	// サービスに渡す
 	err := gameService.StartGame(gameId)
@@ -162,7 +171,12 @@ func StartGameHandler(ctx echo.Context) error {
 // ゲームを終了するエンドポイント
 func EndGameHandler(ctx echo.Context) error {
 	// ゲームIDを取得
-	gameId := ctx.Request().Header.Get("GameID")
+	var args ToggleGameStatusArgs
+	if err := ctx.Bind(&args); err != nil {
+		return err
+	}
+
+	gameId := args.GameId
 
 	// サービスに渡す
 	err := gameService.EndGame(gameId)
