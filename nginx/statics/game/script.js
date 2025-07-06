@@ -349,19 +349,41 @@ document.addEventListener('DOMContentLoaded', () => {
              * @param {number} teamIndex - 削除するチームのインデックス
              * @returns {Array} 更新されたチームリスト
              */
-            removeTeamAPI: (gameId, teamIndex) => {
+            removeTeamAPI: async (gameId, teamIndex) => { // async を追加
                 console.log("API: Removing team from game...", gameId, teamIndex);
-                const gameIndex = backendData.games.findIndex(game => game.game_id === gameId); // game_id を使用
-                if (gameIndex !== -1 && backendData.games[gameIndex].teams) {
-                    if (teamIndex >= 0 && teamIndex < backendData.games[gameIndex].teams.length) {
-                        backendData.games[gameIndex].teams.splice(teamIndex, 1);
-                        saveBackendData();
-                        return [...backendData.games[gameIndex].teams];
-                    } else {
-                        throw new Error("Team index out of bounds.");
+                const token = await auth.getToken(); // トークンを取得
+                const game = backendData.games.find(g => g.game_id === gameId);
+
+                if (!game || !game.teams || teamIndex < 0 || teamIndex >= game.teams.length) {
+                    throw new Error("Game or team not found for deletion.");
+                }
+
+                const teamIdToDelete = game.teams[teamIndex].team_id;
+
+                try {
+                    const response = await fetch('/game/team/delete', { // DELETE リクエスト
+                        method: 'DELETE',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'Authorization': `${token}`,
+                            'GameID': gameId,   // GameID ヘッダーを追加
+                            'TeamID': teamIdToDelete // TeamID ヘッダーを追加
+                        },
+                    });
+
+                    if (!response.ok) {
+                        throw new Error(`HTTP error! status: ${response.status}`);
                     }
-                } else {
-                    throw new Error("Game not found or no teams for removal.");
+
+                    const data = await response.json();
+                    console.log("Team deletion response:", data);
+
+                    // バックエンドで削除されるため、クライアントサイドのデータ操作は不要
+                    // loadGames() が呼び出し元でリストを再ロードする
+                    return data; // APIレスポンスを返す
+                } catch (error) {
+                    console.error("Failed to delete team via API:", error);
+                    throw error;
                 }
             }
         };
@@ -613,15 +635,16 @@ document.addEventListener('DOMContentLoaded', () => {
             });
             // チーム削除ボタンにイベントリスナーを追加
             document.querySelectorAll('.remove-team-btn').forEach(button => {
-                button.onclick = (e) => {
+                button.onclick = async (e) => { // async を追加
                     const teamIndex = parseInt(e.target.dataset.index);
-                    openConfirmModal('本当にこのチームを削除しますか？', () => { // Added confirmation for team deletion
+                    openConfirmModal('本当にこのチームを削除しますか？', async () => { // async を追加
                         try {
-                            backendService.removeTeamAPI(currentSelectedGameId, teamIndex);
-                            // 削除後、詳細モーダルを閉じずにチームリストのみ更新
-                            const updatedTeams = backendService.fetchTeamsAPI(currentSelectedGameId);
-                            renderTeams(updatedTeams);
+                            await backendService.removeTeamAPI(currentSelectedGameId, teamIndex); // await を追加
+                            loadGames(); // 削除後にリストを再ロード
                             hideModal(confirmModal, confirmModalContent); // Hide confirmation modal
+                            // チームリストを更新するために、詳細モーダルを閉じて再度開く
+                            hideModal(gameDetailsModal, gameDetailsModalContent);
+                            openGameDetailsModal(currentSelectedGameId);
                         } catch (error) {
                             console.error("Failed to remove team:", error);
                             openConfirmModal('チームの削除に失敗しました。', () => hideModal(confirmModal, confirmModalContent), 'OK');

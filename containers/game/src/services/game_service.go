@@ -337,3 +337,31 @@ func (GameService) EndGame(gameId string) (error) {
 	// 終了する
 	return game.EndGame()
 }
+
+// チームを削除するエンドポイント
+func (GameService) DeleteTeam(gameId string, teamId string) (error) {
+	// ゲームを取得
+	game, err := models.GetGame(gameId)
+
+	// エラー処理
+	if err != nil {
+		return err
+	}
+
+	// 削除する
+	return game.DeleteTeam(teamId)
+}
+
+// メンバーを削除するエンドポイント
+func (GameService) DeleteMember(gameId string, userId string) (error) {
+	// ゲームを取得
+	game, err := models.GetGame(gameId)
+
+	// エラー処理
+	if err != nil {
+		return err
+	}
+
+	// 削除する
+	return game.DeleteMember(userId)
+}

@@ -37,6 +37,12 @@ func InitRoutes(router *echo.Echo) *echo.Echo {
 
 	// ゲームを終了するエンドポイント
 	router.PATCH("/end", controllers.EndGameHandler, middlewares.RequireLabel([]string{"admin"}))
+
+	// チームの削除するエンドポイント
+	router.DELETE("/team/delete", controllers.DeleteTeamHandler, middlewares.RequireLabel([]string{"admin"}))
+
+	// メンバーを削除するエンドポイント
+	router.DELETE("/member/delete", controllers.DeleteMemberHandler, middlewares.RequireLabel([]string{"admin"}))
 	
 	//円詳細取得
 	router.GET("/circle/:circle_id", controllers.GetCircleDeteileHandler)
