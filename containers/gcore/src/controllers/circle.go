@@ -29,8 +29,8 @@ func CreateCircle(ctx echo.Context) error {
 		return err
 	}
 
-	// TODO 後ほどミドルウェアからの取得に変更する
-	userId := ctx.Request().Header.Get("UserID")
+	// ユーザーIDを取得する
+	userId := ctx.Get("UserID").(string)
 
 	// 円を作成する
 	circleIds, err := services.CreateCircle(services.CreateCircleArgs{
