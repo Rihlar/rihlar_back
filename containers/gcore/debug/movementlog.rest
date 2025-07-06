@@ -1,5 +1,5 @@
-@base_url = https://rihlar-test.kokomeow.com/gcore
-# @base_url = https://localhost:8943/gcore
+# @base_url = https://rihlar-test.kokomeow.com/gcore
+@base_url = https://localhost:8943/gcore
 
 ### 関西
 POST {{base_url}}/report/movement HTTP/1.1

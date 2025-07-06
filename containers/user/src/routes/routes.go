@@ -2,11 +2,15 @@ package routes
 
 import (
 	"user/controllers"
+	"user/middlewares"
 
 	"github.com/labstack/echo/v4"
 )
 
 func InitRoute(router *echo.Echo) *echo.Echo {
+	// 認証を必要とする
+	router.Use(middlewares.RequireAuth)
+
 	//profile一件取得
 	router.GET("/profile", controllers.GetProfileById)
 	//profile作成

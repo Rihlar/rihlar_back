@@ -22,8 +22,8 @@ func ReportMovement(ctx echo.Context) error {
 		return err
 	}
 
-	// TODO 後ほどミドルウェアからの取得に変更する
-	userId := ctx.Request().Header.Get("UserID")
+	// ユーザーIDを取得する
+	userId := ctx.Get("UserID").(string)
 
 	// サービスを呼び出す
 	if err := services.ReportMovement(services.MovementArgs{
@@ -43,8 +43,9 @@ func ReportMovement(ctx echo.Context) error {
 
 // 歩いたデータを記録するエンドポイント
 func GetReportedMovement(ctx echo.Context) error {
-	// TODO 後ほどミドルウェアからの取得に変更する
-	userId := ctx.Request().Header.Get("UserID")
+	// ユーザーIDを取得する
+	userId := ctx.Get("UserID").(string)
+
 	gameId := ctx.Request().Header.Get("GameID")
 
 	// サービスを呼び出す

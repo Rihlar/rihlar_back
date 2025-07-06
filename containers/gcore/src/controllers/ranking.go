@@ -9,8 +9,8 @@ import (
 )
 
 func GetRanking(ctx echo.Context) error {
-	// ユーザーID取得
-	userID := ctx.Request().Header.Get("UserID")
+	// ユーザーIDを取得する
+	userID := ctx.Get("UserID").(string)
 
 	// ゲームID取得
 	gameID := ctx.Request().Header.Get("GameID")
