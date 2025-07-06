@@ -33,3 +33,7 @@ POST {{base_url}}/join
 UserID: userid-e3abf90d-4bcf-4c3b-bbde-37694b1611b3
 GameID: gameid-996e5916-28b7-4222-ad5c-b332c1f892ec
 Content-Type: application/json
+
+### 開始済みのゲーム一覧を取得する
+GET {{base_url}}/startedgame 
+UserID: userid-79541130-3275-4b90-8677-01323045aca5

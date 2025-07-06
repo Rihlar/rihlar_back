@@ -237,3 +237,26 @@ func DeleteMemberHandler(ctx echo.Context) error {
 		"Data": "success",
 	})
 }
+
+// 開催中のゲームを取得する
+func GetStartedGamesHandler(ctx echo.Context) error {
+	// ユーザーIDを取得する
+	// userId := ctx.Get("UserID").(string)
+	
+	// TODO 後ほどミドルウェアからの取得に変更す
+	userId := ctx.Request().Header.Get("UserID")
+
+	// サービスに渡す
+	games, err := gameService.GetStartedGames(userId)
+	if err.Err != nil {
+		logger.PrintErr("開催中のゲーム取得エラー", err.LogMessage)
+		return ctx.JSON(err.Code,echo.Map{
+			"Message": err.ErrMessage,
+		})
+	}
+
+	// レスポンス
+	return ctx.JSON(http.StatusOK, echo.Map{
+		"Data": games,
+	})
+}
