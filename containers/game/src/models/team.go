@@ -48,6 +48,14 @@ func (Team) TableName() string {
 	return "Teams"
 }
 
+// チームを削除する
+func (game *Game) DeleteTeam(teamID string) error {
+	return dbconn.Where(&Team{
+		TeamID: teamID,
+		GameID: game.GameID,
+	}).Delete(&Team{}).Error
+}
+
 func DebugTeam() {
 	// デバッグ用のコードをここに書く
 

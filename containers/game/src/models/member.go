@@ -19,6 +19,14 @@ func (Member) TableName() string {
 	return "Members"
 }
 
+// メンバーを削除する
+func (game *Game) DeleteMember(userId string) error {
+	return dbconn.Where(&Member{
+		UserID: userId,
+		GameID: game.GameID,
+	}).Delete(&Member{}).Error
+}
+
 func DebugMember() {
 	logger.Println("メンバー取得成功")
 }
