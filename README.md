@@ -42,6 +42,12 @@
 - ```task clean``` : コンテナ落として全て削除
 - ```task down``` : コンテナ落とす
 
+# デバッグを実行する場合
+コードを変更するとテーブルが際生成されてデータが飛んでしまうのでデバッグする際は task restore でデバッグ用のデータを入れてください
+デバッグ時にインサートするデータを変更したい場合は デバッグコードのテーブルのドロップを一時的に無効にした後にgorm でデータを入れて
+その後 task dumpdb を実行してください 現在の maindb のダンプデータが　maindb.sqlに出力されます
+※ task restore は　maindb.sql　を復元しているだけなので authdb のデータは復元されません
+※ authdb の中身は機密データなどが入っている可能性があるのでダンプしないでください
+
 # Issue レスポンス
 参考: https://github.com/unSerori/juninry-api/blob/develop/README.md#api%E4%BB%95%E6%A7%98%E6%9B%B8%E3%81%A6%E3%82%93%E3%81%B7%E3%82%8C
-
