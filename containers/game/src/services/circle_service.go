@@ -30,7 +30,7 @@ func(CircleService) GetCircleImage(circleId string) (string, error) {
 		return "", err
 	}
 
-	// imageIdから画像パス生成
+	// imageIdから画像パス生成　TODO:
 	imagePath := "./assets/circle-images/" + circleDeteile.ImageID + ".png"
 
 	return imagePath, nil
