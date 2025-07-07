@@ -11,7 +11,7 @@ import (
 // ルーティング
 func InitRoutes(router *echo.Echo) *echo.Echo {
 	// 認証を必要とするように変更
-	router.Use(middlewares.RequireAuth)
+	// router.Use(middlewares.RequireAuth)
 
 	//ranking取得
 	router.GET("/ranking/personal/:user_id", controllers.GetMyRankingHandler)
@@ -48,6 +48,8 @@ func InitRoutes(router *echo.Echo) *echo.Echo {
 	
 	//円詳細取得
 	router.GET("/circle/:circle_id", controllers.GetCircleDeteileHandler)
+	// 円画像取得
+	router.GET("/circle/image/:circle_id", controllers.GetCircleImageHandler)
 
 	// 終了済みゲーム一覧
 	router.GET("/endgame/:user_id", controllers.GetEndGamesHandler)

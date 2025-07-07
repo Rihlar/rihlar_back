@@ -57,3 +57,24 @@ func GetRankingTopHandler(ctx echo.Context) error {
 		"Data": ranking,
 	})
 }
+
+// 画像取得
+func GetCircleImageHandler(ctx echo.Context) error {
+	// ゲームの特定する
+	id := ctx.Param("circle_id")
+
+	// サービスに渡す
+	imagePath, err := circleService.GetCircleImage(id)
+	if err != nil {
+		logger.PrintErr("画像パス取得エラー", imagePath)
+		return err
+	}
+
+	// 成功ログ
+	logger.Println("Successful imagePath get.")
+	
+	// レスポンス
+	return ctx.File(
+		imagePath,
+	)
+}
