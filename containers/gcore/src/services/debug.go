@@ -7,6 +7,8 @@ import (
 
 func Debug() {
 	// CreateTestData()
+	// メンバーを取得する
+	// member, err := models.GetGame(models.AdminUserId1)
 }
 
 func CreateTestData() {
