@@ -119,9 +119,9 @@ def create_circles_from_data(data_for_circles, base_url, user_id, fixed_steps=10
     print(f"\n--- Sending {len(data_for_circles)} circle creation requests to /create/circle endpoint ---")
     for i, data in enumerate(data_for_circles):
         payload = {
-            "latitude": data["latitude"] - 0.007,
-            "longitude": data["longitude"] + 0.005,
-            "steps": 3000  # Fixed steps value for circle creation
+            "latitude": data["latitude"] + 0.007,
+            "longitude": data["longitude"] - 0.007,
+            "steps": 2000  # Fixed steps value for circle creation
         }
 
         try:
