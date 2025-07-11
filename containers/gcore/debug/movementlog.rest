@@ -1,5 +1,5 @@
-@base_url = https://rihlar-test.kokomeow.com/gcore
-# @base_url = https://localhost:8943/gcore
+# @base_url = https://rihlar-test.kokomeow.com/gcore
+@base_url = https://localhost:8943/gcore
 
 ### 関西
 POST {{base_url}}/report/movement HTTP/1.1
@@ -67,13 +67,68 @@ UserID : userid-79541130-3275-4b90-8677-01323045aca5
 GameID : gameid-413a287b-213c-414f-a287-c1397db8f9bf
 Content-Type: application/json
 
-### テスト円の作成
+### テスト円の作成1 (1位にするため)
 POST {{base_url}}/create/circle HTTP/1.1
 UserID : userid-79541130-3275-4b90-8677-01323045aca5
 Content-Type: application/json
 
 {
-    "latitude": 35.7365646305852,
-    "longitude": 139.80954685258914,
-    "steps": 10
+    "latitude": 35.70741378282897,
+    "longitude": 135.22928178518976,
+    "steps": 10000
+}
+
+### テスト円の作成2 (1位にするため)
+POST {{base_url}}/create/circle HTTP/1.1
+UserID : userid-79541130-3275-4b90-8677-01323045aca5
+Content-Type: application/json
+
+{
+    "latitude": 36.12954086567393,
+    "longitude": 135.03990751760674,
+    "steps": 10000
+}
+
+### テスト円の作成3 (1位にするため)
+POST {{base_url}}/create/circle HTTP/1.1
+UserID : userid-79541130-3275-4b90-8677-01323045aca5
+Content-Type: application/json
+
+{
+    "latitude": 36.224097608827826,
+    "longitude": 134.87002188467537,
+    "steps": 10000
+}
+
+### テスト円の作成4 (1位にするため)
+POST {{base_url}}/create/circle HTTP/1.1
+UserID : userid-79541130-3275-4b90-8677-01323045aca5
+Content-Type: application/json
+
+{
+    "latitude": 33.11728721713383, 
+    "longitude": 135.30066395134796,
+    "steps": 10000
+}
+
+### テスト円の作成5 (1位にするため)
+POST {{base_url}}/create/circle HTTP/1.1
+UserID : userid-79541130-3275-4b90-8677-01323045aca5
+Content-Type: application/json
+
+{
+    "latitude": 33.543314667528826,
+    "longitude": 136.76178739196803,
+    "steps": 10000
+}
+
+### テスト円の作成6 (1位にするため)
+POST {{base_url}}/create/circle HTTP/1.1
+UserID : userid-79541130-3275-4b90-8677-01323045aca5
+Content-Type: application/json
+
+{
+    "latitude": 35.85580432375738,
+    "longitude": 135.7991780749079,
+    "steps": 10000
 }

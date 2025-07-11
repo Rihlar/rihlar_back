@@ -1,5 +1,5 @@
-# @base_url = https://localhost:8943/game
-@base_url = https://rihlar-test.kokomeow.com/game
+@base_url = https://localhost:8943/game
+# @base_url = https://rihlar-test.kokomeow.com/game
 
 @user_id = userid-79541130-3275-4b90-8677-01323045aca5
 

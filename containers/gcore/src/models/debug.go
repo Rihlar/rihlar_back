@@ -51,3 +51,4 @@ func Debug() {
 	DebugCircle()
 	DebugMovementLog()
 }
+
