@@ -66,3 +66,14 @@ GET {{base_url}}/get/top HTTP/1.1
 UserID : userid-79541130-3275-4b90-8677-01323045aca5
 GameID : gameid-413a287b-213c-414f-a287-c1397db8f9bf
 Content-Type: application/json
+
+### テスト円の作成
+POST {{base_url}}/report/movement HTTP/1.1
+UserID : userid-79541130-3275-4b90-8677-01323045aca5
+Content-Type: application/json
+
+{
+    "latitude": 34.706521,
+    "longitude": 135.503366,
+    "steps": 10000
+}
