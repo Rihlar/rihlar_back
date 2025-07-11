@@ -52,7 +52,7 @@ const (
 	MaxLon = 137.5 // 東限
 
 	RecordsPerUser = 100 // 各ユーザーごとの行動履歴件数 (基本件数)
-	RandomCircleRecordsPerUser = 100 // 各ユーザーごとのランダムな円データ件数
+	RandomCircleRecordsPerUser = 10 // 各ユーザーごとのランダムな円データ件数
 	DuplicateLatLngRatio = 0.2 // 約20%の履歴で緯度経度を重複させる
 
 	WalkRecordsPerUser = 50 // 各ユーザーごとの歩数記録件数

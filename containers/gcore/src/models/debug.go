@@ -1,18 +1,18 @@
 package models
 
-import "gcore/logger"
+// import "gcore/logger"
 
 // "gcore/logger"
 
 // テーブルを削除してマイグレートする関数
 func DeleteAndMigrate(table interface{}) error {
-	// テーブルを削除する
-	err := dbconn.Migrator().DropTable(table)
+	// // テーブルを削除する
+	// err := dbconn.Migrator().DropTable(table)
 
-	// エラー処理
-	if err != nil {
-		logger.PrintErr("テーブルの削除中にエラーが発生しました",err)
-	}
+	// // エラー処理
+	// if err != nil {
+	// 	logger.PrintErr("テーブルの削除中にエラーが発生しました",err)
+	// }
 
 	// マイグレーションする
 	return dbconn.AutoMigrate(table)
@@ -31,20 +31,20 @@ func Debug() {
 	DeleteAndMigrate(MovementLog{})
 	DeleteAndMigrate(Profile{})
 
-	// デバッグのコードを呼び出す
+	// // デバッグのコードを呼び出す
 	// DebugSample()
 
 	// DebugProfile()
 	// DebugTeam()
 	// DebugMember()
 
-	// ゲームで使用するリージョンを作成する
+	// // ゲームで使用するリージョンを作成する
 	// DebugRegion()
 
-	// ゲームをデバッグする
+	// // ゲームをデバッグする
 	// DebugGame()
 
-	// DebugBaseChunk()
+	// // DebugBaseChunk()
 	// DebugGameChunk()
 
 	// DebugPerformance()
