@@ -92,7 +92,7 @@ def create_random_circles(movement_data, base_url, user_id, num_samples=10, fixe
         payload = {
             "latitude": data["latitude"],
             "longitude": data["longitude"],
-            "steps": fixed_steps  # Fixed steps value for circle creation
+            "steps": 10000  # Fixed steps value for circle creation
         }
 
         try:

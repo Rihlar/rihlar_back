@@ -31,23 +31,23 @@ func Debug() {
 	DeleteAndMigrate(MovementLog{})
 	DeleteAndMigrate(Profile{})
 
-	// // デバッグのコードを呼び出す
-	// DebugSample()
+	// デバッグのコードを呼び出す
+	DebugSample()
 
-	// DebugProfile()
-	// DebugTeam()
-	// DebugMember()
+	DebugProfile()
+	DebugTeam()
+	DebugMember()
 
-	// // ゲームで使用するリージョンを作成する
-	// DebugRegion()
+	// ゲームで使用するリージョンを作成する
+	DebugRegion()
 
-	// // ゲームをデバッグする
-	// DebugGame()
+	// ゲームをデバッグする
+	DebugGame()
 
-	// // DebugBaseChunk()
-	// DebugGameChunk()
+	// DebugBaseChunk()
+	DebugGameChunk()
 
-	// DebugPerformance()
-	// DebugCircle()
-	// DebugMovementLog()
+	DebugPerformance()
+	DebugCircle()
+	DebugMovementLog()
 }
