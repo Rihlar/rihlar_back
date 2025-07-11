@@ -176,7 +176,7 @@ if __name__ == "__main__":
         print("No valid data parsed from CSV. Exiting.")
     else:
         # 2. Send movement data
-        # send_movement_data(parsed_movement_data, BASE_URL, USER_ID)
+        send_movement_data(parsed_movement_data, BASE_URL, USER_ID)
 
         # 3. Get 10 random data points for circle creation
         random_circle_data = get_random_samples(parsed_movement_data, NUM_CIRCLE_SAMPLES)
