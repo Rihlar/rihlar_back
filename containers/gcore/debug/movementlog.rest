@@ -132,3 +132,36 @@ Content-Type: application/json
     "longitude": 135.7991780749079,
     "steps": 10000
 }
+
+### デモ用の円生成1
+POST {{base_url}}/create/circle HTTP/1.1
+UserID : userid-79541130-3275-4b90-8677-01323045aca5
+Content-Type: application/json
+
+{
+    "latitude": 34.65185946485115, 
+    "longitude": 135.637392653428,
+    "steps": 10000
+}
+
+### デモ用の円生成2
+POST {{base_url}}/create/circle HTTP/1.1
+UserID : userid-79541130-3275-4b90-8677-01323045aca5
+Content-Type: application/json
+
+{
+    "latitude": 34.65077492732302, 
+    "longitude": 135.64119725299452,
+    "steps": 7000
+}
+
+### デモ用の円生成3
+POST {{base_url}}/create/circle HTTP/1.1
+UserID : userid-79541130-3275-4b90-8677-01323045aca5
+Content-Type: application/json
+
+{
+    "latitude": 34.650043779299665, 
+    "longitude": 135.63759978466422,
+    "steps": 4000
+}
