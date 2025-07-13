@@ -1,0 +1,12 @@
+#map {
+    height: 100vh; /* ビューポートの高さ全体を使用 */
+    width: 100vw;  /* ビューポートの幅全体を使用 */
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    margin: 0;
+    padding: 0;
+    overflow: hidden; /* スクロールバーが表示されないようにする */
+}
