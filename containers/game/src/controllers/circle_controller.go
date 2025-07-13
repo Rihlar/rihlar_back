@@ -79,9 +79,10 @@ func GetCircleImageHandler(ctx echo.Context) error {
 		imagePath,
 	)
 }
+
 // 円の画像アップロード
 func UploadCircleImageHandler(ctx echo.Context) error {
-	// circleIDの特定
+	// circleIDの特定　TODO:
 	id := ctx.Request().Header.Get("CircleID")
 
 	// ファイルの特定
@@ -103,5 +104,6 @@ func UploadCircleImageHandler(ctx echo.Context) error {
 	// レスポンス
 	return ctx.JSON(http.StatusOK, echo.Map{
 		"Data": "success",
+		"circle_id": id,
 	})
 }

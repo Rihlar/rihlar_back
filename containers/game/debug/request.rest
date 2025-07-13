@@ -2,7 +2,7 @@
 
 @user_id = userid-79541130-3275-4b90-8677-01323045aca5
 
-@circle_id =circle-fdcc8993-2239-4972-b29e-369946ad4057
+@circle_id =circle-dd3be05a-e095-4b30-ac36-9e3bfac1ec5c
 
 @game_id = gameid-413a287b-213c-414f-a287-c1397db8f9bf
 
@@ -21,6 +21,9 @@ UserID: userid-79541130-3275-4b90-8677-01323045aca5
 
 ### 円の詳細取得
 GET {{base_url}}/circle/{{circle_id}}
+### 円の画像取得
+GET  {{base_url}}/circle/image
+CircleID: circle-ff10250c-41d9-47b8-a74b-d0b1810de1c5
 
 ### 終了済みゲーム一覧
 GET {{base_url}}/endgame/{{user_id}}
