@@ -3,8 +3,9 @@ document.addEventListener('DOMContentLoaded', () => {
     const map = L.map('map').setView([34.706, 135.501], 10); // 初期表示の中心座標とズームレベルを調整
 
     // OpenStreetMapのタイルレイヤーを追加
-    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-        attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+    L.tileLayer('https://{s}.google.com/vt/lyrs=s,h&x={x}&y={y}&z={z}', {
+        subdomains: ['mt0', 'mt1', 'mt2', 'mt3'],
+        attribution: "<a href='https://developers.google.com/maps/documentation' target='_blank'>Google Map</a>",
     }).addTo(map);
 
     // 各順位・チームに対応する色を定義
@@ -124,7 +125,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 opacity: 1,
                 fillOpacity: 0.8
             }).addTo(map)
-              .bindPopup(`
+                .bindPopup(`
                 <b>移動データ</b><br>
                 <b>Time:</b> ${new Date(sortedData[0].timeStamp * 1000).toLocaleString()}<br>
                 <b>Steps:</b> ${sortedData[0].steps}<br>
