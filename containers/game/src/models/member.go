@@ -31,6 +31,17 @@ func DebugMember() {
 	logger.Println("メンバー取得成功")
 }
 
+// 自身が所属しているチームを取得
+func (member *Member) GetTeam() (Team, error) {
+	// チームを取得
+	var team Team
+	err := dbconn.Where(&Team{
+		TeamID: member.TeamID,
+	}).Find(&team).Error
+	return team, err
+}
+
+
 // 現在のランキング取得
 func GetMyRanking(userId string, gameId string) (int, error) {
 

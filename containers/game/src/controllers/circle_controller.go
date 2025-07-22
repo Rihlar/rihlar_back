@@ -29,7 +29,30 @@ func GetCircleDeteileHandler(ctx echo.Context) error {
 	return ctx.JSON(http.StatusOK, echo.Map{
 		"Data": circle,
 	})
+}
 
+// 上位10位のデータを取得する
+func GetRankingTop10Handler(ctx echo.Context) error {
+	// ゲームのIDを取得する
+	gameId := ctx.Param("game_id")
+
+	// TODO UserID の取得 (後々ミドルウェアからの取得に変更する)
+	userid := ctx.Request().Header.Get("UserID")
+
+	// サービスに渡す
+	ranking, err := rankingService.GetRankingTop10(userid, gameId)
+	if err != nil {
+		logger.PrintErr("ランキング取得エラー", ranking)
+		return err
+	}
+
+	// 成功ログ
+	logger.Println("Successful Ranking get.")
+
+	// レスポンス	
+	return ctx.JSON(http.StatusOK, echo.Map{
+		"Data": ranking,
+	})
 }
 
 // 上位３位の円を取得する
@@ -62,7 +85,7 @@ func GetRankingTopHandler(ctx echo.Context) error {
 func GetCircleImageHandler(ctx echo.Context) error {
 
 	// circleIDの特定　TODO: 
-  id := ctx.Request().Header.Get("CircleID")
+  	id := ctx.Request().Header.Get("CircleID")
 
 	// サービスに渡す
 	imagePath, err := circleService.GetCircleImage(id)

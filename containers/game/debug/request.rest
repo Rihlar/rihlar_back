@@ -12,7 +12,7 @@ GET {{base_url}}/
 ### ランキング取得
 GET {{base_url}}/ranking/personal/{{user_id}}
 ### ランキングTOP10
-GET {{base_url}}/ranking/top/{{game_id}}
+GET {{base_url}}/ranking/top10/{{game_id}}
 UserID: userid-79541130-3275-4b90-8677-01323045aca5
 
 ### 上位3位の円を取得する

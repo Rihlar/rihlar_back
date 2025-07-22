@@ -295,3 +295,21 @@ func GetGameByID(gameId string) (Game, error) {
 
 	return game, nil
 }
+
+// Top10のランキングを取得
+func (game *Game) GetRankingTop10() ([]Team, error) {
+	var teams []Team
+
+	result := dbconn.
+		Where("game_id = ?", game.GameID).
+		Order("points DESC").
+		Limit(10).
+		Find(&teams)
+
+	if result.Error != nil {
+		logger.PrintErr("ランキング上位取得エラー", result.Error)
+		return nil, result.Error
+	}
+
+	return teams, nil
+}
