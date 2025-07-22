@@ -12,8 +12,8 @@ import (
 
 type CircleService struct{}
 
-//　円の詳細取得
-func(CircleService) GetCircleDeteile(circleId string) (models.Circle, error) {
+// 　円の詳細取得
+func (CircleService) GetCircleDeteile(circleId string) (models.Circle, error) {
 
 	//　円の詳細取得
 	circleDeteile, err := models.GetCircleDeteile(circleId)
@@ -26,7 +26,7 @@ func(CircleService) GetCircleDeteile(circleId string) (models.Circle, error) {
 }
 
 // 画像取得
-func(CircleService) GetCircleImage(circleId string) (string, error) {
+func (CircleService) GetCircleImage(circleId string) (string, error) {
 
 	// circleIdから円のimageIdをとってくる
 	circleDeteile, err := models.GetCircleDeteile(circleId)
@@ -40,6 +40,7 @@ func(CircleService) GetCircleImage(circleId string) (string, error) {
 
 	return imagePath, nil
 }
+
 // 画像のアップロード
 func (CircleService) UploadImage(circleId string, userId string, fileHeader *multipart.FileHeader) error {
 
@@ -66,11 +67,10 @@ func (CircleService) UploadImage(circleId string, userId string, fileHeader *mul
 
 	// 画像がすでにあるのか確認
 	if _, err := os.Stat(dstPath); err == nil {
-	err := fmt.Errorf("file already exists: %s", dstPath)
-	logger.PrintErr("file already exists", err)
-	return err
-}
-
+		err := fmt.Errorf("file already exists: %s", dstPath)
+		logger.PrintErr("file already exists", err)
+		return err
+	}
 
 	// アップロードされたファイルを開く
 	src, err := fileHeader.Open()
@@ -104,38 +104,48 @@ func (CircleService) UploadImage(circleId string, userId string, fileHeader *mul
 	return nil
 }
 
+type ListCircle struct {
+	CircleID  string `json:"circleId"`
+	Theme     string `json:"theme"`     //画像のテーマ
+	TimeStamp int64  `json:"timestamp"` //作成日
+}
+
 // 画像のリスト
-func (CircleService) GetImageList(userid string) ([]string, error) {
+func (CircleService) GetImageList(userid string) ([]ListCircle, error) {
 	// プロフィールを取得
-	profile,err := models.GetProfile(userid)
+	profile, err := models.GetProfile(userid)
 	if err != nil {
 		logger.PrintErr("profile does not exist", err)
-		return []string{}, err
+		return []ListCircle{}, err
 	}
 
 	// システムのゲームを取得
-	sysGame,err := models.GetGameByID(profile.SysGame)
+	sysGame, err := models.GetGameByID(profile.SysGame)
 
 	// エラー処理
 	if err != nil {
 		logger.PrintErr("game does not exist", err)
-		return []string{}, err
+		return []ListCircle{}, err
 	}
 
 	// ゲームの円を取得
 	circles, err := sysGame.GetCircles()
 	if err != nil {
 		logger.PrintErr("circle does not exist", err)
-		return []string{}, err
+		return []ListCircle{}, err
 	}
 
-	// 円のIDを格納する	
-	circleIds := []string{}
+	// 円のIDを格納する
+	circleDatas := []ListCircle{}
 
 	// 円を回す
 	for _, circle := range circles {
-		circleIds = append(circleIds, circle.CircleID)
+		circleDatas = append(circleDatas, ListCircle{
+			CircleID:  circle.CircleID,
+			Theme:     circle.Theme,
+			TimeStamp: circle.CreatedAT.Unix(),
+		})
 	}
 
-	return circleIds, nil
+	return circleDatas, nil
 }
