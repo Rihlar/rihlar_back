@@ -55,6 +55,8 @@ func InitRoutes(router *echo.Echo) *echo.Echo {
 	//円画像アップロード
 	router.POST("/circle/image/upload", controllers.UploadCircleImageHandler)
 
+	// 画像のリストを返すエンドポイント
+	router.GET("/image/list", controllers.GetImageListHandler)
 
 	// 終了済みゲーム一覧
 	router.GET("/endgame/:user_id", controllers.GetEndGamesHandler)

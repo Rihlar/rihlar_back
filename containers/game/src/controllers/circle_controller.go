@@ -135,3 +135,24 @@ func UploadCircleImageHandler(ctx echo.Context) error {
 		"circle_id": id,
 	})
 }
+
+// 画像のリスト
+func GetImageListHandler(ctx echo.Context) error {
+	// TODO UserID の取得 (後々ミドルウェアからの取得に変更する)
+	userid := ctx.Request().Header.Get("UserID")
+
+	// サービスに渡す
+	imageList, err := circleService.GetImageList(userid)
+	if err != nil {
+		logger.PrintErr("画像リスト取得エラー", imageList)
+		return err
+	}
+
+	// 成功ログ
+	logger.Println("Successful image list get.")
+
+	// レスポンス
+	return ctx.JSON(http.StatusOK, echo.Map{
+		"Data": imageList,
+	})
+}
