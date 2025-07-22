@@ -100,6 +100,11 @@ func StepToSize(steps int64) float64 {
 func ProcessCreateCircle(args GamesCreateCircleArgs) ([]string, error) {
 	CircleIds := []string{}
 
+	// ID 生成
+	ImageId, _ := utils.Genid()
+	// circle のID を生成する
+	ImageIdStr := "image-" + ImageId
+
 	for _, game := range args.Games {
 		// 円を作成する関数
 		// メンバーを取得する関数
@@ -114,11 +119,6 @@ func ProcessCreateCircle(args GamesCreateCircleArgs) ([]string, error) {
 		circleId, _ := utils.Genid()
 		// circle のID を生成する
 		circleIdStr := "circle-" + circleId
-
-		// ID 生成
-		ImageId, _ := utils.Genid()
-		// circle のID を生成する
-		ImageIdStr := "image-" + ImageId
 
 		circleData := &models.Circle{
 			CircleID:  circleIdStr,
