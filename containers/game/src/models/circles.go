@@ -61,3 +61,21 @@ func GetCircleByTeamId(teamId string) ([]Circle, error) {
 
 	return circles, nil
 }
+
+// ゲームに属する円を取得する
+func (game Game) GetCircles() ([]Circle, error) {
+	var circles []Circle
+
+	// 取得
+	err := dbconn.Where(&Circle{
+		GameID: game.GameID,
+	}).Find(&circles).Error
+
+	// エラー処理
+	if err != nil {
+		logger.PrintErr("サークル取得エラー", err)
+		return []Circle{}, err
+	}
+
+	return circles, nil
+}

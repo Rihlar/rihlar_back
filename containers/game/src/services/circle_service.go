@@ -103,3 +103,39 @@ func (CircleService) UploadImage(circleId string, userId string, fileHeader *mul
 
 	return nil
 }
+
+// 画像のリスト
+func (CircleService) GetImageList(userid string) ([]string, error) {
+	// プロフィールを取得
+	profile,err := models.GetProfile(userid)
+	if err != nil {
+		logger.PrintErr("profile does not exist", err)
+		return []string{}, err
+	}
+
+	// システムのゲームを取得
+	sysGame,err := models.GetGameByID(profile.SysGame)
+
+	// エラー処理
+	if err != nil {
+		logger.PrintErr("game does not exist", err)
+		return []string{}, err
+	}
+
+	// ゲームの円を取得
+	circles, err := sysGame.GetCircles()
+	if err != nil {
+		logger.PrintErr("circle does not exist", err)
+		return []string{}, err
+	}
+
+	// 円のIDを格納する	
+	circleIds := []string{}
+
+	// 円を回す
+	for _, circle := range circles {
+		circleIds = append(circleIds, circle.CircleID)
+	}
+
+	return circleIds, nil
+}
