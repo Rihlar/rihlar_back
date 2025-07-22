@@ -41,12 +41,20 @@ func(CircleService) GetCircleImage(circleId string) (string, error) {
 	return imagePath, nil
 }
 // 画像のアップロード
-func (CircleService) UploadImage(circleId string, fileHeader *multipart.FileHeader) error {
+func (CircleService) UploadImage(circleId string, userId string, fileHeader *multipart.FileHeader) error {
 
 	// 円取得
 	circleDeteile, err := models.GetCircleDeteile(circleId)
 	if err != nil {
 		logger.PrintErr("circle deteile does not exist", err)
+		return err
+	}
+
+	// 円が自分が作成したかの判定
+	if circleDeteile.UserID != userId {
+		// 円の所有者じゃない場合
+		err := fmt.Errorf("circle does not belong to user")
+		logger.PrintErr("circle does not belong to user", err)
 		return err
 	}
 

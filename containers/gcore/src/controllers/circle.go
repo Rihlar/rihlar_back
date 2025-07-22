@@ -19,6 +19,7 @@ type CircleArgs struct {
 	Latitude  float64 `json:"latitude`  //緯度
 	Longitude float64 `json:"longitude` //経度
 	Steps     int64   `json:"steps`     //歩いた歩数
+	Theme 	  string  `json:"theme`		//テーマ
 }
 
 // 円を作成する関数
@@ -30,7 +31,10 @@ func CreateCircle(ctx echo.Context) error {
 	}
 
 	// ユーザーIDを取得する
-	userId := ctx.Get("UserID").(string)
+	// userId := ctx.Get("UserID").(string)
+	
+	// TODO デバッグ用にヘッダからユーザーIDを取得する
+	userId := ctx.Request().Header.Get("UserID")
 
 	// 円を作成する
 	circleIds, err := services.CreateCircle(services.CreateCircleArgs{
@@ -38,6 +42,7 @@ func CreateCircle(ctx echo.Context) error {
 		Steps:     args.Steps,
 		Latitude:  args.Latitude,
 		Longitude: args.Longitude,
+		Theme:     args.Theme,
 	})
 
 	// エラー処理

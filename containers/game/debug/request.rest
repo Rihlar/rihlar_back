@@ -6,6 +6,8 @@
 
 @game_id = gameid-413a287b-213c-414f-a287-c1397db8f9bf
 
+@image_circle_id = circle-e3be89dd-18d9-48ec-971c-0c984c7c633e
+
 # test
 GET {{base_url}}/
 
@@ -19,11 +21,24 @@ UserID: userid-79541130-3275-4b90-8677-01323045aca5
 GET {{base_url}}/ranking/top/{{game_id}}
 UserID: userid-79541130-3275-4b90-8677-01323045aca5
 
+### 円に画像をアップロードするエンドポイント
+POST {{base_url}}/circle/image/upload
+Content-Type: multipart/form-data; boundary=boundary
+CircleID: circle-e3be89dd-18d9-48ec-971c-0c984c7c633e
+UserID: {{user_id}}
+
+--boundary
+Content-Disposition: form-data; name="image"; filename="image.png"
+Content-Type: image/png
+
+< ./containers/game/src/assets/circle-images/umeda_image.png
+
+--boundary
+
 ### 円の詳細取得
 GET {{base_url}}/circle/{{circle_id}}
 ### 円の画像取得
-GET  {{base_url}}/circle/image
-CircleID: circle-ff10250c-41d9-47b8-a74b-d0b1810de1c5
+GET  {{base_url}}/circle/image/{{image_circle_id}}
 
 ### 終了済みゲーム一覧
 GET {{base_url}}/endgame/{{user_id}}

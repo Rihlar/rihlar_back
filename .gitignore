@@ -24,3 +24,4 @@ containers/user/src/tmp/
 containers/game/src/tmp/
 containers/gcore/src/tmp/
 
+containers/game/src/assets/circle-images/*.png

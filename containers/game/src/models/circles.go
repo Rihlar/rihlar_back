@@ -18,6 +18,7 @@ type Circle struct {
 	CreatedAT time.Time `gorm:"autoCreateTime" json:"createdAT"`    // 作成時
 	ImageID   string    `gorm:"varchar(50)" json:"imageID"`         // イメージID
 	Steps     int64     `json:"steps"`                              // 歩数
+	Theme     string    `json:"theme"`								// 円のテーマ
 }
 
 // テーブル名
