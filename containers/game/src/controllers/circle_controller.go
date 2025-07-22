@@ -17,14 +17,14 @@ func GetCircleDeteileHandler(ctx echo.Context) error {
 
 	// 円の詳細取得
 	circle, err := circleService.GetCircleDeteile(id)
-		if err != nil {
+	if err != nil {
 		logger.PrintErr("円取得エラー", circle)
 		return err
 	}
 
 	// 成功ログ
 	logger.Println("Successful circleDeteil get.")
-	
+
 	// レスポンス
 	return ctx.JSON(http.StatusOK, echo.Map{
 		"Data": circle,
@@ -43,7 +43,7 @@ func GetRankingTopHandler(ctx echo.Context) error {
 	logger.Println("UserID: ", userid)
 
 	// サービスに渡す
-	ranking, err := rankingService.GetRankingTop(userid,id)
+	ranking, err := rankingService.GetRankingTop(userid, id)
 	if err != nil {
 		logger.PrintErr("ランキング取得エラー", ranking)
 		return err
@@ -51,9 +51,59 @@ func GetRankingTopHandler(ctx echo.Context) error {
 
 	// 成功ログ
 	logger.Println("Successful Ranking get.")
-	
+
 	// レスポンス
 	return ctx.JSON(http.StatusOK, echo.Map{
 		"Data": ranking,
+	})
+}
+
+// 画像取得
+func GetCircleImageHandler(ctx echo.Context) error {
+
+	// circleIDの特定　TODO: 
+  id := ctx.Request().Header.Get("CircleID")
+
+	// サービスに渡す
+	imagePath, err := circleService.GetCircleImage(id)
+	if err != nil {
+		logger.PrintErr("画像パス取得エラー", imagePath)
+		return err
+	}
+
+	// 成功ログ
+	logger.Println("Successful imagePath get.")
+	
+	// レスポンス
+	return ctx.File(
+		imagePath,
+	)
+}
+
+// 円の画像アップロード
+func UploadCircleImageHandler(ctx echo.Context) error {
+	// circleIDの特定　TODO:
+	id := ctx.Request().Header.Get("CircleID")
+
+	// ファイルの特定
+	fileHeader, err := ctx.FormFile("image")
+	if err != nil {
+		return ctx.JSON(http.StatusBadRequest, echo.Map{"error": "画像ファイルが必要です"})
+	}
+
+	// サービスに渡す
+	err = circleService.UploadImage(id, fileHeader)
+	if err != nil {
+		logger.PrintErr("画像アップロードエラー", err)
+		return ctx.JSON(http.StatusBadRequest, echo.Map{"error": "画像アップロードエラー"})
+	}
+
+	// 成功ログ
+	logger.Println("Successful image upload.")
+
+	// レスポンス
+	return ctx.JSON(http.StatusOK, echo.Map{
+		"Data": "success",
+		"circle_id": id,
 	})
 }
