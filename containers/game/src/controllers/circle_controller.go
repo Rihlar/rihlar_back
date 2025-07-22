@@ -109,6 +109,10 @@ func UploadCircleImageHandler(ctx echo.Context) error {
 	// circleIDの特定　TODO:
 	id := ctx.Request().Header.Get("CircleID")
 
+	// TODO UserID の取得 (後々ミドルウェアからの取得に変更する)
+	userid := ctx.Request().Header.Get("UserID")
+	logger.Println("UserID: ", userid)
+
 	// ファイルの特定
 	fileHeader, err := ctx.FormFile("image")
 	if err != nil {
@@ -116,7 +120,7 @@ func UploadCircleImageHandler(ctx echo.Context) error {
 	}
 
 	// サービスに渡す
-	err = circleService.UploadImage(id, fileHeader)
+	err = circleService.UploadImage(id, userid, fileHeader)
 	if err != nil {
 		logger.PrintErr("画像アップロードエラー", err)
 		return ctx.JSON(http.StatusBadRequest, echo.Map{"error": "画像アップロードエラー"})

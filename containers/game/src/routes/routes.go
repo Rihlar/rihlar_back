@@ -48,7 +48,7 @@ func InitRoutes(router *echo.Echo) *echo.Echo {
 	
 	//円詳細取得
 	router.GET("/circle/:circle_id", controllers.GetCircleDeteileHandler)
-	
+
 	// 円画像取得
 	router.GET("/circle/image/:circle_id", controllers.GetCircleImageHandler)
 
