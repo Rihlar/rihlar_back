@@ -14,6 +14,7 @@ type CreateCircleArgs struct {
 	Steps     int64   `json:"steps`
 	Latitude  float64 `json:"latitude`
 	Longitude float64 `json:"longitude`
+	Theme     string  `json:"theme`
 }
 
 func CreateCircle(args CreateCircleArgs) ([]string, error) {
@@ -52,6 +53,7 @@ func CreateCircle(args CreateCircleArgs) ([]string, error) {
 		Longitude: args.Longitude,
 		Games:     []models.Game{admGame, sysGame},
 		CircleSize: circleSize,
+		Theme: args.Theme,
 	})
 
 	// エラー処理
@@ -69,6 +71,7 @@ type GamesCreateCircleArgs struct {
 	Longitude  float64 `json:"longitude`
 	Games      []models.Game
 	CircleSize float64 `json:"circleSize` //円のサイズ
+	Theme      string  `json:"theme`		//円のテーマ
 }
 
 
@@ -128,6 +131,7 @@ func ProcessCreateCircle(args GamesCreateCircleArgs) ([]string, error) {
 			Longitude: args.Longitude,
 			ImageID:   ImageIdStr,
 			Steps:     args.Steps,
+			Theme:     args.Theme,
 		}
 
 		// 円を作成する
