@@ -64,6 +64,7 @@ func (RankingService) GetMyRanking(userId string) (RankingResult, error) {
 	return result, nil
 }
 
+
 // TopRankingは全体のJSON構造を表します。
 // JSONのトップレベルキーが固定されている場合に最適です。
 type TopRanking struct {
@@ -169,6 +170,84 @@ func (RankingService) GetRankingTop(userid, gameId string) (TopRanking, error) {
 	returnRanking.Self.Circles = ModelCircleToCircle(circles, true)
 
 	return returnRanking, nil
+}
+
+// ランキングTOP10用の構造体
+type RankTop10Entry struct {
+	TeamId string `json:"TeamID"`
+	Points int    `json:"Points"`
+}
+
+type SelfTop10Entry struct {
+	Rank  int `json:"rank"`
+	Point int `json:"point"`
+	TeamId string `json:"TeamID"`
+}
+
+type Top10LeaderboardData struct { // 構造体名を変更
+	Ranks []RankTop10Entry `json:"ranks"`
+	Self  SelfTop10Entry   `json:"self"`
+}
+
+// ランキングtop10を取得
+func (RankingService) GetRankingTop10(userid, gameId string) (Top10LeaderboardData, error) {
+	// ゲームを取得する
+	game, err := models.GetGameByID(gameId)
+
+	// エラー処理
+	if err != nil {
+		logger.PrintErr("Game does not exist", err)
+		return Top10LeaderboardData{}, err
+	}
+
+	// メンバーを取得
+	member, err := game.GetMemberByUserID(userid)
+
+	// エラー処理
+	if err != nil {
+		return Top10LeaderboardData{}, err
+	}
+
+	// top10のランキングを取得
+	teams, err := game.GetRankingTop10()
+	if err != nil {
+		logger.PrintErr("Unable to get ranking", err)
+		return Top10LeaderboardData{}, err
+	}
+
+	datas := []RankTop10Entry{}
+
+	// チームを回す
+	for _, team := range teams {
+		// チームを追加する
+		datas = append(datas, RankTop10Entry{
+			TeamId: team.TeamID,
+			Points: team.Points,
+		})
+	}
+
+	// 自身のチーム情報を取得する
+	myTeam,err := member.GetTeam()
+
+	// エラー処理
+	if err != nil {
+		return Top10LeaderboardData{}, err
+	}
+
+	// 自身のチームランキング取得
+	myRank, err := myTeam.GetRank()
+	if err != nil {
+		return Top10LeaderboardData{}, err
+	}
+
+	return Top10LeaderboardData{
+		Ranks: datas,
+		Self:  SelfTop10Entry{
+			Rank:   myRank,
+			Point:  myTeam.Points,
+			TeamId: myTeam.TeamID,
+		},
+	}, nil
 }
 
 // モデルの円を返す円に変換する

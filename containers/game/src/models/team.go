@@ -56,6 +56,33 @@ func (game *Game) DeleteTeam(teamID string) error {
 	}).Delete(&Team{}).Error
 }
 
+// 自分のチームのランキングを取得
+func (team *Team) GetRank() (int, error) {
+	// 取得する
+	teams := []Team{}
+
+	// チームをソートして取得
+	result := dbconn.Where(&Team{
+		GameID: team.GameID,
+	}).Order("points desc").Find(&teams)
+
+	// エラー処理
+	if result.Error != nil {
+		logger.PrintErr("ランキング上位取得エラー", result.Error)
+		return 0, result.Error
+	}
+
+	// 自身のチームが来るまでチームを回す
+	for index, checkTeam := range teams {
+		if checkTeam.TeamID == team.TeamID {
+			// 自身のチームが来た時にindexを返す
+			return index + 1, nil
+		}
+	}
+
+	return 0, nil
+}
+
 func DebugTeam() {
 	// デバッグ用のコードをここに書く
 
