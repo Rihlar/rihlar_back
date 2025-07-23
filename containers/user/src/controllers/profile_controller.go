@@ -5,20 +5,14 @@ import (
 
 	"net/http"
 	"user/services"
-
 	"github.com/labstack/echo/v4"
 	"gorm.io/gorm"
 )
 
-// updateするための構造体
-type Input struct {
-	Name     string `json:"name"`           //ユーザ名
-	RecordID string `json:"record_id"`      // 実績ID
-	Comment  string `json:"comment"`        //コメント
-	RegionID string `json:"region_id"`      // 地域ID
-	SysGame  string `json:"system_game_id"` // システムゲームID
-	AdmGame  string `json:"admin_game_id"`  // アドミンゲームID
-}
+
+/*
+	プロフィール処理
+*/
 
 // プロフィールをIDから取得
 func GetProfileById(c echo.Context) error {
@@ -40,8 +34,9 @@ func GetProfileById(c echo.Context) error {
 	return c.JSON(http.StatusOK, profile)
 }
 
+// プロフィール作成
 func CreateProfile(c echo.Context) error {
-	var req Input
+	var req services.Input
 	//リクエスト整形(bind)
 	if err := c.Bind(&req); err != nil {
 		return c.JSON(http.StatusBadRequest, echo.Map{"error": "invalid input"})
@@ -50,7 +45,6 @@ func CreateProfile(c echo.Context) error {
 	//入力したデータを格納
 	input := services.Input{
 		Name:     req.Name,
-		RecordID: req.RecordID,
 		Comment:  req.Comment,
 		RegionID: req.RegionID,
 		SysGame:  req.SysGame,
@@ -76,7 +70,7 @@ func CreateProfile(c echo.Context) error {
 func UpdateProfileById(c echo.Context) error {
 	//useridをヘッダーから取得
 	userID := c.Request().Header.Get("userid")
-	var req Input
+	var req services.Input
 
 	//リクエスト整形(bind)
 	if err := c.Bind(&req); err != nil {
@@ -86,9 +80,10 @@ func UpdateProfileById(c echo.Context) error {
 	//リクエストを格納
 	input := services.Input{
 		Name:     req.Name,
-		RecordID: req.RecordID,
 		Comment:  req.Comment,
 		RegionID: req.RegionID,
+		SysGame: req.SysGame,
+		AdmGame: req.AdmGame,
 	}
 
 	//エラー処理
@@ -103,6 +98,66 @@ func UpdateProfileById(c echo.Context) error {
 
 	return c.JSON(http.StatusOK, echo.Map{"status": "profile updated"})
 }
+
+/*
+	実績関連処理
+*/
+
+//実績を取得する
+func GetAchiveProfile(c echo.Context) error {
+	//userIDを取得
+	UserID := c.Request().Header.Get("userid")
+
+	//service実行
+	Achivement, err := services.GetAchiveProfile(UserID)
+
+	//エラー処理
+	if err != nil {
+		//NotFoundのとき
+		if errors.Is(err, gorm.ErrRecordNotFound) {
+			return c.JSON(http.StatusNotFound, echo.Map{"error": "Achivement profile not found"})
+		}
+		//NotFound以外のエラー
+		return c.JSON(http.StatusInternalServerError, echo.Map{"error": "internal error"})
+	}
+	
+	//実績を返す
+	return c.JSON(http.StatusOK, Achivement)
+}
+
+// 実績更新
+func UpdateAchiveProfile(c echo.Context) error {
+	UserID := c.Request().Header.Get("userid")
+	var req services.AchiveInput
+
+	//リクエスト整形(bind)
+	if err := c.Bind(&req); err != nil {
+		return c.JSON(http.StatusBadRequest, echo.Map{"error": "invalid input"})
+	}
+
+	input := services.AchiveInput{
+		DisplayAchiveID1: req.DisplayAchiveID1,
+		DisplayAchiveID2: req.DisplayAchiveID2,
+		DisplayAchiveID3: req.DisplayAchiveID3,
+	}
+
+	//エラー処理
+	if err := services.UpdateAchiveProfile(UserID, input); err != nil {
+		//Notfoundのとき
+		if errors.Is(err, gorm.ErrRecordNotFound) {
+			return c.JSON(http.StatusNotFound, echo.Map{"error": "privacy profile not found"})
+		}
+		//Notfound以外のエラー
+		return c.JSON(http.StatusInternalServerError, echo.Map{"error": "update failed"})
+	}
+
+	return c.JSON(http.StatusOK, echo.Map{"status": "privacy updated!"})
+
+}
+
+/*
+	プライバシー関連
+*/
 
 // プライバシー情報を取得
 func GetPrivacyProfile(c echo.Context) error {
@@ -149,6 +204,10 @@ func UpdatePrivacyProfile(c echo.Context) error {
 
 	return c.JSON(http.StatusOK, echo.Map{"status": "privacy updated!"})
 }
+
+/*
+	地域情報関連
+*/
 
 // 地域情報の取得
 func GetRegionProfile(c echo.Context) error {

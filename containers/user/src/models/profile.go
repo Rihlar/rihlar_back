@@ -10,7 +10,9 @@ import (
 type Profile struct {
 	UserID    string  `gorm:"primaryKey;type:varchar(50)" json:"user_id"`        // ユーザID
 	Name      string  `gorm:"type:varchar(100);default:''" json:"name"`          //ユーザ名
-	RecordID  string  `gorm:"type:varchar(50);default''" json:"record_id"`                 // 実績ID
+	DisplayAchiveID1  string  `gorm:"type:varchar(50);default''" json:"display_achive_id1"`       // 実績ID1
+	DisplayAchiveID2  string  `gorm:"type:varchar(50);default''" json:"display_achive_id2"`       // 実績ID2
+	DisplayAchiveID3  string  `gorm:"type:varchar(50);default''" json:"display_achive_id3"`       // 実績ID3
 	Comment   string  `gorm:"type:varchar(255);default:''" json:"comment"`       // ユーザコメント（デフォルト空白）
 	Latitude  float64 `gorm:"type:double;default:0" json:"latitude"`             // 緯度（デフォルト0）
 	Longitude float64 `gorm:"type:double;default:0" json:"longitude"`            // 経度（デフォルト0）
@@ -27,6 +29,13 @@ type PrivacyProfile struct {
 	Size      int     `json:"size"`
 }
 
+//画面に設定する実績情報のみの構造体
+type AchiveProfile struct {
+	DisplayAchiveID1  string  `json:"display_achive_id1"`       // 実績ID1
+	DisplayAchiveID2  string  `json:"display_achive_id2"`       // 実績ID2
+	DisplayAchiveID3  string  `json:"display_achive_id3"`       // 実績ID3
+}
+
 func (Profile) TableName() string {
 	return "Profile"
 }
@@ -36,12 +45,17 @@ func DebugProfile() {
 	user_id := "userid-e3abf90d-4bcf-4c3b-bbde-37694b1611b3"
 	system_game_id := "systemgame-f5b632cb-707d-f450-eece-f119534b724c"
 	admin_game_id := "admingame-01e32526-1c27-c9a9-2b5b-d158b0f50c83"
+	display_achive_ID1 := "achive-d3c9d4be-84c2-5b4d-b116-088a8c8680ab"
+	display_achive_ID2 := "achive-86548e0a-41ab-9617-c248-094e2de7f4f4"
+	display_achive_ID3 := "achive-46e37298-1052-a002-4cc4-1567df59bae4"
 
 	//書き込み
 	result := dbconn.Save(&Profile{
 		UserID:    user_id,
 		Name:      "山田太郎",
-		RecordID:  "第一回優勝",
+		DisplayAchiveID1: display_achive_ID1,
+		DisplayAchiveID2: display_achive_ID2,
+		DisplayAchiveID3: display_achive_ID3,
 		Comment:   "よろしくお願いします。",
 		Latitude:  35.23,
 		Longitude: 135.25,
@@ -74,6 +88,9 @@ func DebugProfile() {
 
 	logger.PrintErr("プロフィール取得成功")
 }
+/*
+	プロフィール全体関連
+*/
 
 // IDからプロフィールを返す
 func FindProfileById(userID string) (*Profile, error) {
@@ -138,6 +155,50 @@ func UpdateProfile(userID string, data Profile) error {
 	return nil
 }
 
+/*
+	実績関連
+*/
+
+//
+func FindAchiveProfile(userID string) (*AchiveProfile, error) {
+
+	Profile, err := FindProfileById(userID)
+
+	if err != nil {
+		logger.PrintErr("実績取得エラー")
+		return nil, err
+	}
+
+	return &AchiveProfile{
+		DisplayAchiveID1: Profile.DisplayAchiveID1,
+		DisplayAchiveID2: Profile.DisplayAchiveID2,
+		DisplayAchiveID3: Profile.DisplayAchiveID3,
+	}, nil
+}
+
+//実績情報を編集する
+func UpdateAchiveProfile(userID string, data AchiveProfile) error {
+	result := dbconn.Model(&Profile{}).Where("user_id = ?", userID).Updates(data)
+
+	//エラーを返す
+	if result.Error != nil {
+		logger.PrintErr("実績編集エラー",result.Error)
+		return result.Error
+	}
+
+	//0件エラー
+	if result.RowsAffected == 0{
+		logger.PrintErr("変更レコード0件エラー")
+		return gorm.ErrRecordNotFound
+	}
+
+	return nil
+}
+
+/*
+	プライバシー関連
+*/
+
 //プライバシー情報を返す
 func FindPrivacyProfile(userID string) (*PrivacyProfile, error) {
 	//ProfileをIDから全項目一件検索
@@ -175,6 +236,10 @@ func UpdatePrivacyProfile(userID string, data PrivacyProfile) error {
 
 	return nil
 }
+
+/*
+	地域情報関連
+*/
 
 //地域情報を返す
 func FindRegionProfile (userID string) (string, error) {

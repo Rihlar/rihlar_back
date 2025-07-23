@@ -8,11 +8,17 @@ import (
 // 基本プロフィールの構造体
 type Input struct {
 	Name     string `json:"name"`           //ユーザ名
-	RecordID string `json:"record_id"`      // 実績ID
 	Comment  string `json:"comment"`        //コメント
 	RegionID string `json:"region_id"`      // 地域ID
 	SysGame  string `json:"system_game_id"` // システムゲームID
 	AdmGame  string `json:"admin_game_id"`  // アドミンゲームID
+}
+
+//　ユーザの実績の構造体
+type AchiveInput struct {
+	DisplayAchiveID1  *string  `json:"display_achive_id1"`       // 実績ID1
+	DisplayAchiveID2  *string  `json:"display_achive_id2"`       // 実績ID2
+	DisplayAchiveID3  *string  `json:"display_achive_id3"`       // 実績ID3
 }
 
 // プライバシー情報の構造体
@@ -21,6 +27,10 @@ type PrivacyInput struct {
 	Longitude *float64 `json:"longitude"`
 	Size      *int     `json:"size"`
 }
+
+/*
+	プロフィール全体関連
+*/
 
 // Profile情報を全て取得
 func GetProfileService(userID string) (*models.Profile, error) {
@@ -32,7 +42,6 @@ func CreateProfileService(input Input) (string, error){
 	//構造体にinputを格納
 	profile := models.Profile{
 		Name: input.Name,
-		RecordID: input.RecordID,
 		Comment:  input.Comment,
 		RegionID: input.RegionID,
 		SysGame: input.SysGame,
@@ -61,11 +70,6 @@ func UpdateProfileById(UserID string, input Input) error {
 		targetProfile.Name = input.Name
 	}
 
-	//実績IDが空文字でない時のみ代入
-	if input.RecordID != "" {
-		targetProfile.RecordID = input.RecordID
-	}
-
 	//コメントが空文字でない時のみ代入
 	if input.Comment != "" {
 		targetProfile.Comment = input.Comment
@@ -88,6 +92,53 @@ func UpdateProfileById(UserID string, input Input) error {
 
 	return models.UpdateProfile(UserID, *targetProfile)
 }
+
+/*
+	実績関連
+*/
+
+func GetAchiveProfile(userID string) (*models.AchiveProfile, error) {
+	return models.FindAchiveProfile(userID)
+}
+
+func UpdateAchiveProfile(userID string, input AchiveInput) error {
+	//UserIDが空文字ならエラー返す
+	if userID == "" {
+		return errors.New("userID is required")
+	}
+
+	//存在確認
+	AchiveProfile, err := models.FindAchiveProfile(userID)
+
+	//エラー処理
+	if err != nil {
+		return err
+	}
+
+	// 3つの実績が空文字でない時のみ代入
+	if input.DisplayAchiveID1 != nil {
+		AchiveProfile.DisplayAchiveID1 = *input.DisplayAchiveID1
+	}
+
+	if input.DisplayAchiveID2 != nil {
+		AchiveProfile.DisplayAchiveID2 = *input.DisplayAchiveID2
+	}
+
+	if input.DisplayAchiveID3 != nil {
+		AchiveProfile.DisplayAchiveID3 = *input.DisplayAchiveID3
+	}
+
+	//　実行結果を返す
+	return models.UpdateAchiveProfile(userID, models.AchiveProfile{
+		DisplayAchiveID1: AchiveProfile.DisplayAchiveID1,
+		DisplayAchiveID2: AchiveProfile.DisplayAchiveID2,
+		DisplayAchiveID3: AchiveProfile.DisplayAchiveID3,
+	})
+}
+
+/*
+	プライバシー関連
+*/
 
 // プライバシー情報の取得
 func GetPrivacyProfileService(UserID string) (*models.PrivacyProfile, error) {
@@ -130,6 +181,10 @@ func UpdatePrivacyProfileById(UserID string, input PrivacyInput) error {
 		Size:      privacyProfile.Size,
 	})
 }
+
+/*
+	地域情報関連
+*/
 
 // 所属地域の取得
 func GetRegionProfileService(UserID string) (string, error) {
