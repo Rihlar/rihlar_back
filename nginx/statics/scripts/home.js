@@ -52,6 +52,14 @@ async function Init() {
         uploadButton.addEventListener('click',async () => {
             await auth.UpdateIcon(fileInput.files[0]);
         });
+
+        try {
+            // アクセストークンを取得して表示する
+            const accessToken = await auth.getToken();
+            document.getElementById('access-token').value = accessToken;
+        } catch (error) {
+            console.error(error);
+        }
     } catch (error) {
         console.error(error);
         // ログインにリダイレクト
