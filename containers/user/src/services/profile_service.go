@@ -49,7 +49,7 @@ func CreateProfileService(userid string,input Input) (string, error) {
 
 	// ゲーム作成
 	err = models.CreateGame(models.Game{
-		GameID:    "gameid-" + gameId,
+		GameID:    "sysgame-" + gameId,
 		StartTime: time.Now(),
 		EndTime:   time.Now(),
 		Flag:      0,
@@ -67,7 +67,7 @@ func CreateProfileService(userid string,input Input) (string, error) {
 	teamId, _ := utils.Genid()
 
 	// メンバーを追加する
-	err = models.DebugAddMember("gameid-" + gameId, "teamid-" + teamId, userid)
+	err = models.DebugAddMember("sysgame-" + gameId, "teamid-" + teamId,  userid)
 
 	// エラー処理
 	if err != nil {
@@ -82,8 +82,8 @@ func CreateProfileService(userid string,input Input) (string, error) {
 		RecordID: input.RecordID,
 		Comment:  input.Comment,
 		RegionID: input.RegionID,
-		SysGame: input.SysGame,
-		AdmGame: input.AdmGame,
+		SysGame: "sysgame-" + gameId,
+		AdmGame: "",
 	}
 
 	// エラー処理

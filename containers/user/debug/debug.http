@@ -10,6 +10,7 @@ Content-Type: application/json
 ###プロフィール作成
 POST {{base_url}}/profile
 Content-Type: application/json
+Authorization: eyJhbGciOiJFZERTQSIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3NTMyNDE5MDksImxhYmVscyI6W10sInByb3ZDb2RlIjoiZ29vZ2xlIiwicHJvdlVpZCI6IjExMDg3MTY0NTY2MjI0MTc5NjA1OSIsInVzZXJJRCI6Ijc1ZTZmMDc5LWVlOTEtNDNkMC04ODJmLWFmZGU4ZjI4MzBjZCJ9.EPH07DrZYs1ixpJ57AWQzrIxulRY3apObLHZBcP-b3i8JYfqKvXT3luJYKharkOElthcdfBh_9W43VyOc4_lBA
 
 {
   "name": "テスト太郎2",

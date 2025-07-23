@@ -58,7 +58,7 @@ func CreateProfile(c echo.Context) error {
 		Comment:  req.Comment,
 		RegionID: req.RegionID,
 		SysGame:  req.SysGame,
-		AdmGame:  req.AdmGame,
+		AdmGame:  "",
 	}
 
 	//作成

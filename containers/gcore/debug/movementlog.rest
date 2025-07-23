@@ -35,13 +35,14 @@ Content-Type: application/json
 
 ### 東京 ユーザー 円を作成
 POST {{base_url}}/create/circle HTTP/1.1
-UserID : userid-8a5fafff-0b2e-4f2b-b011-da21a5a724cd
+# UserID : userid-8a5fafff-0b2e-4f2b-b011-da21a5a724cd
+Authorization: eyJhbGciOiJFZERTQSIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3NTMyNDE5MDksImxhYmVscyI6W10sInByb3ZDb2RlIjoiZ29vZ2xlIiwicHJvdlVpZCI6IjExMDg3MTY0NTY2MjI0MTc5NjA1OSIsInVzZXJJRCI6Ijc1ZTZmMDc5LWVlOTEtNDNkMC04ODJmLWFmZGU4ZjI4MzBjZCJ9.EPH07DrZYs1ixpJ57AWQzrIxulRY3apObLHZBcP-b3i8JYfqKvXT3luJYKharkOElthcdfBh_9W43VyOc4_lBA
 Content-Type: application/json
 
 {
-    "latitude": 35.7365646305852,
-    "longitude": 139.80954685258914,
-    "steps": 10,
+    "latitude": 34.98652833029375,
+    "longitude": 135.3793990772704,
+    "steps": 10000,
     "theme": "動物"
 }
 
