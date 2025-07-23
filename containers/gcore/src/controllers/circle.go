@@ -31,10 +31,10 @@ func CreateCircle(ctx echo.Context) error {
 	}
 
 	// ユーザーIDを取得する
-	// userId := ctx.Get("UserID").(string)
+	userId := ctx.Get("UserID").(string)
 	
 	// TODO デバッグ用にヘッダからユーザーIDを取得する
-	userId := ctx.Request().Header.Get("UserID")
+	// userId := ctx.Request().Header.Get("UserID")
 
 	// 円を作成する
 	circleIds, err := services.CreateCircle(services.CreateCircleArgs{

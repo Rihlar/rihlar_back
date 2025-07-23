@@ -37,7 +37,8 @@ func GetRankingTop10Handler(ctx echo.Context) error {
 	gameId := ctx.Param("game_id")
 
 	// TODO UserID の取得 (後々ミドルウェアからの取得に変更する)
-	userid := ctx.Request().Header.Get("UserID")
+	// userid := ctx.Request().Header.Get("UserID")
+	userid := ctx.Get("UserID").(string)
 
 	// サービスに渡す
 	ranking, err := rankingService.GetRankingTop10(userid, gameId)
@@ -61,7 +62,8 @@ func GetRankingTopHandler(ctx echo.Context) error {
 	id := ctx.Param("game_id")
 
 	// TODO UserID の取得 (後々ミドルウェアからの取得に変更する)
-	userid := ctx.Request().Header.Get("UserID")
+	// userid := ctx.Request().Header.Get("UserID")
+	userid := ctx.Get("UserID").(string)
 
 	logger.Println("UserID: ", userid)
 
@@ -110,7 +112,9 @@ func UploadCircleImageHandler(ctx echo.Context) error {
 	id := ctx.Request().Header.Get("CircleID")
 
 	// TODO UserID の取得 (後々ミドルウェアからの取得に変更する)
-	userid := ctx.Request().Header.Get("UserID")
+	// userid := ctx.Request().Header.Get("UserID")
+	userid := ctx.Get("UserID").(string)
+
 	logger.Println("UserID: ", userid)
 
 	// ファイルの特定
@@ -139,7 +143,8 @@ func UploadCircleImageHandler(ctx echo.Context) error {
 // 画像のリスト
 func GetImageListHandler(ctx echo.Context) error {
 	// TODO UserID の取得 (後々ミドルウェアからの取得に変更する)
-	userid := ctx.Request().Header.Get("UserID")
+	// userid := ctx.Request().Header.Get("UserID")
+	userid := ctx.Get("UserID").(string)
 
 	// サービスに渡す
 	imageList, err := circleService.GetImageList(userid)
