@@ -47,16 +47,16 @@ func InitRoutes(router *echo.Echo) *echo.Echo {
 	router.DELETE("/member/delete", controllers.DeleteMemberHandler, middlewares.RequireLabel([]string{"admin"}))
 	
 	//円詳細取得
-	router.GET("/circle/:circle_id", controllers.GetCircleDeteileHandler)
+	router.GET("/circle/:circle_id", controllers.GetCircleDeteileHandler,middlewares.DebugRequireAuth)
 
 	// 円画像取得
 	router.GET("/circle/image/:circle_id", controllers.GetCircleImageHandler)
 
 	//円画像アップロード
-	router.POST("/circle/image/upload", controllers.UploadCircleImageHandler)
+	router.POST("/circle/image/upload", controllers.UploadCircleImageHandler,middlewares.DebugRequireAuth)
 
 	// 画像のリストを返すエンドポイント
-	router.GET("/image/list", controllers.GetImageListHandler)
+	router.GET("/image/list", controllers.GetImageListHandler, middlewares.DebugRequireAuth)
 
 	// 終了済みゲーム一覧
 	router.GET("/endgame/:user_id", controllers.GetEndGamesHandler)
