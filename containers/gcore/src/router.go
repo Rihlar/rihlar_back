@@ -2,8 +2,7 @@ package main
 
 import (
 	"gcore/controllers"
-	// "gcore/middlewares"
-
+	"gcore/middlewares"
 	"github.com/labstack/echo/v4"
 )
 
@@ -11,7 +10,7 @@ func InitRouter(router *echo.Echo) *echo.Echo {
 	// ここにルーティング関連を書く
 
 	// 認証を必要とする
-	// router.Use(middlewares.RequireAuth)
+	router.Use(middlewares.RequireAuth)
 
 	// 移動を報告するエンドポイント
 	router.POST("/report/movement", controllers.ReportMovement)
