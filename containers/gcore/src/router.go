@@ -10,6 +10,7 @@ func InitRouter(router *echo.Echo) *echo.Echo {
 	// ここにルーティング関連を書く
 
 	// 認証を必要とする
+	// router.Use(middlewares.DebugRequireAuth)
 	router.Use(middlewares.RequireAuth)
 
 	// 移動を報告するエンドポイント
