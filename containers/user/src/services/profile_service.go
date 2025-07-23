@@ -2,7 +2,9 @@ package services
 
 import (
 	"errors"
+	"time"
 	"user/models"
+	"user/utils"
 )
 
 // 基本プロフィールの構造体
@@ -28,7 +30,52 @@ func GetProfileService(userID string) (*models.Profile, error) {
 }
 
 //Profileを作成
-func CreateProfileService(userid string,input Input) (string, error){
+func CreateProfileService(userid string,input Input) (string, error) {
+	// プロファイルが存在するかチェック
+	isExist, err := models.ExistProfile(userid)
+
+	// エラー処理
+	if err != nil {
+		return "", err
+	}
+
+	if isExist {
+		// 存在する時
+		return "", errors.New("profile already exists")
+	}
+
+	// ゲームのIDを生成
+	gameId, _ := utils.Genid()
+
+	// ゲーム作成
+	err = models.CreateGame(models.Game{
+		GameID:    "gameid-" + gameId,
+		StartTime: time.Now(),
+		EndTime:   time.Now(),
+		Flag:      0,
+		Type:      0,
+		Status:    1,
+		RegionID:  "",
+	})
+
+	// エラー処理
+	if err != nil {
+		return "", err
+	}
+
+	// チームIDを生成
+	teamId, _ := utils.Genid()
+
+	// メンバーを追加する
+	err = models.DebugAddMember("gameid-" + gameId, "teamid-" + teamId, userid)
+
+	// エラー処理
+	if err != nil {
+		return "", err
+	}
+
+
+	// 存在しない時
 	//構造体にinputを格納
 	profile := models.Profile{
 		Name: input.Name,
@@ -39,7 +86,15 @@ func CreateProfileService(userid string,input Input) (string, error){
 		AdmGame: input.AdmGame,
 	}
 
-	return models.CreateProfile(userid,profile)
+	// エラー処理
+	_,err = models.CreateProfile(userid,profile)
+
+	// エラー処理
+	if err != nil {
+		return "", err
+	}
+
+	return userid, nil
 }
 
 // Profile情報の入力部分を編集

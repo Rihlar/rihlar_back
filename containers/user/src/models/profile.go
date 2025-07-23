@@ -1,7 +1,9 @@
 package models
 
 import (
+	"errors"
 	"user/logger"
+
 	"gorm.io/gorm"
 )
 
@@ -128,6 +130,32 @@ func UpdateProfile(userID string, data Profile) error {
 	}
 
 	return nil
+}
+
+// プロファイルが存在してるか判定する
+func ExistProfile(userID string) (bool, error) {
+	var profile Profile
+
+	//userIDからprofile一件検索
+	result := dbconn.Where("user_id = ?", userID).First(&profile)
+
+	// gorm record not found
+	if errors.Is(result.Error, gorm.ErrRecordNotFound) {
+		return false, nil
+	}
+
+	//失敗したらエラーを返す
+	if result.Error != nil {
+		logger.PrintErr("プロフィール取得エラー",result.Error)
+		return false, result.Error
+	}
+
+	//0件ならfalseを返す
+	if result.RowsAffected == 0 {
+		return false, nil
+	}
+
+	return true, nil
 }
 
 //プライバシー情報を返す
