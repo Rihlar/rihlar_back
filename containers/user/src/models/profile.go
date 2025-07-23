@@ -2,7 +2,6 @@ package models
 
 import (
 	"user/logger"
-	"user/utils"
 	"gorm.io/gorm"
 )
 
@@ -93,16 +92,9 @@ func FindProfileById(userID string) (*Profile, error) {
 }
 
 //プロフィールの作成
-func CreateProfile(data Profile) (string, error) {
-	userID, err := utils.Genid()
-
-	//uuid生成エラー
-	if err != nil{
-		logger.PrintErr("UUID作成エラー",err)
-		return "", err
-	} 
+func CreateProfile(userid string,data Profile) (string, error) {
 	//uuid格納用に整形
-	data.UserID = "userid-" + userID
+	data.UserID = userid
 	
 	//ユーザー作成
 	result := dbconn.Save(&data)

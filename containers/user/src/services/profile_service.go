@@ -28,7 +28,7 @@ func GetProfileService(userID string) (*models.Profile, error) {
 }
 
 //Profileを作成
-func CreateProfileService(input Input) (string, error){
+func CreateProfileService(userid string,input Input) (string, error){
 	//構造体にinputを格納
 	profile := models.Profile{
 		Name: input.Name,
@@ -39,7 +39,7 @@ func CreateProfileService(input Input) (string, error){
 		AdmGame: input.AdmGame,
 	}
 
-	return models.CreateProfile(profile)
+	return models.CreateProfile(userid,profile)
 }
 
 // Profile情報の入力部分を編集
