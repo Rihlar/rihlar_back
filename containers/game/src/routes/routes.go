@@ -67,7 +67,7 @@ func InitRoutes(router *echo.Echo) *echo.Echo {
 	router.GET("/joingame/:user_id", controllers.GetJoinGamesHandler)
 
 	// 開催中のゲーム一覧を取得する
-	router.GET("/startedgame", controllers.GetStartedGamesHandler)
+	router.GET("/startedgame", controllers.GetStartedGamesHandler, middlewares.RequireAuth)
 
 	// 自身が関与しているゲームの情報を取得する
 	router.GET("/info/self", controllers.GetMyGamesHandler,middlewares.RequireAuth)
