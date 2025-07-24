@@ -34,7 +34,8 @@ func GetEndGamesHandler(ctx echo.Context) error {
 // 参加中のゲーム取得
 func GetJoinGamesHandler(ctx echo.Context) error {
 	// ユーザーの特定する
-	id := ctx.Param("user_id")
+	// id := ctx.Param("user_id")
+	id := ctx.Get("UserID").(string)
 
 	// サービスに渡す
 	joinGames, err := gameService.GetJoinGames(id)
