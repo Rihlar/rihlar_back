@@ -68,6 +68,19 @@ func GetAllGames() ([]Game, error) {
 	return games, nil
 }
 
+// ユーザーがゲームに参加しているかを判定
+func (game *Game) CheckJoin(userId string) bool {
+	// メンバーを検索する
+	_, err := game.GetMemberByUserID(userId)
+
+	// エラー処理
+	if err != nil {
+		return false
+	}
+
+	return true
+}
+
 type SearchGameArgs struct {
 	IsSearchSystem bool	// システムかどうか
 

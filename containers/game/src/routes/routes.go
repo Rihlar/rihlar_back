@@ -25,6 +25,9 @@ func InitRoutes(router *echo.Echo) *echo.Echo {
 	// ソロ用のランキングtop10
 	router.GET("/ranking/solo/top10/:game_id", controllers.GetRankingTop10SoloHandler,middlewares.RequireAuth)
 
+	// ゲームの一覧を取得するエンドポイント (モバイル用)
+	router.GET("/alllist", controllers.GetAllGameListHandler, middlewares.RequireAuth)
+
 	// ゲームを作成するエンドポイント
 	router.POST("/create", controllers.CreateGameHandler,middlewares.RequireLabel([]string{"admin"}))
 
