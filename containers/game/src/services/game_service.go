@@ -252,6 +252,50 @@ func (GameService) GetGameList() ([]GameData, error) {
 	return returnData, nil
 }
 
+type AllGameData struct {
+	IsJoined  bool   `json:"isJoined"`
+	GameID    string `json:"gameID"`
+	StartTime int64 `json:"startTime"`
+	EndTime   int64 `json:"endTime"`
+	Flag      int    `json:"flag"`
+	Type      int    `json:"type"`
+	Status    int    `json:"status"`
+	RegionID  string `json:"regionID"`
+}
+
+// すべてのゲームのリストを取得
+func (GameService) GetAllGameList(userid string) ([]AllGameData, error) {
+	// 全てのゲームを取得
+	games, err := models.GetAllGames()
+
+	// エラー処理
+	if err != nil {
+		return []AllGameData{}, err
+	}
+
+	returnData := []AllGameData{}
+
+	for _, game := range games {
+		// ゲームがシステムゲームの場合無視
+		if game.Type == 0 {
+			continue
+		}
+
+		returnData = append(returnData, AllGameData{
+			IsJoined:  game.CheckJoin(userid),
+			GameID:    game.GameID,
+			StartTime: game.StartTime.Unix(),
+			EndTime:   game.EndTime.Unix(),
+			Flag:      game.Flag,
+			Type:      game.Type,
+			Status:    game.Status,
+			RegionID:  game.RegionID,
+		})
+	}
+
+	return returnData, nil
+}
+
 // ゲームのチームを取得
 func getTeamFromGame(game models.Game) ([]GameTeam, error) {
 	// チームを取得

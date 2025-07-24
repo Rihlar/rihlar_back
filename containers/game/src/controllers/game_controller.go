@@ -118,6 +118,27 @@ func GetGameListHandler(ctx echo.Context) error {
 	})
 }
 
+// ゲーム一覧
+func GetAllGameListHandler(ctx echo.Context) error {
+	// ユーザーIDを取得する
+	userId := ctx.Get("UserID").(string)
+
+	// サービスに渡す
+	games, err := gameService.GetAllGameList(userId)
+	if err != nil {
+		logger.PrintErr("ゲーム一覧取得エラー", err)
+		return err
+	}
+
+	// 成功ログ
+	logger.Println("Successful game list get.")
+
+	// レスポンス
+	return ctx.JSON(http.StatusOK, echo.Map{
+		"Data": games,
+	})
+}
+
 // ゲームを削除する
 func DeleteGameHandler(ctx echo.Context) error {
 	// ゲームIDを取得
