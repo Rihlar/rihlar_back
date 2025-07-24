@@ -56,6 +56,31 @@ func GetRankingTop10Handler(ctx echo.Context) error {
 	})
 }
 
+// ソロ用のランキングTOP10
+func GetRankingTop10SoloHandler(ctx echo.Context) error {
+	// ゲームのIDを取得する
+	gameId := ctx.Param("game_id")
+
+	// TODO UserID の取得 (後々ミドルウェアからの取得に変更する)
+	// userid := ctx.Request().Header.Get("UserID")
+	userid := ctx.Get("UserID").(string)
+
+	// サービスに渡す
+	ranking, err := rankingService.GetSoloRankingTop10(userid, gameId)
+	if err != nil {
+		logger.PrintErr("ランキング取得エラー", ranking)
+		return err
+	}
+
+	// 成功ログ
+	logger.Println("Successful Ranking get.")
+
+	// レスポンス	
+	return ctx.JSON(http.StatusOK, echo.Map{
+		"Data": ranking,
+	})
+}
+
 // 上位３位の円を取得する
 func GetRankingTopHandler(ctx echo.Context) error {
 	// ゲームの特定する
