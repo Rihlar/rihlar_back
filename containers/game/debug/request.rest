@@ -1,12 +1,16 @@
 @base_url = https://localhost:8943/game
+# @base_url = https://rihlar-stage.kokomeow.com/game
 
 @user_id = userid-79541130-3275-4b90-8677-01323045aca5
 
 @circle_id = circle-548d4276-552b-404b-8c28-964281fd7f3b
 
+# @game_id = gameid-413a287b-213c-414f-a287-c1397db8f9bf
 @game_id = gameid-413a287b-213c-414f-a287-c1397db8f9bf
 
 @image_circle_id = circle-548d4276-552b-404b-8c28-964281fd7f3b
+
+@token = eyJhbGciOiJFZERTQSIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3NTMzNTEzOTEsImxhYmVscyI6W10sInByb3ZDb2RlIjoiZ29vZ2xlIiwicHJvdlVpZCI6IjExMDg3MTY0NTY2MjI0MTc5NjA1OSIsInVzZXJJRCI6Ijc1ZTZmMDc5LWVlOTEtNDNkMC04ODJmLWFmZGU4ZjI4MzBjZCJ9.OTWAZ_tReOMQ_DBbfoyjoOtpkweG7csY1Gxs_YcqM0lWY3zvJdvTs0XT_NczdBh-YEkYWV-zfBoLxqvXtL8LCA
 
 # test
 GET {{base_url}}/
@@ -16,12 +20,17 @@ GET {{base_url}}/ranking/personal/{{user_id}}
 ### ランキングTOP10
 GET {{base_url}}/ranking/top10/{{game_id}}
 # UserID: userid-79541130-3275-4b90-8677-01323045aca5
-Authorization: eyJhbGciOiJFZERTQSIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3NTMyNDI0NTAsImxhYmVscyI6W10sInByb3ZDb2RlIjoiZ29vZ2xlIiwicHJvdlVpZCI6IjExMDg3MTY0NTY2MjI0MTc5NjA1OSIsInVzZXJJRCI6Ijc1ZTZmMDc5LWVlOTEtNDNkMC04ODJmLWFmZGU4ZjI4MzBjZCJ9.pkk2zN0amVn19uJJN4Gz7S7D-v_rPbqG_Mf8tOhNHuTb9Z_Cd1tN9XiEOPL-uv0BBfH-lb33aQPbFhobei5mBA
+Authorization: {{token}}
+
+### ランキングTOP10 個人用
+GET {{base_url}}/ranking/solo/top10/{{game_id}}
+# UserID: userid-79541130-3275-4b90-8677-01323045aca5
+Authorization: {{token}}
 
 ### 上位3位の円を取得する
 GET {{base_url}}/ranking/top/{{game_id}}
 # UserID: userid-79541130-3275-4b90-8677-01323045aca5
-Authorization: eyJhbGciOiJFZERTQSIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3NTMyNDI0NTAsImxhYmVscyI6W10sInByb3ZDb2RlIjoiZ29vZ2xlIiwicHJvdlVpZCI6IjExMDg3MTY0NTY2MjI0MTc5NjA1OSIsInVzZXJJRCI6Ijc1ZTZmMDc5LWVlOTEtNDNkMC04ODJmLWFmZGU4ZjI4MzBjZCJ9.pkk2zN0amVn19uJJN4Gz7S7D-v_rPbqG_Mf8tOhNHuTb9Z_Cd1tN9XiEOPL-uv0BBfH-lb33aQPbFhobei5mBA
+Authorization: {{token}}
 
 ### 円に画像をアップロードするエンドポイント
 POST {{base_url}}/circle/image/upload
@@ -39,7 +48,8 @@ Content-Type: image/png
 
 ### 円のリストを取得
 GET {{base_url}}/image/list
-UserID: {{user_id}}
+# UserID: {{user_id}}
+Authorization: {{token}}
 
 ### 円の詳細取得
 GET {{base_url}}/circle/{{circle_id}}
@@ -56,7 +66,7 @@ GET {{base_url}}/joingame/{{user_id}}
 ### ゲームに参加するエンドポイント
 POST {{base_url}}/join
 # UserID: userid-e3abf90d-4bcf-4c3b-bbde-37694b1611b3
-Authorization: eyJhbGciOiJFZERTQSIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3NTMyNDE5MDksImxhYmVscyI6W10sInByb3ZDb2RlIjoiZ29vZ2xlIiwicHJvdlVpZCI6IjExMDg3MTY0NTY2MjI0MTc5NjA1OSIsInVzZXJJRCI6Ijc1ZTZmMDc5LWVlOTEtNDNkMC04ODJmLWFmZGU4ZjI4MzBjZCJ9.EPH07DrZYs1ixpJ57AWQzrIxulRY3apObLHZBcP-b3i8JYfqKvXT3luJYKharkOElthcdfBh_9W43VyOc4_lBA
+Authorization: {{token}}
 GameID: {{game_id}}
 Content-Type: application/json
 
