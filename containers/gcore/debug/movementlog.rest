@@ -1,5 +1,7 @@
-# @base_url = https://rihlar-test.kokomeow.com/gcore
-@base_url = https://localhost:8943/gcore
+@base_url = https://rihlar-test.kokomeow.com/gcore
+# @base_url = https://localhost:8943/gcore
+
+@token = eyJhbGciOiJFZERTQSIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3NTMyNDQ1NzksImxhYmVscyI6W10sInByb3ZDb2RlIjoiZ29vZ2xlIiwicHJvdlVpZCI6IjExMDg3MTY0NTY2MjI0MTc5NjA1OSIsInVzZXJJRCI6Ijc1ZTZmMDc5LWVlOTEtNDNkMC04ODJmLWFmZGU4ZjI4MzBjZCJ9.GXlMofpZ7ErfHW2milQoZwZpzgpamQoOO65dj20laCPCtb3RSiUv0Bfeq7TzF5j7t__QCsM-a9QlmOByoxwzBA
 
 ### 関西
 POST {{base_url}}/report/movement HTTP/1.1
@@ -36,7 +38,7 @@ Content-Type: application/json
 ### 東京 ユーザー 円を作成
 POST {{base_url}}/create/circle HTTP/1.1
 # UserID : userid-8a5fafff-0b2e-4f2b-b011-da21a5a724cd
-Authorization: eyJhbGciOiJFZERTQSIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3NTMyNDE5MDksImxhYmVscyI6W10sInByb3ZDb2RlIjoiZ29vZ2xlIiwicHJvdlVpZCI6IjExMDg3MTY0NTY2MjI0MTc5NjA1OSIsInVzZXJJRCI6Ijc1ZTZmMDc5LWVlOTEtNDNkMC04ODJmLWFmZGU4ZjI4MzBjZCJ9.EPH07DrZYs1ixpJ57AWQzrIxulRY3apObLHZBcP-b3i8JYfqKvXT3luJYKharkOElthcdfBh_9W43VyOc4_lBA
+Authorization: {{token}}
 Content-Type: application/json
 
 {
