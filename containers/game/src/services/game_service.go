@@ -413,13 +413,13 @@ func (GameService) GetStartedGames(userId string) (StartedGameResult, CustomErro
 	// ゲームがない場合
 	if len(games) == 0 {
 		return StartedGameResult{
-			IsJoined: false,
-		}, CustomError{
-			Code:       http.StatusNotFound,
-			LogMessage: "開催中のゲームがありません",
-			ErrMessage: "開催中のゲームがありません",
-			Err:        errors.New("開催中のゲームがありません"),
-		}
+				IsJoined: false,
+			}, CustomError{
+				Code:       http.StatusNotFound,
+				LogMessage: "開催中のゲームがありません",
+				ErrMessage: "開催中のゲームがありません",
+				Err:        errors.New("開催中のゲームがありません"),
+			}
 	}
 
 	// 現状一つだけなので
@@ -453,22 +453,23 @@ func (GameService) GetStartedGames(userId string) (StartedGameResult, CustomErro
 
 // GameData represents the overall structure of the game data.
 type MySelfGameData struct {
-	Admin  AdminData  `json:"admin"`
-	System SystemData `json:"system"`
+	IsAdminJoined bool       `json:"IsAdminJoined"`
+	Admin         AdminData  `json:"admin"`
+	System        SystemData `json:"system"`
 }
 
 // AdminData holds administrative information about the game.
 type AdminData struct {
-	IsFinished bool      `json:"IsFinished"` // ゲームが終了済みか
-	IsStarted  bool      `json:"IsStarted"`  // ゲームが開始済みか
-	GameID     string    `json:"GameID"`     // ゲームID
-	StartTime  int64 `json:"StartTime"`  // 開始時間 Unix Time
-	EndTime    int64 `json:"EndTime"`    // 終了時間 Unix Time
+	IsFinished bool   `json:"IsFinished"` // ゲームが終了済みか
+	IsStarted  bool   `json:"IsStarted"`  // ゲームが開始済みか
+	GameID     string `json:"GameID"`     // ゲームID
+	StartTime  int64  `json:"StartTime"`  // 開始時間 Unix Time
+	EndTime    int64  `json:"EndTime"`    // 終了時間 Unix Time
 }
 
 // SystemData holds system-level information about the game.
 type SystemData struct {
-	GameID    string    `json:"GameID"`   // ゲームID
+	GameID string `json:"GameID"` // ゲームID
 }
 
 // 自身が参加しているゲームを取得する
@@ -478,7 +479,7 @@ func (GameService) GetMyGames(userId string) (MySelfGameData, error) {
 	if err != nil {
 		return MySelfGameData{}, err
 	}
-	
+
 	returnData := MySelfGameData{}
 
 	// ゲームIDを回す
@@ -513,10 +514,12 @@ func (GameService) GetMyGames(userId string) (MySelfGameData, error) {
 				StartTime:  game.StartTime.Unix(),
 				EndTime:    game.EndTime.Unix(),
 			}
+
+			returnData.IsAdminJoined = true
 		} else {
 			// system の場合返すデータに
 			returnData.System = SystemData{
-				GameID:    gameId,
+				GameID: gameId,
 			}
 		}
 	}
