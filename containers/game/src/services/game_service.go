@@ -450,3 +450,76 @@ func (GameService) GetStartedGames(userId string) (StartedGameResult, CustomErro
 		IsJoined:  true,
 	}, CustomError{}
 }
+
+// GameData represents the overall structure of the game data.
+type MySelfGameData struct {
+	Admin  AdminData  `json:"admin"`
+	System SystemData `json:"system"`
+}
+
+// AdminData holds administrative information about the game.
+type AdminData struct {
+	IsFinished bool      `json:"IsFinished"` // ゲームが終了済みか
+	IsStarted  bool      `json:"IsStarted"`  // ゲームが開始済みか
+	GameID     string    `json:"GameID"`     // ゲームID
+	StartTime  int64 `json:"StartTime"`  // 開始時間 Unix Time
+	EndTime    int64 `json:"EndTime"`    // 終了時間 Unix Time
+}
+
+// SystemData holds system-level information about the game.
+type SystemData struct {
+	GameID    string    `json:"GameID"`   // ゲームID
+}
+
+// 自身が参加しているゲームを取得する
+func (GameService) GetMyGames(userId string) (MySelfGameData, error) {
+	// メンバー一覧を取得する
+	gameIds, err := models.GetJoinGames(userId)
+	if err != nil {
+		return MySelfGameData{}, err
+	}
+	
+	returnData := MySelfGameData{}
+
+	// ゲームIDを回す
+	for _, gameId := range gameIds {
+		// ゲームを取得する
+		game, err := models.GetGame(gameId)
+		if err != nil {
+			logger.Println(err)
+			continue
+		}
+
+		if game.Type == 1 {
+			isFinished := false
+
+			if game.Status == 2 {
+				// 終了の場合
+				isFinished = true
+			}
+
+			isStarted := false
+
+			if game.Status == 1 {
+				// 開始の場合
+				isStarted = true
+			}
+
+			// admin の場合返すデータに
+			returnData.Admin = AdminData{
+				IsFinished: isFinished,
+				IsStarted:  isStarted,
+				GameID:     gameId,
+				StartTime:  game.StartTime.Unix(),
+				EndTime:    game.EndTime.Unix(),
+			}
+		} else {
+			// system の場合返すデータに
+			returnData.System = SystemData{
+				GameID:    gameId,
+			}
+		}
+	}
+
+	return returnData, nil
+}

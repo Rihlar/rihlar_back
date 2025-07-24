@@ -248,7 +248,7 @@ func GetStartedGamesHandler(ctx echo.Context) error {
 	games, err := gameService.GetStartedGames(userId)
 	if err.Err != nil {
 		logger.PrintErr("開催中のゲーム取得エラー", err.LogMessage)
-		return ctx.JSON(err.Code,echo.Map{
+		return ctx.JSON(err.Code, echo.Map{
 			"Message": err.ErrMessage,
 		})
 	}
@@ -256,5 +256,25 @@ func GetStartedGamesHandler(ctx echo.Context) error {
 	// レスポンス
 	return ctx.JSON(http.StatusOK, echo.Map{
 		"Data": games,
+	})
+}
+
+// 自身が関与しているゲームの一覧を取得する
+func GetMyGamesHandler(ctx echo.Context) error {
+	// ユーザーIDを取得する
+	userId := ctx.Get("UserID").(string)
+
+	// サービスに渡す
+	data, err := gameService.GetMyGames(userId)
+	if err != nil {
+		logger.PrintErr("自身が関与しているゲーム取得エラー", err)
+		return ctx.JSON(http.StatusInternalServerError, echo.Map{
+			"Message": "自身が関与しているゲーム取得エラー",
+		})
+	}
+
+	// レスポンス
+	return ctx.JSON(http.StatusOK, echo.Map{
+		"Data": data,
 	})
 }

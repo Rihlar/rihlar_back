@@ -69,5 +69,8 @@ func InitRoutes(router *echo.Echo) *echo.Echo {
 	// 開催中のゲーム一覧を取得する
 	router.GET("/startedgame", controllers.GetStartedGamesHandler)
 
+	// 自身が関与しているゲームの情報を取得する
+	router.GET("/info/self", controllers.GetMyGamesHandler,middlewares.RequireAuth)
+	
 	return router
 }
