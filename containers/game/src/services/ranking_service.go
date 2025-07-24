@@ -300,10 +300,15 @@ func (RankingService) GetSoloRankingTop10(userid, gameId string) (SoloTop10Leade
 	// チームを回す
 	for _, team := range teams {
 		// メンバーを一人取得
-		soloMemberId := team.Members[0].UserID
+		teamMembers,err := team.GetMembers()
+
+		// エラー処理
+		if err != nil {
+			return SoloTop10LeaderboardData{}, err
+		}
 
 		// プロファイルを取得
-		profile, err := models.GetProfile(soloMemberId)
+		profile, err := models.GetProfile(teamMembers[0].UserID)
 
 		// 	エラー処理
 		if err != nil {

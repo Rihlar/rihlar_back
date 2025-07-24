@@ -7,11 +7,11 @@ import (
 
 // テーブル定義
 type Team struct {
-	TeamID    string    `gorm:"primaryKey;size:50" json:"teamID"`                                                                 // チームID
-	GameID    string    `gorm:"not null;size:50" json:"gameID"`                                                                   // ゲームID
+	TeamID    string    `gorm:"primaryKey;size:50" json:"teamID"`                                                                               // チームID
+	GameID    string    `gorm:"not null;size:50" json:"gameID"`                                                                                 // ゲームID
 	Members   []Member  `gorm:"foreignKey:TeamID,GameID;references:TeamID,GameID;constraint:OnUpdate:CASCADE,OnDelete:CASCADE;" json:"members"` //　チームメンバー
-	CreatedAT time.Time `gorm:"autoCreateTime" json:"createdAT"`                                                                  // ゲーム作成時
-	Points    int       `gorm:"not null" json:"points"`                                                                           // チーム合計ポイント
+	CreatedAT time.Time `gorm:"autoCreateTime" json:"createdAT"`                                                                                // ゲーム作成時
+	Points    int       `gorm:"not null" json:"points"`                                                                                         // チーム合計ポイント
 }
 
 // チームを作成する
@@ -46,6 +46,14 @@ func (game *Game) GetTeam(teamID string) (Team, error) {
 // テーブル名
 func (Team) TableName() string {
 	return "Teams"
+}
+
+// メンバー一覧を取得する
+func (team *Team) GetMembers() ([]Member, error) {
+	// 取得
+	err := dbconn.Model(team).Association("Members").Find(&team.Members)
+
+	return team.Members, err
 }
 
 // チームを削除する
