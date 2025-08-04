@@ -23,6 +23,7 @@ func CreateCircle(args CreateCircleArgs) (CreateCirclesResponse, error) {
 
 	// エラー処理
 	if err != nil {
+		logger.PrintErr("プロファイル取得エラー", err)
 		return CreateCirclesResponse{}, err
 	}
 
@@ -45,6 +46,7 @@ func CreateCircle(args CreateCircleArgs) (CreateCirclesResponse, error) {
 
 	// エラー処理
 	if err != nil {
+		logger.PrintErr("システムゲーム取得エラー", err)
 		return CreateCirclesResponse{}, err
 	}
 
@@ -67,6 +69,7 @@ func CreateCircle(args CreateCircleArgs) (CreateCirclesResponse, error) {
 
 	// エラー処理
 	if err != nil {
+		logger.PrintErr("円作成エラー", err)
 		return CreateCirclesResponse{}, err
 	}
 
