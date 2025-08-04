@@ -38,7 +38,7 @@ func GetGame(gameid string) (Game, error) {
 	// 取得する
 	result := dbconn.Where(&Game{
 		GameID: gameid,
-	}).Find(&game)
+	}).First(&game)
 
 	return game, result.Error
 }
