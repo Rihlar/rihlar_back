@@ -29,16 +29,24 @@ func CreateCircle(args CreateCircleArgs) (CreateCirclesResponse, error) {
 
 	games := []models.Game{}
 
-	// adminゲームを取得
-	admGame, err := models.GetGame(profile.AdmGame)
+	// ゲームIDが空の場合
 
-	// エラー処理
-	if err != nil {
-		// 見つからない時
-		logger.PrintErr("adminゲーム取得エラー", err)
-	} else {
-		// 見つかった時
-		games = append(games, admGame)
+	logger.Println(profile.AdmGame)
+	if profile.AdmGame != "" {
+		// adminゲームを取得
+		admGame, err := models.GetGame(profile.AdmGame)
+
+		// エラー処理
+		if err != nil {
+			// 見つからない時
+			logger.PrintErr("adminゲーム取得エラー", err)
+		} else {
+			// ゲームが開催中か
+			if admGame.Status == 1 {
+				// ゲーム開催中の時
+				games = append(games, admGame)
+			}
+		}
 	}
 
 	// システムゲームを取得
