@@ -73,11 +73,36 @@ func (game *Game) GetChunkByLatLon(lat, lon float64) (GameChunk, error) {
 		return GameChunk{}, err
 	}
 
-	// Grid から近くのチャンクを取得
-	inGridData, err := gridData.GetGridCell(location.LatLng{
-		Lat: lat,
-		Lng: lon,
-	})
+	targetGrid := &location.GridCell{}
+
+	// システムゲームの場合 グリッドのチェックを外す
+	if game.Type == 0 {
+		// 境界チェック無しバージョン
+		inGridData := gridData.GetGridCellFast(location.LatLng{
+			Lat: lat,
+			Lng: lon,
+		})
+
+		// エラー処理
+		if err != nil {
+			return GameChunk{}, err
+		}
+
+		targetGrid = inGridData
+	} else {
+		// Grid から近くのチャンクを取得
+		inGridData, err := gridData.GetGridCell(location.LatLng{
+			Lat: lat,
+			Lng: lon,
+		})
+
+		// エラー処理
+		if err != nil {
+			return GameChunk{}, err
+		}
+
+		targetGrid = inGridData
+	}
 
 	// エラー処理
 	if err != nil {
@@ -88,10 +113,10 @@ func (game *Game) GetChunkByLatLon(lat, lon float64) (GameChunk, error) {
 	// ゲームからチャンクを取得する
 	err = dbconn.Where(GameChunk{
 		GameID:   game.GameID,
-		StartLat: inGridData.Bounds.TopLeft.Lat,
-		StartLon: inGridData.Bounds.TopLeft.Lng,
-		EndLat:   inGridData.Bounds.BottomRight.Lat,
-		EndLon:   inGridData.Bounds.BottomRight.Lng,
+		StartLat: targetGrid.Bounds.TopLeft.Lat,
+		StartLon: targetGrid.Bounds.TopLeft.Lng,
+		EndLat:   targetGrid.Bounds.BottomRight.Lat,
+		EndLon:   targetGrid.Bounds.BottomRight.Lng,
 	}).First(&findChunk).Error
 
 	// 存在しない場合
@@ -105,10 +130,10 @@ func (game *Game) GetChunkByLatLon(lat, lon float64) (GameChunk, error) {
 			GameID:   game.GameID,
 			ImageID:  "",
 			OwnerID:  "",
-			StartLat: inGridData.Bounds.TopLeft.Lat,
-			StartLon: inGridData.Bounds.TopLeft.Lng,
-			EndLat:   inGridData.Bounds.BottomRight.Lat,
-			EndLon:   inGridData.Bounds.BottomRight.Lng,
+			StartLat: targetGrid.Bounds.TopLeft.Lat,
+			StartLon: targetGrid.Bounds.TopLeft.Lng,
+			EndLat:   targetGrid.Bounds.BottomRight.Lat,
+			EndLon:   targetGrid.Bounds.BottomRight.Lng,
 			Level:    0,
 		}
 
