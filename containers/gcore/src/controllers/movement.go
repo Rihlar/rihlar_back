@@ -26,19 +26,18 @@ func ReportMovement(ctx echo.Context) error {
 	userId := ctx.Get("UserID").(string)
 
 	// サービスを呼び出す
-	if err := services.ReportMovement(services.MovementArgs{
+	response,err := services.ReportMovement(services.MovementArgs{
 		UserID:    userId,
 		Steps:     args.Steps,
 		Latitude:  args.Latitude,
 		Longitude: args.Longitude,
-	}); err != nil {
+	}); 
+	if err != nil {
 		logger.PrintErr(err)
-		return err
+		return ctx.JSON(http.StatusInternalServerError,response)
 	}
 
-	return ctx.JSON(http.StatusOK, echo.Map{
-		"result": "success",
-	})
+	return ctx.JSON(http.StatusOK, response)
 }
 
 // 歩いたデータを記録するエンドポイント
