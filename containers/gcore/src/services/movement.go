@@ -171,6 +171,8 @@ func ProcessChunk(args ProcessChunkArgs) (ProcessChunkResponse,error) {
 				// 追加する
 				returnData.AdminGames = append(returnData.AdminGames, addData)
 			} else {
+				logger.Println("システムゲーム処理でエラーが発生しました")
+				logger.Println(err)
 				// システムゲームの時
 				// レスポンスを変更する
 				returnData.IsSyetemSuccess = false
