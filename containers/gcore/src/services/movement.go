@@ -202,13 +202,16 @@ func ProcessChunk(args ProcessChunkArgs) (ProcessChunkResponse,error) {
 			}
 		}
 
-		addData := ProcessChunkAdminGameResponse{
-			IsSuccess: true,
-			Message:   "処理に成功しました",
-			Status:    http.StatusOK,
-			GameId:    game.GameID,
+		// admin ゲームの場合結果を追加
+		if game.Type == 1 {
+			addData := ProcessChunkAdminGameResponse{
+				IsSuccess: true,
+				Message:   "処理に成功しました",
+				Status:    http.StatusOK,
+				GameId:    game.GameID,
+			}
+			returnData.AdminGames = append(returnData.AdminGames, addData)
 		}
-		returnData.AdminGames = append(returnData.AdminGames, addData)
 	}
 
 	returnData.IsSyetemSuccess = true
