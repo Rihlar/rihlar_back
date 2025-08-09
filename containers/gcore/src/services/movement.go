@@ -154,6 +154,7 @@ func ProcessChunk(args ProcessChunkArgs) (ProcessChunkResponse,error) {
 
 		// エラー処理
 		if err != nil {
+			logger.PrintErr("処理対象のゲーム",game,err)
 			// エラーが起きた時
 			// admin ゲームならむし
 			if game.Type == 1 {
@@ -171,6 +172,8 @@ func ProcessChunk(args ProcessChunkArgs) (ProcessChunkResponse,error) {
 				// 追加する
 				returnData.AdminGames = append(returnData.AdminGames, addData)
 			} else {
+				logger.Println("システムゲーム処理でエラーが発生しました")
+				logger.Println(err)
 				// システムゲームの時
 				// レスポンスを変更する
 				returnData.IsSyetemSuccess = false
@@ -198,8 +201,20 @@ func ProcessChunk(args ProcessChunkArgs) (ProcessChunkResponse,error) {
 				return returnData,err
 			}
 		}
+
+		// admin ゲームの場合結果を追加
+		if game.Type == 1 {
+			addData := ProcessChunkAdminGameResponse{
+				IsSuccess: true,
+				Message:   "処理に成功しました",
+				Status:    http.StatusOK,
+				GameId:    game.GameID,
+			}
+			returnData.AdminGames = append(returnData.AdminGames, addData)
+		}
 	}
 
+	returnData.IsSyetemSuccess = true
 	return returnData, nil
 }
 
