@@ -15,7 +15,7 @@ services:
     # 認証用コンテナ
     auth:
         hostname: auth
-        image: mattuu0/authbase-auth:0.2.3
+        image: mattuu0/authbase-auth:0.2.4
         env_file:
             - ./openssl/jwtKeys/private.env
             - ./config/auth.env
@@ -29,7 +29,7 @@ services:
 
     # マイグレーション
     migrate:
-        image: mattuu0/authbase-auth:0.2.3
+        image: mattuu0/authbase-auth:0.2.4
         env_file:
             - ./config/auth.env
         command: ["/auth", "migrate","-r"]

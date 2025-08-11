@@ -52,6 +52,7 @@ tasks:
   # 初回セットアップ
   setup:
     cmds:
+      - task: config
       - task: genkey
       - task: up
       # - task: dbreset
@@ -93,3 +94,15 @@ tasks:
     vars:
       Build_Image:
         sh: docker build -q ./openssl
+
+  config:
+    cmds:
+      - cmd: docker run --rm -it -v .\\config:/config/data {{.Build_Image}}
+        platforms: [windows]
+      - cmd: docker run --rm -it -v ./config:/config/data {{.Build_Image}}
+        platforms: [linux,darwin]
+      - echo "設定用のイメージを削除しています"
+      - docker rmi -f {{.Build_Image}}
+    vars:
+      Build_Image:
+        sh: docker build -q ./config
