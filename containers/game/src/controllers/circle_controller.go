@@ -11,12 +11,16 @@ import (
 var circleService = services.CircleService{} //サービスの実体を作る
 
 // 円の詳細取得
-func GetCircleDeteileHandler(ctx echo.Context) error {
-	// サークルIDの特定する
-	id := ctx.Param("circle_id")
+func GetCircleDetaileHandler(ctx echo.Context) error {
+	// コンテキストからID取得
+	circleid := ctx.Get("CircleID")
+	// ID取得できてるかチェック
+	if circleid == "" {
+		return ctx.JSON(http.StatusBadRequest, echo.Map{"error": "badRequest"})
+	}
 
 	// 円の詳細取得
-	circle, err := circleService.GetCircleDeteile(id)
+	circle, err := circleService.GetCircleDeteile(circleid.(string))
 	if err != nil {
 		logger.PrintErr("円取得エラー", circle)
 		return err
@@ -50,7 +54,7 @@ func GetRankingTop10Handler(ctx echo.Context) error {
 	// 成功ログ
 	logger.Println("Successful Ranking get.")
 
-	// レスポンス	
+	// レスポンス
 	return ctx.JSON(http.StatusOK, echo.Map{
 		"Data": ranking,
 	})
@@ -75,7 +79,7 @@ func GetRankingTop10SoloHandler(ctx echo.Context) error {
 	// 成功ログ
 	logger.Println("Successful Ranking get.")
 
-	// レスポンス	
+	// レスポンス
 	return ctx.JSON(http.StatusOK, echo.Map{
 		"Data": ranking,
 	})
@@ -124,7 +128,7 @@ func GetCircleImageHandler(ctx echo.Context) error {
 
 	// 成功ログ
 	logger.Println("Successful imagePath get.")
-	
+
 	// レスポンス
 	return ctx.File(
 		imagePath,
@@ -160,7 +164,7 @@ func UploadCircleImageHandler(ctx echo.Context) error {
 
 	// レスポンス
 	return ctx.JSON(http.StatusOK, echo.Map{
-		"Data": "success",
+		"Data":      "success",
 		"circle_id": id,
 	})
 }

@@ -3,7 +3,7 @@
 
 @user_id = userid-79541130-3275-4b90-8677-01323045aca5
 
-@circle_id = circle-548d4276-552b-404b-8c28-964281fd7f3b
+@circle_id = circle-fffe81ae-43eb-4fd7-a01c-8e3c08883314
 
 # @game_id = gameid-413a287b-213c-414f-a287-c1397db8f9bf
 @game_id = gameid-413a287b-213c-414f-a287-c1397db8f9bf
@@ -53,6 +53,7 @@ Authorization: {{token}}
 
 ### 円の詳細取得
 GET {{base_url}}/circle/{{circle_id}}
+CircleID: {{circle_id}}
 
 ### 円の画像取得
 GET  {{base_url}}/circle/image/{{image_circle_id}}
