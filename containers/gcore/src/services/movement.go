@@ -198,14 +198,36 @@ func ProcessChunk(args ProcessChunkArgs) (ProcessChunkResponse,error) {
 		if chunk.Level == 0 || chunk.Level == 1 {
 			// チャンクを更新する
 			if err := chunk.ChangeLevel(1); err != nil {
-				logger.PrintErr(err)
-				return returnData,err
+				logger.PrintErr("レベルの更新に失敗しました LV1" ,err)
+
+				// 失敗をデータに記録する
+				addData := ProcessChunkAdminGameResponse{
+					IsSuccess: true,
+					Message:   "レベルの更新に失敗しました LV1",
+					Status:    http.StatusInternalServerError,
+					GameId:    game.GameID,
+				}
+				returnData.AdminGames = append(returnData.AdminGames, addData)
+
+				continue
+				// return returnData,err
 			}
 
 			// オーナーも変更する
 			if err := chunk.ChangeOwner(args.UserID); err != nil {
-				logger.PrintErr(err)
-				return returnData,err
+				logger.PrintErr("チャンクのオーナーの変更に失敗しました" ,err)
+
+				// 失敗をデータに記録する
+				addData := ProcessChunkAdminGameResponse{
+					IsSuccess: true,
+					Message:   "チャンクのオーナーの変更に失敗しました",
+					Status:    http.StatusInternalServerError,
+					GameId:    game.GameID,
+				}
+				returnData.AdminGames = append(returnData.AdminGames, addData)
+
+				continue
+				// return returnData,err
 			}
 		}
 
