@@ -201,7 +201,9 @@ func LevelUpCircle(args ProcessCircleArgs) error {
 
 		// エラー処理
 		if err != nil {
-			return err
+			// メンバーが見つからない場合戻る
+			logger.Println("member not found:", err)
+			continue
 		}
 
 		// レベル2の円を取得
@@ -229,7 +231,8 @@ func LevelUpCircle(args ProcessCircleArgs) error {
 
 			// エラー処理
 			if err != nil {
-				return err
+				logger.PrintErr("キャッシュエラー", err)
+				continue
 			}
 		}
 	}
