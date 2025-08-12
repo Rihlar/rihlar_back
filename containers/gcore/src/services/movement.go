@@ -149,12 +149,14 @@ func ProcessChunk(args ProcessChunkArgs) (ProcessChunkResponse,error) {
 
 	// ゲームを回す
 	for _, game := range args.Games {
+		logger.PrintErr("処理対象のゲーム",game)
+
 		// 一番近いチャンクを取得
 		chunk, err := game.GetChunkByLatLon(args.Latitude, args.Longitude)
 
 		// エラー処理
 		if err != nil {
-			logger.PrintErr("処理対象のゲーム",game,err)
+			logger.PrintErr("処理対象のゲームエラー",game,err)
 			// エラーが起きた時
 			// admin ゲームならむし
 			if game.Type == 1 {
