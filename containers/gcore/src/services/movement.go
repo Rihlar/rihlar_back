@@ -199,15 +199,18 @@ func ProcessChunk(args ProcessChunkArgs) (ProcessChunkResponse,error) {
 			// チャンクを更新する
 			if err := chunk.ChangeLevel(1); err != nil {
 				logger.PrintErr("レベルの更新に失敗しました LV1" ,err)
-
-				// 失敗をデータに記録する
-				addData := ProcessChunkAdminGameResponse{
-					IsSuccess: true,
-					Message:   "レベルの更新に失敗しました LV1",
-					Status:    http.StatusInternalServerError,
-					GameId:    game.GameID,
+				
+				// admin ゲームの時
+				if game.Type == 1 {
+					// 失敗をデータに記録する
+					addData := ProcessChunkAdminGameResponse{
+						IsSuccess: true,
+						Message:   "レベルの更新に失敗しました LV1",
+						Status:    http.StatusInternalServerError,
+						GameId:    game.GameID,
+					}
+					returnData.AdminGames = append(returnData.AdminGames, addData)
 				}
-				returnData.AdminGames = append(returnData.AdminGames, addData)
 
 				continue
 				// return returnData,err
@@ -217,14 +220,17 @@ func ProcessChunk(args ProcessChunkArgs) (ProcessChunkResponse,error) {
 			if err := chunk.ChangeOwner(args.UserID); err != nil {
 				logger.PrintErr("チャンクのオーナーの変更に失敗しました" ,err)
 
-				// 失敗をデータに記録する
-				addData := ProcessChunkAdminGameResponse{
-					IsSuccess: true,
-					Message:   "チャンクのオーナーの変更に失敗しました",
-					Status:    http.StatusInternalServerError,
-					GameId:    game.GameID,
+				// admin ゲームの時
+				if game.Type == 1 {
+					// 失敗をデータに記録する
+					addData := ProcessChunkAdminGameResponse{
+						IsSuccess: true,
+						Message:   "チャンクのオーナーの変更に失敗しました",
+						Status:    http.StatusInternalServerError,
+						GameId:    game.GameID,
+					}
+					returnData.AdminGames = append(returnData.AdminGames, addData)
 				}
-				returnData.AdminGames = append(returnData.AdminGames, addData)
 
 				continue
 				// return returnData,err
@@ -241,8 +247,11 @@ func ProcessChunk(args ProcessChunkArgs) (ProcessChunkResponse,error) {
 			}
 			returnData.AdminGames = append(returnData.AdminGames, addData)
 		}
+
+		logger.Println("処理対象のゲーム処理完了",game)
 	}
 
+	logger.Println("すべてのゲームの処理完了")
 	returnData.IsSyetemSuccess = true
 	return returnData, nil
 }
