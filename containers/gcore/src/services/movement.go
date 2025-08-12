@@ -67,7 +67,7 @@ func ReportMovement(args MovementArgs) (ProcessChunkResponse,error) {
 	err = SaveMovementLog(SaveMovementLogArgs{
 		UserID:    args.UserID,
 		SystemID:  sysGame.GameID,
-		Games:     []models.Game{admGame, sysGame},
+		Games:     []models.Game{sysGame},
 		Steps:     args.Steps,
 		Latitude:  args.Latitude,
 		Longitude: args.Longitude,
@@ -113,6 +113,11 @@ func ReportMovement(args MovementArgs) (ProcessChunkResponse,error) {
 func SaveMovementLog(args SaveMovementLogArgs) error {
 	// ゲームを回す
 	for _, game := range args.Games {
+		// システムゲーム以外の時戻る
+		if game.Type != 0 {
+			continue
+		}
+
 		// メンバーオブジェクト取得
 		member, err := game.GetMemberByUserID(args.UserID)
 
