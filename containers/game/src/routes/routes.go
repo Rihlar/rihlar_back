@@ -20,10 +20,10 @@ func InitRoutes(router *echo.Echo) *echo.Echo {
 	router.GET("/ranking/top/:game_id", controllers.GetRankingTopHandler, middlewares.RequireAuth)
 
 	// rankingTop10
-	router.GET("/ranking/top10/:game_id", controllers.GetRankingTop10Handler, middlewares.RequireAuth)
+	router.GET("/ranking/top10", controllers.GetRankingTop10Handler, middlewares.DebugRequireAuth)
 
 	// ソロ用のランキングtop10
-	router.GET("/ranking/solo/top10/:game_id", controllers.GetRankingTop10SoloHandler, middlewares.RequireAuth)
+	router.GET("/ranking/solo/top10", controllers.GetRankingTop10SoloHandler, middlewares.DebugRequireAuth)
 
 	// ゲームの一覧を取得するエンドポイント (モバイル用)
 	router.GET("/allgames", controllers.GetAllGameListHandler, middlewares.RequireAuth)
@@ -53,7 +53,7 @@ func InitRoutes(router *echo.Echo) *echo.Echo {
 	router.DELETE("/member/delete", controllers.DeleteMemberHandler, middlewares.RequireLabel([]string{"admin"}))
 
 	//円詳細取得
-	router.GET("/circle", controllers.GetCircleDetaileHandler,middlewares.DebugRequireAuth)
+	router.GET("/circle", controllers.GetCircleDetaileHandler,middlewares.RequireAuth)
 
 	// 円画像取得
 	router.GET("/circle/image/:circle_id", controllers.GetCircleImageHandler)
