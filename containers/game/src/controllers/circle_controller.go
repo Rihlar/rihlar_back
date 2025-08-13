@@ -37,15 +37,19 @@ func GetCircleDetaileHandler(ctx echo.Context) error {
 
 // 上位10位のデータを取得する
 func GetRankingTop10Handler(ctx echo.Context) error {
-	// ゲームのIDを取得する
-	gameId := ctx.Param("game_id")
-
 	// TODO UserID の取得 (後々ミドルウェアからの取得に変更する)
 	// userid := ctx.Request().Header.Get("UserID")
 	userid := ctx.Get("UserID").(string)
 
+	// コンテキストからゲームID取得
+	gameid := ctx.Get("GameID")
+	// ID取得できてるかチェック
+	if gameid == "" {
+		return ctx.JSON(http.StatusBadRequest, echo.Map{"error": "badRequest"})
+	}
+
 	// サービスに渡す
-	ranking, err := rankingService.GetRankingTop10(userid, gameId)
+	ranking, err := rankingService.GetRankingTop10(userid, gameid.(string))
 	if err != nil {
 		logger.PrintErr("ランキング取得エラー", ranking)
 		return err

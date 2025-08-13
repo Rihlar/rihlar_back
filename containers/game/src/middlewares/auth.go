@@ -21,6 +21,9 @@ func DebugRequireAuth(next echo.HandlerFunc) echo.HandlerFunc {
 		circleID := ctx.Request().Header.Get("CircleID")
 		ctx.Set("CircleID", circleID)
 
+		gameID := ctx.Request().Header.Get("GameID")
+		ctx.Set("GameID", gameID)
+
 		// 認証処理
 		return next(ctx)
 	}
@@ -112,7 +115,7 @@ func (middleware RequireLabelMiddleware) RequireAuth(next echo.HandlerFunc) echo
 		// コンテキスト登録処理
 		circleID := ctx.Request().Header.Get("CircleID")
 		ctx.Set("CircleID", circleID)
-		
+
 
 		// 認証処理
 		return next(ctx)

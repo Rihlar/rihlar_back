@@ -1,11 +1,10 @@
 @base_url = https://localhost:8943/game
 # @base_url = https://rihlar-stage.kokomeow.com/game
 
-@user_id = userid-79541130-3275-4b90-8677-01323045aca5
+@user_id = userid-a1b2c3d4-e5f6-7890-1234-567890abcdef
 
 @circle_id = circle-fffe81ae-43eb-4fd7-a01c-8e3c08883314
 
-# @game_id = gameid-413a287b-213c-414f-a287-c1397db8f9bf
 @game_id = gameid-413a287b-213c-414f-a287-c1397db8f9bf
 
 @image_circle_id = circle-548d4276-552b-404b-8c28-964281fd7f3b
@@ -20,6 +19,7 @@ GET {{base_url}}/ranking/personal/{{user_id}}
 ### ランキングTOP10
 GET {{base_url}}/ranking/top10/{{game_id}}
 # UserID: userid-79541130-3275-4b90-8677-01323045aca5
+# GameID: gameid-413a287b-213c-414f-a287-c1397db8f9bf
 Authorization: {{token}}
 
 ### ランキングTOP10 個人用
