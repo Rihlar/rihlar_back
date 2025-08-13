@@ -52,7 +52,7 @@ GET {{base_url}}/image/list
 Authorization: {{token}}
 
 ### 円の詳細取得
-GET {{base_url}}/circle/{{circle_id}}
+GET {{base_url}}/circle
 CircleID: {{circle_id}}
 
 ### 円の画像取得

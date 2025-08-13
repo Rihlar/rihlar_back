@@ -53,7 +53,7 @@ func InitRoutes(router *echo.Echo) *echo.Echo {
 	router.DELETE("/member/delete", controllers.DeleteMemberHandler, middlewares.RequireLabel([]string{"admin"}))
 
 	//円詳細取得
-	router.GET("/circle/:circle_id", controllers.GetCircleDetaileHandler,middlewares.RequireAuth)
+	router.GET("/circle", controllers.GetCircleDetaileHandler,middlewares.DebugRequireAuth)
 
 	// 円画像取得
 	router.GET("/circle/image/:circle_id", controllers.GetCircleImageHandler)
