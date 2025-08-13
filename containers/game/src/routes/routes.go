@@ -17,13 +17,13 @@ func InitRoutes(router *echo.Echo) *echo.Echo {
 	router.GET("/ranking/personal/:user_id", controllers.GetMyRankingHandler)
 
 	// 上位３位の円を取得する
-	router.GET("/ranking/top/:game_id", controllers.GetRankingTopHandler, middlewares.RequireAuth)
+	router.GET("/ranking/top", controllers.GetRankingTopHandler, middlewares.DebugRequireAuth)
 
 	// rankingTop10
-	router.GET("/ranking/top10", controllers.GetRankingTop10Handler, middlewares.DebugRequireAuth)
+	router.GET("/ranking/top10", controllers.GetRankingTop10Handler, middlewares.RequireAuth)
 
 	// ソロ用のランキングtop10
-	router.GET("/ranking/solo/top10", controllers.GetRankingTop10SoloHandler, middlewares.DebugRequireAuth)
+	router.GET("/ranking/solo/top10", controllers.GetRankingTop10SoloHandler, middlewares.RequireAuth)
 
 	// ゲームの一覧を取得するエンドポイント (モバイル用)
 	router.GET("/allgames", controllers.GetAllGameListHandler, middlewares.RequireAuth)
