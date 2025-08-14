@@ -17,21 +17,36 @@ type CreateCircleArgs struct {
 	Theme     string  `json:"theme`
 }
 
-func CreateCircle(args CreateCircleArgs) ([]string, error) {
+func CreateCircle(args CreateCircleArgs) (CreateCirclesResponse, error) {
 	// ユーザーのプロファイルを取得する
 	profile, err := models.GetProfile(args.UserID)
 
 	// エラー処理
 	if err != nil {
-		return []string{}, err
+		logger.PrintErr("プロファイル取得エラー", err)
+		return CreateCirclesResponse{}, err
 	}
 
-	// adminゲームを取得
-	admGame, err := models.GetGame(profile.AdmGame)
+	games := []models.Game{}
 
-	// エラー処理
-	if err != nil {
-		return []string{}, err
+	// ゲームIDが空の場合
+
+	logger.Println(profile.AdmGame)
+	if profile.AdmGame != "" {
+		// adminゲームを取得
+		admGame, err := models.GetGame(profile.AdmGame)
+
+		// エラー処理
+		if err != nil {
+			// 見つからない時
+			logger.PrintErr("adminゲーム取得エラー", err)
+		} else {
+			// ゲームが開催中か
+			if admGame.Status == 1 {
+				// ゲーム開催中の時
+				games = append(games, admGame)
+			}
+		}
 	}
 
 	// システムゲームを取得
@@ -39,29 +54,34 @@ func CreateCircle(args CreateCircleArgs) ([]string, error) {
 
 	// エラー処理
 	if err != nil {
-		return []string{}, err
+		logger.PrintErr("システムゲーム取得エラー", err)
+		return CreateCirclesResponse{}, err
 	}
+
+	// システムゲームを追加
+	games = append(games, sysGame)
 
 	// 円のサイズを計算する
 	circleSize := StepToSize(args.Steps)
 
 	// 円を作成 (システムとadminゲーム)
-	circleIds, err := ProcessCreateCircle(GamesCreateCircleArgs{
+	response, err := ProcessCreateCircle(GamesCreateCircleArgs{
 		UserID:    args.UserID,
 		Steps:     args.Steps,
 		Latitude:  args.Latitude,
 		Longitude: args.Longitude,
-		Games:     []models.Game{admGame, sysGame},
+		Games:     games,
 		CircleSize: circleSize,
 		Theme: args.Theme,
 	})
 
 	// エラー処理
 	if err != nil {
-		return []string{}, err
+		logger.PrintErr("円作成エラー", err)
+		return CreateCirclesResponse{}, err
 	}
 
-	return circleIds, nil
+	return response, nil
 }
 
 type GamesCreateCircleArgs struct {
@@ -96,14 +116,21 @@ func StepToSize(steps int64) float64 {
 	return 400 //float64(steps * 10.0)
 }
 
-// 円のデータを保存してチャンクを更新する関数 (円のIDリスト,エラー)
-func ProcessCreateCircle(args GamesCreateCircleArgs) ([]string, error) {
-	CircleIds := []string{}
+type CreateCirclesResponse struct {
+	IsAdmin        bool   `json:"isAdmin`
+	AdminCircleID string `json:"adminCircleID`
+	SystemCircleID string `json:"systemCircleID`
+}
 
+// 円のデータを保存してチャンクを更新する関数 (円のIDリスト,エラー)
+func ProcessCreateCircle(args GamesCreateCircleArgs) (CreateCirclesResponse, error) {
 	// ID 生成
 	ImageId, _ := utils.Genid()
 	// circle のID を生成する
 	ImageIdStr := "image-" + ImageId
+
+	// 返すデータ
+	response := CreateCirclesResponse{}
 
 	for _, game := range args.Games {
 		// 円を作成する関数
@@ -112,7 +139,7 @@ func ProcessCreateCircle(args GamesCreateCircleArgs) ([]string, error) {
 
 		// エラー処理
 		if err != nil {
-			return []string{}, err
+			return CreateCirclesResponse{}, err
 		}
 
 		// ID 生成
@@ -137,14 +164,23 @@ func ProcessCreateCircle(args GamesCreateCircleArgs) ([]string, error) {
 		// 円を作成する
 		if err := member.CreateCircle(circleData); err != nil {
 			logger.PrintErr(err)
-			return []string{}, err
+			return CreateCirclesResponse{}, err
 		}
 
 		// ID を追加
-		CircleIds = append(CircleIds, circleIdStr)
+		// CircleIds = append(CircleIds, circleIdStr)
+
+		if game.Type == 0 {
+			// システムの時
+			response.SystemCircleID = circleIdStr
+		} else {
+			// 管理ゲームの時
+			response.AdminCircleID = circleIdStr
+			response.IsAdmin = true
+		}
 	}
 
-	return CircleIds, nil
+	return response, nil
 }
 
 
