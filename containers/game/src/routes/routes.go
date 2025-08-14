@@ -17,7 +17,7 @@ func InitRoutes(router *echo.Echo) *echo.Echo {
 	router.GET("/ranking/personal/:user_id", controllers.GetMyRankingHandler)
 
 	// 上位３位の円を取得する
-	router.GET("/ranking/top", controllers.GetRankingTopHandler, middlewares.DebugRequireAuth)
+	router.GET("/ranking/top", controllers.GetRankingTopHandler, middlewares.RequireAuth)
 
 	// rankingTop10
 	router.GET("/ranking/top10", controllers.GetRankingTop10Handler, middlewares.RequireAuth)
