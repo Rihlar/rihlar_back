@@ -68,8 +68,7 @@ func GetRankingTopHandler(ctx echo.Context) error {
 func GetCircleImageHandler(ctx echo.Context) error {
 
 	// circleIDの特定　TODO: 
-	id := ctx.Param("circle_id")
-  	// id := ctx.Request().Header.Get("CircleID")
+  id := ctx.Request().Header.Get("CircleID")
 
 	// サービスに渡す
 	imagePath, err := circleService.GetCircleImage(id)

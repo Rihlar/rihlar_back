@@ -56,10 +56,11 @@ Authorization: {{token}}
 
 ### 円の詳細取得
 GET {{base_url}}/circle
-CircleID: {{circle_id}}
+CircleID: circle-ff6eb7f3-82d7-4313-8603-ec181c68b74e
 
 ### 円の画像取得
 GET  {{base_url}}/circle/image/{{image_circle_id}}
+CircleID: circle-ff6eb7f3-82d7-4313-8603-ec181c68b74e
 
 ### 終了済みゲーム一覧
 GET {{base_url}}/endgame/{{user_id}}
