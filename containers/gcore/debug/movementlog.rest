@@ -1,21 +1,23 @@
-@base_url = https://rihlar-test.kokomeow.com/gcore
+@base_url = https://rihlar-stage.kokomeow.com/gcore
 # @base_url = https://localhost:8943/gcore
 
-@token = eyJhbGciOiJFZERTQSIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3NTMyNDQ1NzksImxhYmVscyI6W10sInByb3ZDb2RlIjoiZ29vZ2xlIiwicHJvdlVpZCI6IjExMDg3MTY0NTY2MjI0MTc5NjA1OSIsInVzZXJJRCI6Ijc1ZTZmMDc5LWVlOTEtNDNkMC04ODJmLWFmZGU4ZjI4MzBjZCJ9.GXlMofpZ7ErfHW2milQoZwZpzgpamQoOO65dj20laCPCtb3RSiUv0Bfeq7TzF5j7t__QCsM-a9QlmOByoxwzBA
+@token = eyJhbGciOiJFZERTQSIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3NTQ3MjMwNzIsImxhYmVscyI6W10sInByb3ZDb2RlIjoiZ29vZ2xlIiwicHJvdlVpZCI6IjExMDg3MTY0NTY2MjI0MTc5NjA1OSIsInVzZXJJRCI6Ijg2NWZiYzI1LWRjMzAtNGI2OS1hZjlkLTkxY2IxMmJkNGZkZCJ9.i2qrGnf4UB943gRRs05L4lifMlu9zoOfFfgPbnlfG2wRK0PqgdgtBIQXB_riCgu1duiRcQwcVeGDE5CY1phtBQ
 
 ### 関西
 POST {{base_url}}/report/movement HTTP/1.1
-UserID : userid-79541130-3275-4b90-8677-01323045aca5
+# UserID : userid-79541130-3275-4b90-8677-01323045aca5
+Authorization: {{token}}
 Content-Type: application/json
 
-{    "latitude": 34.70649578495347,
-    "longitude": 135.50326868815958,
+{    "latitude": 34.70642001012556, 
+    "longitude": 135.5032876861992,
     "steps": 10
 }
 
 ### 東京 (リージョン以外 ユーザー1)
 POST {{base_url}}/report/movement HTTP/1.1
-UserID : userid-8a5fafff-0b2e-4f2b-b011-da21a5a724cd
+# UserID : userid-8a5fafff-0b2e-4f2b-b011-da21a5a724cd
+Authorization: {{token}}
 Content-Type: application/json
 
 {
@@ -26,7 +28,8 @@ Content-Type: application/json
 
 ### 東京 (リージョン以外 ユーザー2)
 POST {{base_url}}/report/movement HTTP/1.1
-UserID : userid-79541130-3275-4b90-8677-01323045aca5
+# UserID : userid-79541130-3275-4b90-8677-01323045aca5
+Authorization: {{token}}
 Content-Type: application/json
 
 {
@@ -62,7 +65,8 @@ Content-Type: application/json
 
 ### 歩いたデータを取得する
 GET {{base_url}}/get/movement HTTP/1.1
-UserID : userid-79541130-3275-4b90-8677-01323045aca5
+# UserID : userid-79541130-3275-4b90-8677-01323045aca5
+Authorization: {{token}}
 GameID : gameid-413a287b-213c-414f-a287-c1397db8f9bf
 Content-Type: application/json
 

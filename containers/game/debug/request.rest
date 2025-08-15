@@ -1,5 +1,5 @@
-@base_url = https://localhost:8943/game
-# @base_url = https://rihlar-stage.kokomeow.com/game
+# @base_url = https://localhost:8943/game
+@base_url = https://rihlar-stage.kokomeow.com/game
 
 @user_id = userid-79541130-3275-4b90-8677-01323045aca5
 
@@ -10,7 +10,7 @@
 
 @image_circle_id = circle-548d4276-552b-404b-8c28-964281fd7f3b
 
-@token = eyJhbGciOiJFZERTQSIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3NTMzNTEzOTEsImxhYmVscyI6W10sInByb3ZDb2RlIjoiZ29vZ2xlIiwicHJvdlVpZCI6IjExMDg3MTY0NTY2MjI0MTc5NjA1OSIsInVzZXJJRCI6Ijc1ZTZmMDc5LWVlOTEtNDNkMC04ODJmLWFmZGU4ZjI4MzBjZCJ9.OTWAZ_tReOMQ_DBbfoyjoOtpkweG7csY1Gxs_YcqM0lWY3zvJdvTs0XT_NczdBh-YEkYWV-zfBoLxqvXtL8LCA
+@token = eyJhbGciOiJFZERTQSIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3NTQ4ODk1ODgsImxhYmVscyI6W10sInByb3ZDb2RlIjoiZ29vZ2xlIiwicHJvdlVpZCI6IjExMDg3MTY0NTY2MjI0MTc5NjA1OSIsInVzZXJJRCI6Ijg2NWZiYzI1LWRjMzAtNGI2OS1hZjlkLTkxY2IxMmJkNGZkZCJ9.Almm9F9w8Iu9hpA5vQTX5mk0-9jr1BZqrJU-kE-jCIIUboGTOSKppgvlp5iu4nxn0lK3fAwnw96EqrugXva5Dg
 
 # test
 GET {{base_url}}/
@@ -73,3 +73,7 @@ Content-Type: application/json
 ### 開始済みのゲーム一覧を取得する
 GET {{base_url}}/startedgame 
 UserID: userid-79541130-3275-4b90-8677-01323045aca5
+
+### 開始済みのゲーム一覧を取得する
+GET {{base_url}}/allgames
+Authorization: {{token}}
