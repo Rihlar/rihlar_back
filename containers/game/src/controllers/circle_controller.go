@@ -12,15 +12,11 @@ var circleService = services.CircleService{} //サービスの実体を作る
 
 // 円の詳細取得
 func GetCircleDetaileHandler(ctx echo.Context) error {
-	// コンテキストからID取得
-	circleid := ctx.Get("CircleID")
-	// ID取得できてるかチェック
-	if circleid == "" {
-		return ctx.JSON(http.StatusBadRequest, echo.Map{"error": "badRequest"})
-	}
+	// ヘッダーからID取得
+	circleID := ctx.Request().Header.Get("CircleID")
 
 	// 円の詳細取得
-	circle, err := circleService.GetCircleDeteile(circleid.(string))
+	circle, err := circleService.GetCircleDeteile(circleID)
 	if err != nil {
 		logger.PrintErr("円取得エラー", circle)
 		return err
@@ -41,15 +37,11 @@ func GetRankingTopHandler(ctx echo.Context) error {
 	// userid := ctx.Request().Header.Get("UserID")
 	userid := ctx.Get("UserID").(string)
 
-	// コンテキストからゲームID取得
-	gameid := ctx.Get("GameID")
-	// ID取得できてるかチェック
-	if gameid == "" {
-		return ctx.JSON(http.StatusBadRequest, echo.Map{"error": "badRequest"})
-	}
+	// ヘッダーからゲームID取得
+	gameID := ctx.Request().Header.Get("GameID")
 
 	// サービスに渡す
-	ranking, err := rankingService.GetRankingTop(userid, gameid.(string))
+	ranking, err := rankingService.GetRankingTop(userid, gameID)
 	if err != nil {
 		logger.PrintErr("ランキング取得エラー", ranking)
 		return err

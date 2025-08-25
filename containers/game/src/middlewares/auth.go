@@ -17,13 +17,6 @@ func DebugRequireAuth(next echo.HandlerFunc) echo.HandlerFunc {
 		// ユーザーIDを格納
 		ctx.Set("UserID", userId)
 
-		// コンテキスト登録処理
-		circleID := ctx.Request().Header.Get("CircleID")
-		ctx.Set("CircleID", circleID)
-
-		gameID := ctx.Request().Header.Get("GameID")
-		ctx.Set("GameID", gameID)
-
 		// 認証処理
 		return next(ctx)
 	}
@@ -53,14 +46,6 @@ func RequireAuth(next echo.HandlerFunc) echo.HandlerFunc {
 		ctx.Set("token", token)
 		// ユーザーIDを格納
 		ctx.Set("UserID", "userid-" + claim.UserID)
-
-
-		// コンテキスト登録処理
-		circleID := ctx.Request().Header.Get("CircleID")
-		ctx.Set("CircleID", circleID)
-
-		gameID := ctx.Request().Header.Get("GameID")
-		ctx.Set("GameID", gameID)
 
 		// 認証処理
 		return next(ctx)
@@ -114,13 +99,6 @@ func (middleware RequireLabelMiddleware) RequireAuth(next echo.HandlerFunc) echo
 		ctx.Set("token", token)
 		// ユーザーIDを格納
 		ctx.Set("UserID", claim.UserID)
-
-		// コンテキスト登録処理
-		circleID := ctx.Request().Header.Get("CircleID")
-		ctx.Set("CircleID", circleID)
-
-		gameID := ctx.Request().Header.Get("GameID")
-		ctx.Set("GameID", gameID)
 
 		// 認証処理
 		return next(ctx)
