@@ -80,14 +80,14 @@ func GetCircleImageHandler(ctx echo.Context) error {
 
 // 円の画像アップロード
 func UploadCircleImageHandler(ctx echo.Context) error {
-	// circleIDの特定　TODO:
-	id := ctx.Request().Header.Get("CircleID")
-
 	// TODO UserID の取得 (後々ミドルウェアからの取得に変更する)
 	// userid := ctx.Request().Header.Get("UserID")
 	userid := ctx.Get("UserID").(string)
 
 	logger.Println("UserID: ", userid)
+
+	// circleIDの特定　TODO:
+	id := ctx.Request().Header.Get("CircleID")
 
 	// ファイルの特定
 	fileHeader, err := ctx.FormFile("image")
