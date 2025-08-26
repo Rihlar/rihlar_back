@@ -111,7 +111,7 @@ func FindProfileById(userID string) (*Profile, error) {
 
 //プロフィールの作成
 func CreateProfile(data Profile) (string, error) {
-	userID, err := utils.Genid()
+	uuid, err := utils.Genid()
 
 	//uuid生成エラー
 	if err != nil{
@@ -119,7 +119,7 @@ func CreateProfile(data Profile) (string, error) {
 		return "", err
 	} 
 	//uuid格納用に整形
-	data.UserID = "userid-" + userID
+	data.UserID = "userid-" + uuid
 	
 	//ユーザー作成
 	result := dbconn.Save(&data)
@@ -138,7 +138,7 @@ func CreateProfile(data Profile) (string, error) {
 func UpdateProfile(userID string, data Profile) error {
 
 	//userIDからprofile編集
-	result := dbconn.Where("user_id", userID).Save(&data)
+	result := dbconn.Model(&Profile{}).Where("user_id = ?", userID).Updates(data)
 
 	//失敗したらエラーを返す
 	if result.Error != nil {
@@ -162,7 +162,7 @@ func UpdateProfile(userID string, data Profile) error {
 //
 func FindAchiveProfile(userID string) (*AchiveProfile, error) {
 
-	Profile, err := FindProfileById(userID)
+	profile, err := FindProfileById(userID)
 
 	if err != nil {
 		logger.PrintErr("実績取得エラー",err)
@@ -170,15 +170,15 @@ func FindAchiveProfile(userID string) (*AchiveProfile, error) {
 	}
 
 	return &AchiveProfile{
-		DisplayAchiveID1: Profile.DisplayAchiveID1,
-		DisplayAchiveID2: Profile.DisplayAchiveID2,
-		DisplayAchiveID3: Profile.DisplayAchiveID3,
+		DisplayAchiveID1: profile.DisplayAchiveID1,
+		DisplayAchiveID2: profile.DisplayAchiveID2,
+		DisplayAchiveID3: profile.DisplayAchiveID3,
 	}, nil
 }
 
 //実績情報を編集する
 func UpdateAchiveProfile(userID string, data AchiveProfile) error {
-	result := dbconn.Model(&Profile{}).Where("user_id = ?", userID).Updates(data)
+	result := dbconn.Model(&Profile{}).Where("user_id = ?", userID).Updates(&data)
 
 	//エラーを返す
 	if result.Error != nil {
@@ -202,7 +202,7 @@ func UpdateAchiveProfile(userID string, data AchiveProfile) error {
 //プライバシー情報を返す
 func FindPrivacyProfile(userID string) (*PrivacyProfile, error) {
 	//ProfileをIDから全項目一件検索
-	Profile, err := FindProfileById(userID)
+	profile, err := FindProfileById(userID)
 
 	//エラーならnilを返す
 	if err != nil{
@@ -212,9 +212,9 @@ func FindPrivacyProfile(userID string) (*PrivacyProfile, error) {
 
 	//成功したら、緯度,経度,サイズを返す
 	return &PrivacyProfile{
-		Latitude: Profile.Latitude,
-		Longitude: Profile.Longitude,
-		Size: Profile.Size,
+		Latitude: profile.Latitude,
+		Longitude: profile.Longitude,
+		Size: profile.Size,
 	}, nil
 }
 

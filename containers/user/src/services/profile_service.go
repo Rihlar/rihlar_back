@@ -52,13 +52,13 @@ func CreateProfileService(input Input) (string, error){
 }
 
 // Profile情報の入力部分を編集
-func UpdateProfileById(UserID string, input Input) error {
+func UpdateProfileById(userID string, input Input) error {
 	//ユーザーIDがからの時
-	if UserID == "" {
+	if userID == "" {
 		return errors.New("userID is required")
 	}
 
-	targetProfile, err := models.FindProfileById(UserID)
+	targetProfile, err := models.FindProfileById(userID)
 
 	// エラー処理
 	if err != nil {
@@ -90,7 +90,7 @@ func UpdateProfileById(UserID string, input Input) error {
 		targetProfile.AdmGame = input.AdmGame
 	}
 
-	return models.UpdateProfile(UserID, *targetProfile)
+	return models.UpdateProfile(userID, *targetProfile)
 }
 
 /*
@@ -141,20 +141,20 @@ func UpdateAchiveProfile(userID string, input AchiveInput) error {
 */
 
 // プライバシー情報の取得
-func GetPrivacyProfileService(UserID string) (*models.PrivacyProfile, error) {
-	return models.FindPrivacyProfile(UserID)
+func GetPrivacyProfileService(userID string) (*models.PrivacyProfile, error) {
+	return models.FindPrivacyProfile(userID)
 }
 
 // プライバシー情報の編集
-func UpdatePrivacyProfileById(UserID string, input PrivacyInput) error {
+func UpdatePrivacyProfileById(userID string, input PrivacyInput) error {
 
 	//UserIDが空文字ならエラー返す
-	if UserID == "" {
+	if userID == "" {
 		return errors.New("userID is required")
 	}
 
 	//プライバシー情報を取得し、失敗ならエラーを返す
-	privacyProfile, err := models.FindPrivacyProfile(UserID)
+	privacyProfile, err := models.FindPrivacyProfile(userID)
 	if err != nil {
 		return err
 	}
@@ -175,7 +175,7 @@ func UpdatePrivacyProfileById(UserID string, input PrivacyInput) error {
 	}
 
 	//緯度経度サイズそれぞれを編集する
-	return models.UpdatePrivacyProfile(UserID, models.PrivacyProfile{
+	return models.UpdatePrivacyProfile(userID, models.PrivacyProfile{
 		Latitude:  privacyProfile.Latitude,
 		Longitude: privacyProfile.Longitude,
 		Size:      privacyProfile.Size,
@@ -187,8 +187,8 @@ func UpdatePrivacyProfileById(UserID string, input PrivacyInput) error {
 */
 
 // 所属地域の取得
-func GetRegionProfileService(UserID string) (string, error) {
-	return models.FindRegionProfile(UserID)
+func GetRegionProfileService(userID string) (string, error) {
+	return models.FindRegionProfile(userID)
 }
 
 // 　所属地域の編集
