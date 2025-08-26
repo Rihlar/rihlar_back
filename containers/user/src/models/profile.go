@@ -165,7 +165,7 @@ func FindAchiveProfile(userID string) (*AchiveProfile, error) {
 	Profile, err := FindProfileById(userID)
 
 	if err != nil {
-		logger.PrintErr("実績取得エラー")
+		logger.PrintErr("実績取得エラー",err)
 		return nil, err
 	}
 

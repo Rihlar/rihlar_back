@@ -121,13 +121,13 @@ func UpdateAchiveProfile(c echo.Context) error {
 	if err := services.UpdateAchiveProfile(UserID, req); err != nil {
 		//Notfoundのとき
 		if errors.Is(err, gorm.ErrRecordNotFound) {
-			return c.JSON(http.StatusNotFound, echo.Map{"error": "privacy profile not found"})
+			return c.JSON(http.StatusNotFound, echo.Map{"error": "Achivement profile not found"})
 		}
 		//Notfound以外のエラー
 		return c.JSON(http.StatusInternalServerError, echo.Map{"error": "update failed"})
 	}
 
-	return c.JSON(http.StatusOK, echo.Map{"status": "privacy updated!"})
+	return c.JSON(http.StatusOK, echo.Map{"status": "Achivement updated!"})
 
 }
 
