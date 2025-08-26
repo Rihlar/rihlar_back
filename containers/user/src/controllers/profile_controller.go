@@ -42,17 +42,8 @@ func CreateProfile(c echo.Context) error {
 		return c.JSON(http.StatusBadRequest, echo.Map{"error": "invalid input"})
 	}
 
-	//入力したデータを格納
-	input := services.Input{
-		Name:     req.Name,
-		Comment:  req.Comment,
-		RegionID: req.RegionID,
-		SysGame:  req.SysGame,
-		AdmGame:  req.AdmGame,
-	}
-
 	//作成
-	userID, err := services.CreateProfileService(input)
+	userID, err := services.CreateProfileService(req)
 
 	//エラー処理
 	if err != nil{
@@ -77,17 +68,8 @@ func UpdateProfileById(c echo.Context) error {
 		return c.JSON(http.StatusBadRequest, echo.Map{"error": "invalid input"})
 	}
 
-	//リクエストを格納
-	input := services.Input{
-		Name:     req.Name,
-		Comment:  req.Comment,
-		RegionID: req.RegionID,
-		SysGame: req.SysGame,
-		AdmGame: req.AdmGame,
-	}
-
 	//エラー処理
-	if err := services.UpdateProfileById(userID, input); err != nil {
+	if err := services.UpdateProfileById(userID, req); err != nil {
 		//NotFoundのとき
 		if errors.Is(err, gorm.ErrRecordNotFound) {
 			return c.JSON(http.StatusNotFound, echo.Map{"error": "profile not found"})
@@ -135,14 +117,8 @@ func UpdateAchiveProfile(c echo.Context) error {
 		return c.JSON(http.StatusBadRequest, echo.Map{"error": "invalid input"})
 	}
 
-	input := services.AchiveInput{
-		DisplayAchiveID1: req.DisplayAchiveID1,
-		DisplayAchiveID2: req.DisplayAchiveID2,
-		DisplayAchiveID3: req.DisplayAchiveID3,
-	}
-
 	//エラー処理
-	if err := services.UpdateAchiveProfile(UserID, input); err != nil {
+	if err := services.UpdateAchiveProfile(UserID, req); err != nil {
 		//Notfoundのとき
 		if errors.Is(err, gorm.ErrRecordNotFound) {
 			return c.JSON(http.StatusNotFound, echo.Map{"error": "privacy profile not found"})
