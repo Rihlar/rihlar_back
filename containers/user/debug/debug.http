@@ -13,9 +13,6 @@ Content-Type: application/json
 
 {
   "name": "テスト太郎2",
-  "display_achive_id1": "achive-d3c9d4be-84c2-5b4d-b116-088a8c8680a5",
-  "display_achive_id2": "achive-86548e0a-41ab-9617-c248-094e2de7f4f5",
-  "display_achive_id3": "achive-46e37298-1052-a002-4cc4-1567df59bae5",
   "comment": "これはテスト用のコメントです。",
   "region_id": "北海道",
   "system_game_id": "",
@@ -33,9 +30,6 @@ Content-Type: application/json
   "system_game_id": "systemgame-f5b632cb-707d-f450-eece-f119534b724a",
   "admin_game_id": "admingame-01e32526-1c27-c9a9-2b5b-d158b0f50c80"
 }
-
-### 実績取得
-GET {{{{base_url}}}}/
 
 ### プライバシー取得
 GET  {{base_url}}/privacy
@@ -79,7 +73,7 @@ Content-Type: application/json
 Userid: {{user_id}}
 
 {
-  "display_achive_id1": "9d89644f-a0aa-e270-9c2b-2c0a88c85a93",
-  "display_achive_id2": "9d5e7f55-eb7b-c2fd-5284-9b645e34eb3a",
-  "display_achive_id3": "669ee10d-759f-584d-cd42-38af7850e41d"
+  "display_achive_id1": "achive-9d89644f-a0aa-e270-9c2b-2c0a88c85a93",
+  "display_achive_id2": "achive-9d5e7f55-eb7b-c2fd-5284-9b645e34eb3a",
+  "display_achive_id3": "achive-669ee10d-759f-584d-cd42-38af7850e41d"
 }
