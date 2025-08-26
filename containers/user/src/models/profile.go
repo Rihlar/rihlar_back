@@ -10,9 +10,9 @@ import (
 type Profile struct {
 	UserID    string  `gorm:"primaryKey;type:varchar(50)" json:"user_id"`        // ユーザID
 	Name      string  `gorm:"type:varchar(100);default:''" json:"name"`          //ユーザ名
-	DisplayAchiveID1  string  `gorm:"type:varchar(50);default''" json:"display_achive_id1"`       // 実績ID1
-	DisplayAchiveID2  string  `gorm:"type:varchar(50);default''" json:"display_achive_id2"`       // 実績ID2
-	DisplayAchiveID3  string  `gorm:"type:varchar(50);default''" json:"display_achive_id3"`       // 実績ID3
+    DisplayAchiveID1  string  `gorm:"type:varchar(50);default:''" json:"display_achive_id1"`       // 実績ID1
+    DisplayAchiveID2  string  `gorm:"type:varchar(50);default:''" json:"display_achive_id2"`       // 実績ID2
+    DisplayAchiveID3  string  `gorm:"type:varchar(50);default:''" json:"display_achive_id3"`       // 実績ID3
 	Comment   string  `gorm:"type:varchar(255);default:''" json:"comment"`       // ユーザコメント（デフォルト空白）
 	Latitude  float64 `gorm:"type:double;default:0" json:"latitude"`             // 緯度（デフォルト0）
 	Longitude float64 `gorm:"type:double;default:0" json:"longitude"`            // 経度（デフォルト0）
