@@ -58,7 +58,9 @@ GET {{base_url}}/circle/{{circle_id}}
 GET  {{base_url}}/circle/image/{{image_circle_id}}
 
 ### 終了済みゲーム一覧
-GET {{base_url}}/endgame/{{user_id}}
+GET {{base_url}}/endgame
+# UserID: userid-79541130-3275-4b90-8677-01323045aca5
+
 
 ###   開催中のゲーム一覧取得
 GET {{base_url}}/joingame/{{user_id}}
