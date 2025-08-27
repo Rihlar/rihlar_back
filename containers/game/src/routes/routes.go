@@ -65,7 +65,7 @@ func InitRoutes(router *echo.Echo) *echo.Echo {
 	router.GET("/image/list", controllers.GetImageListHandler, middlewares.RequireAuth)
 
 	// 終了済みゲーム一覧
-	router.GET("/endgame/:user_id", controllers.GetEndGamesHandler)
+	router.GET("/endgame", controllers.GetEndGamesHandler)
 	// 参加している全てのゲーム一覧取得
 	router.GET("/joingame", controllers.GetJoinGamesHandler, middlewares.RequireAuth)
 
