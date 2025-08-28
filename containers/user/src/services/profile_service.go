@@ -10,11 +10,17 @@ import (
 // 基本プロフィールの構造体
 type Input struct {
 	Name     string `json:"name"`           //ユーザ名
-	RecordID string `json:"record_id"`      // 実績ID
 	Comment  string `json:"comment"`        //コメント
 	RegionID string `json:"region_id"`      // 地域ID
 	SysGame  string `json:"system_game_id"` // システムゲームID
 	AdmGame  string `json:"admin_game_id"`  // アドミンゲームID
+}
+
+//　ユーザの実績の構造体
+type AchiveInput struct {
+	DisplayAchiveID1  *string  `json:"display_achive_id1"`       // 実績ID1
+	DisplayAchiveID2  *string  `json:"display_achive_id2"`       // 実績ID2
+	DisplayAchiveID3  *string  `json:"display_achive_id3"`       // 実績ID3
 }
 
 // プライバシー情報の構造体
@@ -23,6 +29,10 @@ type PrivacyInput struct {
 	Longitude *float64 `json:"longitude"`
 	Size      *int     `json:"size"`
 }
+
+/*
+	プロフィール全体関連
+*/
 
 // Profile情報を全て取得
 func GetProfileService(userID string) (*models.Profile, error) {
@@ -79,7 +89,6 @@ func CreateProfileService(userid string,input Input) (string, error) {
 	//構造体にinputを格納
 	profile := models.Profile{
 		Name: input.Name,
-		RecordID: input.RecordID,
 		Comment:  input.Comment,
 		RegionID: input.RegionID,
 		SysGame: "sysgame-" + gameId,
@@ -98,13 +107,13 @@ func CreateProfileService(userid string,input Input) (string, error) {
 }
 
 // Profile情報の入力部分を編集
-func UpdateProfileById(UserID string, input Input) error {
+func UpdateProfileById(userID string, input Input) error {
 	//ユーザーIDがからの時
-	if UserID == "" {
+	if userID == "" {
 		return errors.New("userID is required")
 	}
 
-	targetProfile, err := models.FindProfileById(UserID)
+	targetProfile, err := models.FindProfileById(userID)
 
 	// エラー処理
 	if err != nil {
@@ -114,11 +123,6 @@ func UpdateProfileById(UserID string, input Input) error {
 	//名前が空文字でない時のみ代入
 	if input.Name != "" {
 		targetProfile.Name = input.Name
-	}
-
-	//実績IDが空文字でない時のみ代入
-	if input.RecordID != "" {
-		targetProfile.RecordID = input.RecordID
 	}
 
 	//コメントが空文字でない時のみ代入
@@ -141,24 +145,71 @@ func UpdateProfileById(UserID string, input Input) error {
 		targetProfile.AdmGame = input.AdmGame
 	}
 
-	return models.UpdateProfile(UserID, *targetProfile)
+	return models.UpdateProfile(userID, *targetProfile)
 }
 
+/*
+	実績関連
+*/
+
+func GetAchiveProfile(userID string) (*models.AchiveProfile, error) {
+	return models.FindAchiveProfile(userID)
+}
+
+func UpdateAchiveProfile(userID string, input AchiveInput) error {
+	//UserIDが空文字ならエラー返す
+	if userID == "" {
+		return errors.New("userID is required")
+	}
+
+	//存在確認
+	AchiveProfile, err := models.FindAchiveProfile(userID)
+
+	//エラー処理
+	if err != nil {
+		return err
+	}
+
+	// 3つの実績が空文字でない時のみ代入
+	if input.DisplayAchiveID1 != nil {
+		AchiveProfile.DisplayAchiveID1 = *input.DisplayAchiveID1
+	}
+
+	if input.DisplayAchiveID2 != nil {
+		AchiveProfile.DisplayAchiveID2 = *input.DisplayAchiveID2
+	}
+
+	if input.DisplayAchiveID3 != nil {
+		AchiveProfile.DisplayAchiveID3 = *input.DisplayAchiveID3
+	}
+
+	//　実行結果を返す
+	return models.UpdateAchiveProfile(userID, models.AchiveProfile{
+		DisplayAchiveID1: AchiveProfile.DisplayAchiveID1,
+		DisplayAchiveID2: AchiveProfile.DisplayAchiveID2,
+		DisplayAchiveID3: AchiveProfile.DisplayAchiveID3,
+	})
+}
+
+/*
+	プライバシー関連
+*/
+
 // プライバシー情報の取得
-func GetPrivacyProfileService(UserID string) (*models.PrivacyProfile, error) {
-	return models.FindPrivacyProfile(UserID)
+func GetPrivacyProfileService(userID string) (*models.PrivacyProfile, error) {
+	return models.FindPrivacyProfile(userID)
 }
 
 // プライバシー情報の編集
-func UpdatePrivacyProfileById(UserID string, input PrivacyInput) error {
+func UpdatePrivacyProfileById(userID string, input PrivacyInput) error {
 
 	//UserIDが空文字ならエラー返す
-	if UserID == "" {
+	if userID == "" {
 		return errors.New("userID is required")
 	}
 
 	//プライバシー情報を取得し、失敗ならエラーを返す
-	privacyProfile, err := models.FindPrivacyProfile(UserID)
+	privacyProfile, err := models.FindPrivacyProfile(userID)
 	if err != nil {
 		return err
 	}
@@ -179,16 +230,20 @@ func UpdatePrivacyProfileById(UserID string, input PrivacyInput) error {
 	}
 
 	//緯度経度サイズそれぞれを編集する
-	return models.UpdatePrivacyProfile(UserID, models.PrivacyProfile{
+	return models.UpdatePrivacyProfile(userID, models.PrivacyProfile{
 		Latitude:  privacyProfile.Latitude,
 		Longitude: privacyProfile.Longitude,
 		Size:      privacyProfile.Size,
 	})
 }
 
+/*
+	地域情報関連
+*/
+
 // 所属地域の取得
-func GetRegionProfileService(UserID string) (string, error) {
-	return models.FindRegionProfile(UserID)
+func GetRegionProfileService(userID string) (string, error) {
+	return models.FindRegionProfile(userID)
 }
 
 // 　所属地域の編集

@@ -25,6 +25,10 @@ func InitRoute(router *echo.Echo) *echo.Echo {
 	router.GET("/region", controllers.GetRegionProfile)
 	//所属地域の編集
 	router.PUT("/region", controllers.UpdateRegionProfile)
+	//実績の取得
+	router.GET("/achive", controllers.GetAchiveProfile)
+	//実績の編集
+	router.PUT("/achive", controllers.UpdateAchiveProfile)
 
 	return router
 }
