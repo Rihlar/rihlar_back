@@ -8,6 +8,20 @@ import (
 	"github.com/labstack/echo/v4"
 )
 
+func DebugRequireAuth(next echo.HandlerFunc) echo.HandlerFunc {
+	return func(ctx echo.Context) error {
+		userId := "userid-79541130-3275-4b90-8677-01323045aca5" //ctx.Request().Header.Get("UserID")
+
+		// トークンを格納
+		ctx.Set("token", "")
+		// ユーザーIDを格納
+		ctx.Set("UserID", userId)
+
+		// 認証処理
+		return next(ctx)
+	}
+}
+
 // 認証ミドルウェア
 func RequireAuth(next echo.HandlerFunc) echo.HandlerFunc {
 	return func(ctx echo.Context) error {
@@ -31,7 +45,7 @@ func RequireAuth(next echo.HandlerFunc) echo.HandlerFunc {
 		// トークンを格納
 		ctx.Set("token", token)
 		// ユーザーIDを格納
-		ctx.Set("UserID", claim.UserID)
+		ctx.Set("UserID", "userid-" + claim.UserID)
 
 		// 認証処理
 		return next(ctx)

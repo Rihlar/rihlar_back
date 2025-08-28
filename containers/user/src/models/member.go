@@ -1,7 +1,7 @@
 package models
 
 import (
-	"game/logger"
+	"user/logger"
 
 	"gorm.io/gorm"
 )

@@ -18,6 +18,7 @@ type Circle struct {
 	CreatedAT time.Time `gorm:"autoCreateTime" json:"createdAT"`    // 作成時
 	ImageID   string    `gorm:"varchar(50)" json:"imageID"`         // イメージID
 	Steps     int64     `json:"steps"`                              // 歩数
+	Theme     string    `json:"theme"`								// 円のテーマ
 }
 
 // テーブル名
@@ -50,6 +51,24 @@ func GetCircleByTeamId(teamId string) ([]Circle, error) {
 	// 取得
 	err := dbconn.Where(&Circle{
 		TeamID: teamId,
+	}).Find(&circles).Error
+
+	// エラー処理
+	if err != nil {
+		logger.PrintErr("サークル取得エラー", err)
+		return []Circle{}, err
+	}
+
+	return circles, nil
+}
+
+// ゲームに属する円を取得する
+func (game Game) GetCircles() ([]Circle, error) {
+	var circles []Circle
+
+	// 取得
+	err := dbconn.Where(&Circle{
+		GameID: game.GameID,
 	}).Find(&circles).Error
 
 	// エラー処理

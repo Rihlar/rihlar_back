@@ -12,8 +12,12 @@ var gameService = services.GameService{} // サービスの実体を作る。
 
 // 終了済みゲーム一覧
 func GetEndGamesHandler(ctx echo.Context) error {
+
+	logger.Println("pass通過")
+	
 	// ユーザーの特定する
-	id := ctx.Param("user_id")
+	id := ctx.Request().Header.Get("UserID")
+
 
 	// サービスに渡す
 	endGame, err := gameService.GetEndGames(id)
@@ -34,7 +38,8 @@ func GetEndGamesHandler(ctx echo.Context) error {
 // 参加中のゲーム取得
 func GetJoinGamesHandler(ctx echo.Context) error {
 	// ユーザーの特定する
-	id := ctx.Param("user_id")
+	// id := ctx.Param("user_id")
+	id := ctx.Get("UserID").(string)
 
 	// サービスに渡す
 	joinGames, err := gameService.GetJoinGames(id)
@@ -103,6 +108,27 @@ func CreateGameHandler(ctx echo.Context) error {
 func GetGameListHandler(ctx echo.Context) error {
 	// サービスに渡す
 	games, err := gameService.GetGameList()
+	if err != nil {
+		logger.PrintErr("ゲーム一覧取得エラー", err)
+		return err
+	}
+
+	// 成功ログ
+	logger.Println("Successful game list get.")
+
+	// レスポンス
+	return ctx.JSON(http.StatusOK, echo.Map{
+		"Data": games,
+	})
+}
+
+// ゲーム一覧
+func GetAllGameListHandler(ctx echo.Context) error {
+	// ユーザーIDを取得する
+	userId := ctx.Get("UserID").(string)
+
+	// サービスに渡す
+	games, err := gameService.GetAllGameList(userId)
 	if err != nil {
 		logger.PrintErr("ゲーム一覧取得エラー", err)
 		return err
@@ -219,7 +245,8 @@ func DeleteTeamHandler(ctx echo.Context) error {
 // メンバーを削除するエンドポイと
 func DeleteMemberHandler(ctx echo.Context) error {
 	// TODO 後ほどミドルウェアからの取得に変更す
-	userId := ctx.Request().Header.Get("UserID")
+	userId := ctx.Get("UserID").(string)
+	// userId := ctx.Request().Header.Get("UserID")
 	gameId := ctx.Request().Header.Get("GameID")
 
 	// サービスに渡す
@@ -247,7 +274,7 @@ func GetStartedGamesHandler(ctx echo.Context) error {
 	games, err := gameService.GetStartedGames(userId)
 	if err.Err != nil {
 		logger.PrintErr("開催中のゲーム取得エラー", err.LogMessage)
-		return ctx.JSON(err.Code,echo.Map{
+		return ctx.JSON(err.Code, echo.Map{
 			"Message": err.ErrMessage,
 		})
 	}
@@ -255,5 +282,25 @@ func GetStartedGamesHandler(ctx echo.Context) error {
 	// レスポンス
 	return ctx.JSON(http.StatusOK, echo.Map{
 		"Data": games,
+	})
+}
+
+// 自身が関与しているゲームの一覧を取得する
+func GetMyGamesHandler(ctx echo.Context) error {
+	// ユーザーIDを取得する
+	userId := ctx.Get("UserID").(string)
+
+	// サービスに渡す
+	data, err := gameService.GetMyGames(userId)
+	if err != nil {
+		logger.PrintErr("自身が関与しているゲーム取得エラー", err)
+		return ctx.JSON(http.StatusInternalServerError, echo.Map{
+			"Message": "自身が関与しているゲーム取得エラー",
+		})
+	}
+
+	// レスポンス
+	return ctx.JSON(http.StatusOK, echo.Map{
+		"Data": data,
 	})
 }

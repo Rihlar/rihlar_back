@@ -6,7 +6,7 @@ import (
 )
 
 func Debug() {
-	CreateTestData()
+	// CreateTestData()
 }
 
 func CreateTestData() {

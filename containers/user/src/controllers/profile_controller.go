@@ -36,6 +36,10 @@ func GetProfileById(c echo.Context) error {
 
 // プロフィール作成
 func CreateProfile(c echo.Context) error {
+	// ユーザーIDを取得する	
+	// userID := c.Request().Header.Get("userid")
+	UserID := c.Get("UserID").(string)
+
 	var req services.Input
 	//リクエスト整形(bind)
 	if err := c.Bind(&req); err != nil {
@@ -43,7 +47,7 @@ func CreateProfile(c echo.Context) error {
 	}
 
 	//作成
-	userID, err := services.CreateProfileService(req)
+	userID, err := services.CreateProfileService(UserID, req)
 
 	//エラー処理
 	if err != nil{

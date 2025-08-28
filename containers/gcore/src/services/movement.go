@@ -3,6 +3,7 @@ package services
 import (
 	"gcore/logger"
 	"gcore/models"
+	"net/http"
 	"time"
 )
 
@@ -32,13 +33,13 @@ type ProcessChunkArgs struct {
 	Games     []models.Game `json:"games`     // 管理ゲームID
 }
 
-func ReportMovement(args MovementArgs) error {
+func ReportMovement(args MovementArgs) (ProcessChunkResponse,error) {
 	// プロファイルを取得する
 	profile, err := models.GetProfile(args.UserID)
 
 	// エラー処理
 	if err != nil {
-		return err
+		return ProcessChunkResponse{}, err
 	}
 
 	// システムゲームを取得
@@ -46,7 +47,7 @@ func ReportMovement(args MovementArgs) error {
 
 	// エラー処理
 	if err != nil {
-		return err
+		return ProcessChunkResponse{}, err
 	}
 
 	// adminゲームを取得
@@ -54,7 +55,7 @@ func ReportMovement(args MovementArgs) error {
 
 	// エラー処理
 	if err != nil {
-		return err
+		return ProcessChunkResponse{}, err
 	}
 
 	// タイムスタンプがなかったら
@@ -75,11 +76,11 @@ func ReportMovement(args MovementArgs) error {
 
 	// エラー処理
 	if err != nil {
-		return err
+		return ProcessChunkResponse{}, err
 	}
 
 	// チャンクに対しての処理
-	err = ProcessChunk(ProcessChunkArgs{
+	response,err := ProcessChunk(ProcessChunkArgs{
 		UserID:    args.UserID,
 		Latitude:  args.Latitude,
 		Longitude: args.Longitude,
@@ -88,7 +89,7 @@ func ReportMovement(args MovementArgs) error {
 
 	// エラー処理
 	if err != nil {
-		return err
+		return ProcessChunkResponse{}, err
 	}
 
 	// 円のレベルアップ処理
@@ -102,10 +103,10 @@ func ReportMovement(args MovementArgs) error {
 
 	// エラー処理
 	if err != nil {
-		return err
+		return ProcessChunkResponse{}, err
 	}
 
-	return nil
+	return response, nil
 }
 
 // 歩いたログを記録する関数
@@ -130,8 +131,22 @@ func SaveMovementLog(args SaveMovementLogArgs) error {
 	return nil
 }
 
+type ProcessChunkAdminGameResponse struct {
+	IsSuccess bool   //管理ゲームが成功したか
+	GameId    string //管理ゲームID
+	Message   string //メッセージ
+	Status    int    //ステータス
+}
+
+type ProcessChunkResponse struct {
+	IsSyetemSuccess bool //システムゲームが成功したか
+	AdminGames      []ProcessChunkAdminGameResponse	//管理ゲームの処理結果
+}
+
 // チャンクに対しての処理 (Level1 などを実行する)
-func ProcessChunk(args ProcessChunkArgs) error {
+func ProcessChunk(args ProcessChunkArgs) (ProcessChunkResponse,error) {
+	returnData := ProcessChunkResponse{}
+
 	// ゲームを回す
 	for _, game := range args.Games {
 		// 一番近いチャンクを取得
@@ -139,7 +154,35 @@ func ProcessChunk(args ProcessChunkArgs) error {
 
 		// エラー処理
 		if err != nil {
-			return err
+			logger.PrintErr("処理対象のゲーム",game,err)
+			// エラーが起きた時
+			// admin ゲームならむし
+			if game.Type == 1 {
+				logger.Println("チャンク処理でエラーが発生しました")
+				logger.Println(err)
+
+				// admin ゲームの追加するデータ
+				addData := ProcessChunkAdminGameResponse{
+					IsSuccess: false,
+					Message:   err.Error(),
+					Status:    http.StatusInternalServerError,
+					GameId:    game.GameID,
+				}
+
+				// 追加する
+				returnData.AdminGames = append(returnData.AdminGames, addData)
+			} else {
+				logger.Println("システムゲーム処理でエラーが発生しました")
+				logger.Println(err)
+				// システムゲームの時
+				// レスポンスを変更する
+				returnData.IsSyetemSuccess = false
+
+				// エラーを返す
+				return returnData, err
+			}
+
+			continue
 		}
 
 		logger.Println("near chunk:", chunk)
@@ -149,18 +192,30 @@ func ProcessChunk(args ProcessChunkArgs) error {
 			// チャンクを更新する
 			if err := chunk.ChangeLevel(1); err != nil {
 				logger.PrintErr(err)
-				return err
+				return returnData,err
 			}
 
 			// オーナーも変更する
 			if err := chunk.ChangeOwner(args.UserID); err != nil {
 				logger.PrintErr(err)
-				return err
+				return returnData,err
 			}
+		}
+
+		// admin ゲームの場合結果を追加
+		if game.Type == 1 {
+			addData := ProcessChunkAdminGameResponse{
+				IsSuccess: true,
+				Message:   "処理に成功しました",
+				Status:    http.StatusOK,
+				GameId:    game.GameID,
+			}
+			returnData.AdminGames = append(returnData.AdminGames, addData)
 		}
 	}
 
-	return nil
+	returnData.IsSyetemSuccess = true
+	return returnData, nil
 }
 
 type MovementLog struct {
@@ -171,7 +226,7 @@ type MovementLog struct {
 }
 
 // 歩いた記録を取得する
-func GetReportedMovement(gameId, userId string) ([]MovementLog,error) {
+func GetReportedMovement(gameId, userId string) ([]MovementLog, error) {
 	// ゲームを取得する
 	game, err := models.GetGame(gameId)
 

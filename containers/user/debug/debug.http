@@ -1,4 +1,5 @@
-@base_url = https://localhost:8943/user
+# @base_url = https://localhost:8943/user
+@base_url = https://rihlar-stage.kokomeow.com/user
 
 @user_id = userid-e3abf90d-4bcf-4c3b-bbde-37694b1611b3
 
@@ -10,6 +11,7 @@ Content-Type: application/json
 ###プロフィール作成
 POST {{base_url}}/profile
 Content-Type: application/json
+Authorization: eyJhbGciOiJFZERTQSIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3NTQyOTI5OTUsImxhYmVscyI6W10sInByb3ZDb2RlIjoiZ29vZ2xlIiwicHJvdlVpZCI6IjExMDg3MTY0NTY2MjI0MTc5NjA1OSIsInVzZXJJRCI6Ijg2NWZiYzI1LWRjMzAtNGI2OS1hZjlkLTkxY2IxMmJkNGZkZCJ9.GRaKRuBgjkJ5BoLn1ytu73QBkONtM3FCnM_cb9gQPz0-j0zfgBXAO7c0hDCUCaqZdfLVrHpsWxp3vPxoeDbeBw
 
 {
   "name": "テスト太郎2",
