@@ -115,7 +115,7 @@ def main():
     print("--- OAuth およびアプリケーション設定の開始 ---")
 
     # ファイルの上書き確認を行い、許可されない場合は終了
-    files_to_check = ["auth.env", "app.env", "gcore.env", "game.env", "user.env"]
+    files_to_check = ["auth.env", "app.env", "gcore.env", "game.env", "user.env","friend.env"]
     if not confirm_overwrite_all(files_to_check):
         return
 
@@ -165,6 +165,16 @@ DATABASE_DSN = "main:main@tcp(db:3306)/maindb?charset=utf8mb4&parseTime=True&loc
 """
     # user.env ファイルを生成
     create_env_file("user.env", user_env_template)
+
+    # friend.env のテンプレート (app.env と同じ内容だが、キーは新規生成)
+    session_secret_user = generate_random_key()
+    friend_env_template = f"""
+SessionSecret = "{session_secret_user}"
+GRPC_SERVER = auth:9000
+DATABASE_DSN = "main:main@tcp(db:3306)/maindb?charset=utf8mb4&parseTime=True&loc=Local"
+"""
+    # user.env ファイルを生成
+    create_env_file("friend.env", friend_env_template)
 
 
     print(f"\n--- 設定完了！ ---")

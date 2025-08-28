@@ -5,11 +5,7 @@ database/data/
 .env
 
 openssl/jwtKeys/
-config/auth.env
-config/app.env
-config/user.env
-config/gcore.env
-config/game.env
+config/*.env
 
 auth/src/assets/icons/*
 !auth/src/assets/icons/readme.md
@@ -25,3 +21,5 @@ containers/game/src/tmp/
 containers/gcore/src/tmp/
 
 containers/game/src/assets/circle-images/*.png
+
+containers/friend/src/tmp/
