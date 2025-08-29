@@ -1,6 +1,7 @@
 package services
 
 import (
+	"errors"
 	"friend/logger"
 	"friend/models"
 )
@@ -43,4 +44,30 @@ func GetRecvedRequest(userId string) ([]RequestData, error) {
 	}
 
 	return returnDatas, nil
+}
+
+// リクエストを拒否する関数
+func RejectRequest(userId, targetUserId string) error {
+	// フレンドデータを取得
+	friendData, err := models.GetFriendData(userId, targetUserId)
+
+	// エラー処理
+	if err != nil {
+		return err
+	}
+
+	// リクエストかどうか
+	if friendData.Type != models.FriendTypeRequest {
+		// リクエストじゃない場合
+		return errors.New("invalid request")
+	}
+
+	// 自信が受信者かどうか
+	if friendData.ReceiverId != userId {
+		// 自身当てのリクエストじゃない場合
+		return errors.New("invalid request")
+	}
+
+	// フレンドデータを削除
+	return models.DeleteFriend(friendData)
 }
