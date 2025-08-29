@@ -25,7 +25,7 @@ userId: userid-8393099e-d66d-43db-82a9-9624e6a7611c
 ###
 # リクエストを送信する関数
 POST {{base_url}}/request
-Authorization: eyJhbGciOiJFZERTQSIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3NTY0NjY2MDAsImxhYmVscyI6W10sInByb3ZDb2RlIjoiZ29vZ2xlIiwicHJvdlVpZCI6IjEwMTI0MTk5Mjg0NTIzNzkwMjA4NiIsInVzZXJJRCI6IjgzOTMwOTllLWQ2NmQtNDNkYi04MmE5LTk2MjRlNmE3NjExYyJ9.8BkdkBWB1aFsCNfTkVxDxSUNt5QT8Z10r0BIk6Q5m7sAjXphnxPG4l7APc3XpRKpnuPDj3nYWm-LW510Jp2NAw
+Authorization: eyJhbGciOiJFZERTQSIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3NTY0NjcyNjEsImxhYmVscyI6W10sInByb3ZDb2RlIjoiZ29vZ2xlIiwicHJvdlVpZCI6IjEwMTI0MTk5Mjg0NTIzNzkwMjA4NiIsInVzZXJJRCI6IjgzOTMwOTllLWQ2NmQtNDNkYi04MmE5LTk2MjRlNmE3NjExYyJ9.CsWHqRyHfxalLvLfuhCcBy67DWVvBcZtgy92OlEhLjnqNoejzgSqMiD8E7KqO7pvcaMWspjy0l7Euc2Aa0ccAg
 Content-Type: application/json
 code: NDQ1MjAwMmMtNDM4MS00NzQxLWFmY2YtNWVjNTg4NWIwOTJl
 
@@ -38,6 +38,13 @@ Content-Type: application/json
 ###
 # リクエストを拒否する
 Post {{base_url}}/request/reject
+Authorization: {{token}}
+Content-Type: application/json
+userId: userid-8393099e-d66d-43db-82a9-9624e6a7611c
+
+###
+# リクエストを承認する
+Post {{base_url}}/request/accept
 Authorization: {{token}}
 Content-Type: application/json
 userId: userid-8393099e-d66d-43db-82a9-9624e6a7611c

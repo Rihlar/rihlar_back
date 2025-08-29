@@ -71,3 +71,32 @@ func RejectRequest(userId, targetUserId string) error {
 	// フレンドデータを削除
 	return models.DeleteFriend(friendData)
 }
+
+// リクエストを承認する関数
+func AcceptRequest(userId, targetUserId string) error {
+	// フレンドデータを取得
+	friendData, err := models.GetFriendData(userId, targetUserId)
+
+	// エラー処理
+	if err != nil {
+		return err
+	}
+
+	// リクエストかどうか
+	if friendData.Type != models.FriendTypeRequest {
+		// リクエストじゃない場合
+		return errors.New("invalid request")
+	}
+
+	// 自信が受信者かどうか
+	if friendData.ReceiverId != userId {
+		// 自身当てのリクエストじゃない場合
+		return errors.New("invalid request")
+	}
+
+	// フレンドの種類を変更
+	friendData.Type = models.FriendTypeData
+
+	// フレンドデータを更新
+	return models.SaveFriend(friendData)
+}
