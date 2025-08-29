@@ -139,3 +139,23 @@ func GetFriendList(userId string) ([]FriendData, error) {
 	// 返すデータを返す
 	return returnDatas, nil
 }
+
+// フレンドを削除する関数
+func DeleteFriend(userId string, friendId string) error {
+	// データを取得する
+	data, err := models.GetFriendData(userId, friendId)
+
+	// エラー処理
+	if err != nil {
+		return err
+	}
+
+	// リクエストの場合
+	if data.Type == models.FriendTypeRequest {
+		// エラーを返す
+		return errors.New("you are not friends")
+	}
+
+	// フレンドを削除する
+	return models.DeleteFriend(data)
+}

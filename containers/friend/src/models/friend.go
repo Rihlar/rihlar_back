@@ -51,3 +51,8 @@ func GetFriendList(userid string) ([]Friend, error) {
 
 	return data, nil
 }
+
+// フレンドを削除する関数
+func DeleteFriend(data Friend) error {
+	return dbconn.Unscoped().Delete(&data).Error
+}

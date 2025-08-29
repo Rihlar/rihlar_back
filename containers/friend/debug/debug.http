@@ -1,7 +1,6 @@
 @base_url = https://localhost:8943/friend
 
-@token = eyJhbGciOiJFZERTQSIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3NTY0NjI2NTksImxhYmVscyI6W10sInByb3ZDb2RlIjoiZ29vZ2xlIiwicHJvdlVpZCI6IjExMDg3MTY0NTY2MjI0MTc5NjA1OSIsInVzZXJJRCI6ImNhZGVlYjFhLWY0ZjEtNGZlMi1hMzJiLTM2YmQ3NTEyMzFhZiJ9.G1AhY7c-qCsraCn36UZW2bEO43FBNeMm85XHe7NW1tB0DbBbcf3NYYBxUtVReM5PmY4vY4sMk-KrnS7bEPYLCg
-
+@token = eyJhbGciOiJFZERTQSIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3NTY0NjQ0MzQsImxhYmVscyI6W10sInByb3ZDb2RlIjoiZ29vZ2xlIiwicHJvdlVpZCI6IjExMDg3MTY0NTY2MjI0MTc5NjA1OSIsInVzZXJJRCI6ImNhZGVlYjFhLWY0ZjEtNGZlMi1hMzJiLTM2YmQ3NTEyMzFhZiJ9.HUHgcie2w-Urjm1INv_3-bxPfncTczL__g6rkiUn-8InIr-bXdZu4Lngewp1jYNAw2r71tqpJH0Xov3mqFUXAA
 GET {{base_url}}/gencode
 Authorization: {{token}}
 Content-Type: application/json
@@ -19,8 +18,15 @@ Authorization: {{token}}
 Content-Type: application/json
 
 ###
+# フレンドを削除する関数
+DELETE {{base_url}}/delete
+Authorization: {{token}}
+Content-Type: application/json
+userId: userid-8393099e-d66d-43db-82a9-9624e6a7611c
+
+###
 # リクエストを送信する関数
 POST {{base_url}}/request
-Authorization: eyJhbGciOiJFZERTQSIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3NTY0NjE2MjcsImxhYmVscyI6W10sInByb3ZDb2RlIjoiZ29vZ2xlIiwicHJvdlVpZCI6IjEwMTI0MTk5Mjg0NTIzNzkwMjA4NiIsInVzZXJJRCI6IjgzOTMwOTllLWQ2NmQtNDNkYi04MmE5LTk2MjRlNmE3NjExYyJ9.LF-frXzHpmU75SCWS4k1XZf-kGvhk06QlaVzdXjFueKlQspP5SK_YagkUynGGmG7qv33_4J922EJiA-Lal4mAg
+Authorization: eyJhbGciOiJFZERTQSIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3NTY0NjM3NDksImxhYmVscyI6W10sInByb3ZDb2RlIjoiZ29vZ2xlIiwicHJvdlVpZCI6IjExMDg3MTY0NTY2MjI0MTc5NjA1OSIsInVzZXJJRCI6ImNhZGVlYjFhLWY0ZjEtNGZlMi1hMzJiLTM2YmQ3NTEyMzFhZiJ9.3u_OcGU-fVXKwYUWz-onMGq0Uf0a7vT_QlXof5Ws2A-l4YK8PS-r8E8I5NH1sifA1BnJeNR2-9vso2QLaPa6Dg
 Content-Type: application/json
-code: NmMwYWZkNDAtZWZmMC00ZmIzLWExZDMtODczNTNkYjVkYTQy
+code: MDZmOTBiYjgtZTk1YS00OTRmLTk2NDctYTA0NjI4NDBmMGUx

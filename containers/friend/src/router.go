@@ -23,5 +23,8 @@ func InitRoutes(router *echo.Echo) *echo.Echo {
 	// フレンドリストの取得
 	router.GET("/list",controllers.GetFriendList)
 
+	// フレンドの削除
+	router.DELETE("/delete",controllers.DeleteFriend)
+
 	return router
 }
