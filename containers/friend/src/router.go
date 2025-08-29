@@ -40,6 +40,9 @@ func InitRoutes(router *echo.Echo) *echo.Echo {
 
 		// フレンドリクエストをキャンセルする関数
 		requestg.POST("/cancel",controllers.CancelRequest)
+
+		// 送信済みリクエストを取得する
+		requestg.GET("/sent",controllers.GetSentRequest)
 	}
 
 	return router

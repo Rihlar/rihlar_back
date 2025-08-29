@@ -55,3 +55,9 @@ Post {{base_url}}/request/cancel
 Authorization: {{token}}
 Content-Type: application/json
 userId: userid-8393099e-d66d-43db-82a9-9624e6a7611c
+
+###
+# 送信済みリクエストを取得する
+Get {{base_url}}/request/sent
+Authorization: eyJhbGciOiJFZERTQSIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3NTY0NzEwMzAsImxhYmVscyI6W10sInByb3ZDb2RlIjoiZ29vZ2xlIiwicHJvdlVpZCI6IjEwMTI0MTk5Mjg0NTIzNzkwMjA4NiIsInVzZXJJRCI6IjgzOTMwOTllLWQ2NmQtNDNkYi04MmE5LTk2MjRlNmE3NjExYyJ9.31pAF-E-kwOaQ2aeCmMiYfGU3ypuWYrGLukYoGSZI0BaFQiPouYtiQNUqMAVke8ASafStRyaxXGWB4-x_nriAg
+Content-Type: application/json

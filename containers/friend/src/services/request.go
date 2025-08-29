@@ -125,3 +125,38 @@ func CancelRequest(userId, targetUserId string) error {
 	// フレンドデータを取得
 	return models.DeleteFriend(data)
 }
+
+// 送信済みリクエストを取得する関数
+func GetSentRequest(userId string) ([]RequestData, error) {
+	// リクエストを取得する
+	datas, err := models.GetSentRequests(userId)
+
+	// エラー処理
+	if err != nil {
+		return []RequestData{}, err
+	}
+
+	// 返すデータを格納する変数
+	returnDatas := []RequestData{}
+
+	// リクエストを回して取得する
+	for _, data := range datas {
+		// 受信者の情報を取得する
+		receiverProfile,err := models.GetProfile(data.ReceiverId)
+
+		// エラー処理
+		if err != nil {
+			logger.PrintErr(err)
+			continue
+		}
+
+		// 返すデータを格納する
+		returnDatas = append(returnDatas, RequestData{
+			UserId:    data.ReceiverId,
+			UserName:  receiverProfile.Name,
+			TimeStamp: data.CreatedAt,
+		})
+	}
+
+	return returnDatas, nil
+}
