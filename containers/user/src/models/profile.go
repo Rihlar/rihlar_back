@@ -114,7 +114,7 @@ func FindProfileById(userID string) (*Profile, error) {
 // プロフィールの作成
 func CreateProfile(userid string, data Profile) (string, error) {
 	//uuid格納用に整形
-	data.UserID = "userid-" + userid
+	data.UserID = userid
 
 	//ユーザー作成
 	result := dbconn.Save(&data)
