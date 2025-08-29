@@ -16,11 +16,11 @@ type Input struct {
 	AdmGame  string `json:"admin_game_id"`  // アドミンゲームID
 }
 
-//　ユーザの実績の構造体
+// 　ユーザの実績の構造体
 type AchiveInput struct {
-	DisplayAchiveID1  *string  `json:"display_achive_id1"`       // 実績ID1
-	DisplayAchiveID2  *string  `json:"display_achive_id2"`       // 実績ID2
-	DisplayAchiveID3  *string  `json:"display_achive_id3"`       // 実績ID3
+	DisplayAchiveID1 *string `json:"display_achive_id1"` // 実績ID1
+	DisplayAchiveID2 *string `json:"display_achive_id2"` // 実績ID2
+	DisplayAchiveID3 *string `json:"display_achive_id3"` // 実績ID3
 }
 
 // プライバシー情報の構造体
@@ -39,8 +39,8 @@ func GetProfileService(userID string) (*models.Profile, error) {
 	return models.FindProfileById(userID)
 }
 
-//Profileを作成
-func CreateProfileService(userid string,input Input) (string, error) {
+// Profileを作成
+func CreateProfileService(userid string, input Input) (string, error) {
 	// プロファイルが存在するかチェック
 	isExist, err := models.ExistProfile(userid)
 
@@ -77,26 +77,25 @@ func CreateProfileService(userid string,input Input) (string, error) {
 	teamId, _ := utils.Genid()
 
 	// メンバーを追加する
-	err = models.DebugAddMember("sysgame-" + gameId, "teamid-" + teamId,  userid)
+	err = models.DebugAddMember("sysgame-"+gameId, "teamid-"+teamId, userid)
 
 	// エラー処理
 	if err != nil {
 		return "", err
 	}
 
-
 	// 存在しない時
 	//構造体にinputを格納
 	profile := models.Profile{
-		Name: input.Name,
+		Name:     input.Name,
 		Comment:  input.Comment,
 		RegionID: input.RegionID,
-		SysGame: "sysgame-" + gameId,
-		AdmGame: "",
+		SysGame:  "sysgame-" + gameId,
+		AdmGame:  "",
 	}
 
 	// エラー処理
-	_,err = models.CreateProfile(userid,profile)
+	_, err = models.CreateProfile(userid, profile)
 
 	// エラー処理
 	if err != nil {
