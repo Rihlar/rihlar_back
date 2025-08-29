@@ -64,3 +64,23 @@ func AcceptRequest(ctx echo.Context) error {
 
 	return ctx.JSON(http.StatusOK, echo.Map{"result": "success"})
 }
+
+// フレンドリクエストをキャンセルする関数
+func CancelRequest(ctx echo.Context) error {
+	// ユーザーID を取得
+	userId := ctx.Get("UserID").(string)
+
+	// キャンセル対象のユーザーID を取得
+	targetUserId := ctx.Request().Header.Get("userId")
+
+	// サービスに渡す
+	err := services.CancelRequest(userId, targetUserId)
+
+	// エラー処理
+	if err != nil {
+		logger.PrintErr(err)
+		return ctx.JSON(http.StatusInternalServerError, echo.Map{"error": "failed to cancel request","message" : err.Error()})
+	}
+
+	return ctx.JSON(http.StatusOK, echo.Map{"result": "success"})
+}

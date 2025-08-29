@@ -37,6 +37,9 @@ func InitRoutes(router *echo.Echo) *echo.Echo {
 
 		// フレンドリクエストを承認する関数
 		requestg.POST("/accept",controllers.AcceptRequest)
+
+		// フレンドリクエストをキャンセルする関数
+		requestg.POST("/cancel",controllers.CancelRequest)
 	}
 
 	return router

@@ -1,6 +1,6 @@
 @base_url = https://localhost:8943/friend
 
-@token = eyJhbGciOiJFZERTQSIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3NTY0NjY2NjksImxhYmVscyI6W10sInByb3ZDb2RlIjoiZ29vZ2xlIiwicHJvdlVpZCI6IjExMDg3MTY0NTY2MjI0MTc5NjA1OSIsInVzZXJJRCI6ImNhZGVlYjFhLWY0ZjEtNGZlMi1hMzJiLTM2YmQ3NTEyMzFhZiJ9.1SqrwBljl0RDunnaUkNzAI1_YxJsGN492Nfg2MwDjLm3KljJl8Mk_rToJQRH6Fv7REufQC9wdZmkTopBQBHtDA
+@token = eyJhbGciOiJFZERTQSIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3NTY0NzA5MzgsImxhYmVscyI6W10sInByb3ZDb2RlIjoiZ29vZ2xlIiwicHJvdlVpZCI6IjExMDg3MTY0NTY2MjI0MTc5NjA1OSIsInVzZXJJRCI6ImNhZGVlYjFhLWY0ZjEtNGZlMi1hMzJiLTM2YmQ3NTEyMzFhZiJ9.qaSAURWp3MAVd2-fubcYo0-qdSMn5Qqyqv-eVgyJdrk_u96xabpB3yUeHcFd5duV5tima5dLlmam6dZk9SIgBw
 Content-Type: application/json
 
 ###
@@ -25,7 +25,7 @@ userId: userid-8393099e-d66d-43db-82a9-9624e6a7611c
 ###
 # リクエストを送信する関数
 POST {{base_url}}/request
-Authorization: eyJhbGciOiJFZERTQSIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3NTY0NjcyNjEsImxhYmVscyI6W10sInByb3ZDb2RlIjoiZ29vZ2xlIiwicHJvdlVpZCI6IjEwMTI0MTk5Mjg0NTIzNzkwMjA4NiIsInVzZXJJRCI6IjgzOTMwOTllLWQ2NmQtNDNkYi04MmE5LTk2MjRlNmE3NjExYyJ9.CsWHqRyHfxalLvLfuhCcBy67DWVvBcZtgy92OlEhLjnqNoejzgSqMiD8E7KqO7pvcaMWspjy0l7Euc2Aa0ccAg
+Authorization: eyJhbGciOiJFZERTQSIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3NTY0NzEwMzAsImxhYmVscyI6W10sInByb3ZDb2RlIjoiZ29vZ2xlIiwicHJvdlVpZCI6IjEwMTI0MTk5Mjg0NTIzNzkwMjA4NiIsInVzZXJJRCI6IjgzOTMwOTllLWQ2NmQtNDNkYi04MmE5LTk2MjRlNmE3NjExYyJ9.31pAF-E-kwOaQ2aeCmMiYfGU3ypuWYrGLukYoGSZI0BaFQiPouYtiQNUqMAVke8ASafStRyaxXGWB4-x_nriAg
 Content-Type: application/json
 code: NDQ1MjAwMmMtNDM4MS00NzQxLWFmY2YtNWVjNTg4NWIwOTJl
 
@@ -45,6 +45,13 @@ userId: userid-8393099e-d66d-43db-82a9-9624e6a7611c
 ###
 # リクエストを承認する
 Post {{base_url}}/request/accept
+Authorization: {{token}}
+Content-Type: application/json
+userId: userid-8393099e-d66d-43db-82a9-9624e6a7611c
+
+###
+# リクエストをキャンセルする
+Post {{base_url}}/request/cancel
 Authorization: {{token}}
 Content-Type: application/json
 userId: userid-8393099e-d66d-43db-82a9-9624e6a7611c

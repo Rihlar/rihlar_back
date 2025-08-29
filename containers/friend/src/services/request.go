@@ -100,3 +100,28 @@ func AcceptRequest(userId, targetUserId string) error {
 	// フレンドデータを更新
 	return models.SaveFriend(friendData)
 }
+
+// リクエストをキャンセルする関数
+func CancelRequest(userId, targetUserId string) error {
+	// 情報を取得
+	data,err := models.GetFriendData(userId, targetUserId)
+
+	// エラー処理
+	if err != nil {
+		return err
+	}
+
+	// リクエストじゃない場合
+	if data.Type != models.FriendTypeRequest {
+		return errors.New("invalid request")
+	}
+
+	// 自信が送信者かどうか
+	if data.SenderId != userId {
+		// 自身が送信者じゃない場合
+		return errors.New("invalid request")
+	}
+
+	// フレンドデータを取得
+	return models.DeleteFriend(data)
+}
