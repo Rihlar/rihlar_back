@@ -20,5 +20,8 @@ func InitRoutes(router *echo.Echo) *echo.Echo {
 	// フレンドリクエストを送信する関数
 	router.POST("/request",controllers.SendRequest)
 
+	// フレンドリストの取得
+	router.GET("/list",controllers.GetFriendList)
+
 	return router
 }

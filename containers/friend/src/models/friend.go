@@ -35,3 +35,19 @@ func GetFriendData(userid1, userid2 string) (Friend, error) {
 func SaveFriend(data Friend) error {
 	return dbconn.Save(&data).Error
 }
+
+// フレンドリストを取得する関数
+func GetFriendList(userid string) ([]Friend, error) {
+	// データを格納する変数
+	data := []Friend{}
+
+	// データベースを検索する (送信元IDまたは受信元IDかつフレンドの種類)
+	err := dbconn.Where(&Friend{SenderId: userid, Type: FriendTypeData}).Or(&Friend{ReceiverId: userid, Type: FriendTypeData}).Find(&data).Error
+
+	// エラー処理
+	if err != nil {
+		return []Friend{}, err
+	}
+
+	return data, nil
+}

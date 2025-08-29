@@ -1,7 +1,7 @@
 @base_url = https://localhost:8943/friend
 
-@token = eyJhbGciOiJFZERTQSIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3NTY0NjExODIsImxhYmVscyI6W10sInByb3ZDb2RlIjoiZ29vZ2xlIiwicHJvdlVpZCI6IjExMDg3MTY0NTY2MjI0MTc5NjA1OSIsInVzZXJJRCI6ImNhZGVlYjFhLWY0ZjEtNGZlMi1hMzJiLTM2YmQ3NTEyMzFhZiJ9.2Bwb83fvMF8pJR98EsT6VFIUvTeFCdCy19cv5W3lZ7IJg5VtXu2XCTN1uPyR-ciXMS0JbGa5dI80ntL0mA3KDg
-# コードを生成する関数
+@token = eyJhbGciOiJFZERTQSIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3NTY0NjI2NTksImxhYmVscyI6W10sInByb3ZDb2RlIjoiZ29vZ2xlIiwicHJvdlVpZCI6IjExMDg3MTY0NTY2MjI0MTc5NjA1OSIsInVzZXJJRCI6ImNhZGVlYjFhLWY0ZjEtNGZlMi1hMzJiLTM2YmQ3NTEyMzFhZiJ9.G1AhY7c-qCsraCn36UZW2bEO43FBNeMm85XHe7NW1tB0DbBbcf3NYYBxUtVReM5PmY4vY4sMk-KrnS7bEPYLCg
+
 GET {{base_url}}/gencode
 Authorization: {{token}}
 Content-Type: application/json
@@ -13,8 +13,14 @@ Authorization: {{token}}
 Content-Type: application/json
 
 ###
+# フレンド一覧を取得する関数
+GET {{base_url}}/list
+Authorization: {{token}}
+Content-Type: application/json
+
+###
 # リクエストを送信する関数
 POST {{base_url}}/request
 Authorization: eyJhbGciOiJFZERTQSIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3NTY0NjE2MjcsImxhYmVscyI6W10sInByb3ZDb2RlIjoiZ29vZ2xlIiwicHJvdlVpZCI6IjEwMTI0MTk5Mjg0NTIzNzkwMjA4NiIsInVzZXJJRCI6IjgzOTMwOTllLWQ2NmQtNDNkYi04MmE5LTk2MjRlNmE3NjExYyJ9.LF-frXzHpmU75SCWS4k1XZf-kGvhk06QlaVzdXjFueKlQspP5SK_YagkUynGGmG7qv33_4J922EJiA-Lal4mAg
 Content-Type: application/json
-code: ZDhkYWMzMWMtYTZiNy00OGZhLWFlYWMtMDVhNjk4N2RiMGE0
+code: NmMwYWZkNDAtZWZmMC00ZmIzLWExZDMtODczNTNkYjVkYTQy
