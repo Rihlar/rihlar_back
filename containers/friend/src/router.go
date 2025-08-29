@@ -26,5 +26,12 @@ func InitRoutes(router *echo.Echo) *echo.Echo {
 	// フレンドの削除
 	router.DELETE("/delete",controllers.DeleteFriend)
 
+	// リクエスト用グループ作成
+	requestg := router.Group("/request")
+	{
+		// 受信済みフレンドリクエスト取得
+		requestg.GET("/recved",controllers.GetRecvedRequest)
+	}
+
 	return router
 }
