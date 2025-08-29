@@ -1,0 +1,8 @@
+@base_url = https://localhost:8943/friend
+
+@token = eyJhbGciOiJFZERTQSIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3NTY0NTc4NjksImxhYmVscyI6W10sInByb3ZDb2RlIjoiZ29vZ2xlIiwicHJvdlVpZCI6IjExMDg3MTY0NTY2MjI0MTc5NjA1OSIsInVzZXJJRCI6ImNhZGVlYjFhLWY0ZjEtNGZlMi1hMzJiLTM2YmQ3NTEyMzFhZiJ9.yY4I4IbX_JjfGL9jFrQ9X7mRDvrGJLve1gYXZ6SFx7KkBhih7bOenDBIsNTveiwY7DO4erSD-_vEMnms__CcDw
+
+# コードを生成する関数
+GET {{base_url}}/gencode
+Authorization: {{token}}
+Content-Type: application/json

@@ -37,5 +37,8 @@ func main() {
 		})
 	}, middlewares.RequireAuth)
 
+	// エンドポイントを初期化する
+	router = InitRoutes(router)
+
 	router.Logger.Fatal(router.Start(":8090"))
 }
