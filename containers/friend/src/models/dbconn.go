@@ -28,7 +28,8 @@ func Init() {
 	}
 
 	// マイグレーション
-	// db.AutoMigrate(&sample{})
+	db.AutoMigrate(&Friend{})
+	db.AutoMigrate(&FriendCode{})
 
 	// グローバル変数に格納
 	dbconn = db
