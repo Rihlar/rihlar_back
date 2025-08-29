@@ -1,8 +1,14 @@
 @base_url = https://localhost:8943/friend
 
-@token = eyJhbGciOiJFZERTQSIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3NTY0NTc4NjksImxhYmVscyI6W10sInByb3ZDb2RlIjoiZ29vZ2xlIiwicHJvdlVpZCI6IjExMDg3MTY0NTY2MjI0MTc5NjA1OSIsInVzZXJJRCI6ImNhZGVlYjFhLWY0ZjEtNGZlMi1hMzJiLTM2YmQ3NTEyMzFhZiJ9.yY4I4IbX_JjfGL9jFrQ9X7mRDvrGJLve1gYXZ6SFx7KkBhih7bOenDBIsNTveiwY7DO4erSD-_vEMnms__CcDw
+@token = eyJhbGciOiJFZERTQSIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3NTY0NTg2NzAsImxhYmVscyI6W10sInByb3ZDb2RlIjoiZ29vZ2xlIiwicHJvdlVpZCI6IjExMDg3MTY0NTY2MjI0MTc5NjA1OSIsInVzZXJJRCI6ImNhZGVlYjFhLWY0ZjEtNGZlMi1hMzJiLTM2YmQ3NTEyMzFhZiJ9.bmCz9VIXDrcBgtfOT2vc0M6IFD8JrLRLP-RjV3oxLMZ8qEQ2XHGjyfCnm1kve8ulCdhRVSk_186NQr8NcqM5BQ
 
 # コードを生成する関数
 GET {{base_url}}/gencode
+Authorization: {{token}}
+Content-Type: application/json
+
+###
+# 現在のコードを取得する関数
+GET {{base_url}}/nowcode
 Authorization: {{token}}
 Content-Type: application/json

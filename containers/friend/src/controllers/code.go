@@ -23,3 +23,19 @@ func GenCode(ctx echo.Context) error {
 
 	return ctx.JSON(http.StatusOK, echo.Map{"code": code})
 }
+
+func NowCode(ctx echo.Context) error {
+	// ユーザーID を取得
+	userId := ctx.Get("UserID").(string)
+
+	// サービスからコードを取得する
+	data, err := services.NowCode(userId)
+
+	// エラー処理
+	if err != nil {
+		logger.PrintErr(err)
+		return ctx.JSON(http.StatusInternalServerError, echo.Map{"error": "failed to get code","message" : err.Error()})
+	}
+
+	return ctx.JSON(http.StatusOK, echo.Map{"code": data.Code,"count" : data.UseCount})
+}

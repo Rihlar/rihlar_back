@@ -14,5 +14,8 @@ func InitRoutes(router *echo.Echo) *echo.Echo {
 	// コードを生成するエンドポイント
 	router.GET("/gencode",controllers.GenCode)
 
+	// 現在のコードを取得する関数
+	router.GET("/nowcode",controllers.NowCode)
+
 	return router
 }

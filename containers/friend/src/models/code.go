@@ -31,3 +31,22 @@ func GetUseCount(userId string) (int, error) {
 
 	return code.UseCount, nil
 }
+
+type CodeData struct {
+	Code   string `json:"code"`    // コード
+	Count  int    `json:"count"`   // 使用回数
+}
+
+func GetCode(userId string) (CodeData, error) {
+	var code FriendCode
+
+	// データベースから取得
+	result := dbconn.Where(&FriendCode{UserId: userId}).First(&code)
+
+	if result.Error != nil {
+		return CodeData{}, result.Error
+	}
+
+	// コード情報を返す
+	return CodeData{Code: code.Code, Count: code.UseCount}, nil
+}
