@@ -14,3 +14,24 @@ type Friend struct {
 	Type       FriendType //データの種類
 	CreatedAt  int64      //作成時間
 }
+
+// フレンドのデータを取得する関数
+func GetFriendData(userid1, userid2 string) (Friend, error) {
+	// データを格納する変数
+	data := Friend{}
+
+	// データベースを検索する
+	err := dbconn.Where(&Friend{SenderId: userid1, ReceiverId: userid2}).Or(&Friend{SenderId: userid2, ReceiverId: userid1}).First(&data).Error
+
+	// エラー処理
+	if err != nil {
+		return Friend{}, err
+	}
+
+
+	return data, nil
+}
+
+func SaveFriend(data Friend) error {
+	return dbconn.Save(&data).Error
+}

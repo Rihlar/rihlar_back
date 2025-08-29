@@ -1,7 +1,6 @@
 @base_url = https://localhost:8943/friend
 
-@token = eyJhbGciOiJFZERTQSIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3NTY0NTg2NzAsImxhYmVscyI6W10sInByb3ZDb2RlIjoiZ29vZ2xlIiwicHJvdlVpZCI6IjExMDg3MTY0NTY2MjI0MTc5NjA1OSIsInVzZXJJRCI6ImNhZGVlYjFhLWY0ZjEtNGZlMi1hMzJiLTM2YmQ3NTEyMzFhZiJ9.bmCz9VIXDrcBgtfOT2vc0M6IFD8JrLRLP-RjV3oxLMZ8qEQ2XHGjyfCnm1kve8ulCdhRVSk_186NQr8NcqM5BQ
-
+@token = eyJhbGciOiJFZERTQSIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3NTY0NjExODIsImxhYmVscyI6W10sInByb3ZDb2RlIjoiZ29vZ2xlIiwicHJvdlVpZCI6IjExMDg3MTY0NTY2MjI0MTc5NjA1OSIsInVzZXJJRCI6ImNhZGVlYjFhLWY0ZjEtNGZlMi1hMzJiLTM2YmQ3NTEyMzFhZiJ9.2Bwb83fvMF8pJR98EsT6VFIUvTeFCdCy19cv5W3lZ7IJg5VtXu2XCTN1uPyR-ciXMS0JbGa5dI80ntL0mA3KDg
 # コードを生成する関数
 GET {{base_url}}/gencode
 Authorization: {{token}}
@@ -12,3 +11,10 @@ Content-Type: application/json
 GET {{base_url}}/nowcode
 Authorization: {{token}}
 Content-Type: application/json
+
+###
+# リクエストを送信する関数
+POST {{base_url}}/request
+Authorization: eyJhbGciOiJFZERTQSIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3NTY0NjE2MjcsImxhYmVscyI6W10sInByb3ZDb2RlIjoiZ29vZ2xlIiwicHJvdlVpZCI6IjEwMTI0MTk5Mjg0NTIzNzkwMjA4NiIsInVzZXJJRCI6IjgzOTMwOTllLWQ2NmQtNDNkYi04MmE5LTk2MjRlNmE3NjExYyJ9.LF-frXzHpmU75SCWS4k1XZf-kGvhk06QlaVzdXjFueKlQspP5SK_YagkUynGGmG7qv33_4J922EJiA-Lal4mAg
+Content-Type: application/json
+code: ZDhkYWMzMWMtYTZiNy00OGZhLWFlYWMtMDVhNjk4N2RiMGE0

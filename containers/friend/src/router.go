@@ -17,5 +17,8 @@ func InitRoutes(router *echo.Echo) *echo.Echo {
 	// 現在のコードを取得する関数
 	router.GET("/nowcode",controllers.NowCode)
 
+	// フレンドリクエストを送信する関数
+	router.POST("/request",controllers.SendRequest)
+
 	return router
 }

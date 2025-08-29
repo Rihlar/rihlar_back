@@ -50,3 +50,16 @@ func GetCode(userId string) (CodeData, error) {
 	// コード情報を返す
 	return CodeData{Code: code.Code, Count: code.UseCount}, nil
 }
+
+// コードから情報を取得する
+func GetFromCode(code string) (FriendCode, error) {
+	var friendCode FriendCode
+
+	result := dbconn.Where(&FriendCode{Code: code}).First(&friendCode)
+
+	if result.Error != nil {
+		return FriendCode{}, result.Error
+	}
+
+	return friendCode, nil
+}
