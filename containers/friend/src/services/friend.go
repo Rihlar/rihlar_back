@@ -120,7 +120,7 @@ func GetFriendList(userId string) ([]FriendData, error) {
 		}
 
 		// 相手のプロファイルを取得
-		profile, err := models.GetProfile("userid-" + targetId)
+		profile, err := models.GetProfile(targetId)
 
 		// エラー処理
 		if err != nil {
