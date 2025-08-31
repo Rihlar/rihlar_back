@@ -4,11 +4,12 @@ import (
 	"errors"
 
 	"net/http"
+	"user/logger"
 	"user/services"
+
 	"github.com/labstack/echo/v4"
 	"gorm.io/gorm"
 )
-
 
 /*
 	プロフィール処理
@@ -29,6 +30,7 @@ func GetProfileById(c echo.Context) error {
 		if errors.Is(err, gorm.ErrRecordNotFound) {
 			return c.JSON(http.StatusNotFound, echo.Map{"error": "profile not found"})
 		}
+		logger.PrintErr(err)
 		return c.JSON(http.StatusInternalServerError, echo.Map{"error": "internal error"})
 	}
 
@@ -52,6 +54,7 @@ func CreateProfile(c echo.Context) error {
 
 	//エラー処理
 	if err != nil{
+		logger.PrintErr(err)
 		return c.JSON(http.StatusInternalServerError, echo.Map{"status": "failed to create"})
 	}
 
@@ -81,6 +84,7 @@ func UpdateProfileById(c echo.Context) error {
 			return c.JSON(http.StatusNotFound, echo.Map{"error": "profile not found"})
 		}
 		//NotFound以外のエラー
+		logger.PrintErr(err)
 		return c.JSON(http.StatusInternalServerError, echo.Map{"error": "update failed"})
 	}
 
@@ -107,6 +111,7 @@ func GetAchiveProfile(c echo.Context) error {
 			return c.JSON(http.StatusNotFound, echo.Map{"error": "Achivement profile not found"})
 		}
 		//NotFound以外のエラー
+		logger.PrintErr(err)
 		return c.JSON(http.StatusInternalServerError, echo.Map{"error": "internal error"})
 	}
 	
@@ -132,6 +137,7 @@ func UpdateAchiveProfile(c echo.Context) error {
 			return c.JSON(http.StatusNotFound, echo.Map{"error": "Achivement profile not found"})
 		}
 		//Notfound以外のエラー
+		logger.PrintErr(err)
 		return c.JSON(http.StatusInternalServerError, echo.Map{"error": "update failed"})
 	}
 
@@ -159,6 +165,7 @@ func GetPrivacyProfile(c echo.Context) error {
 			return c.JSON(http.StatusNotFound, echo.Map{"error": "privacy profile not found"})
 		}
 		//NotFound以外のエラー
+		logger.PrintErr(err)
 		return c.JSON(http.StatusInternalServerError, echo.Map{"error": "internal error"})
 	}
 
@@ -185,6 +192,7 @@ func UpdatePrivacyProfile(c echo.Context) error {
 			return c.JSON(http.StatusNotFound, echo.Map{"error": "privacy profile not found"})
 		}
 		//Notfound以外のエラー
+		logger.PrintErr(err)
 		return c.JSON(http.StatusInternalServerError, echo.Map{"error": "update failed"})
 	}
 
@@ -212,6 +220,7 @@ func GetRegionProfile(c echo.Context) error {
 			return c.JSON(http.StatusNotFound, echo.Map{"error": "region profile not found"})
 		}
 		//NotFound以外のエラー
+		logger.PrintErr(err)
 		return c.JSON(http.StatusInternalServerError, echo.Map{"error": "internal error"})
 	}
 
@@ -240,6 +249,7 @@ func UpdateRegionProfile(c echo.Context) error {
 			return c.JSON(http.StatusNotFound, echo.Map{"error": "region profile not found"})
 		}
 		//NotFound以外のエラー
+		logger.PrintErr(err)
 		return c.JSON(http.StatusInternalServerError, echo.Map{"error": "update failed"})
 	}
 	
