@@ -17,7 +17,8 @@ import (
 // プロフィールをIDから取得
 func GetProfileById(c echo.Context) error {
 	//useridをヘッダーから取得
-	userID := c.Request().Header.Get("userid")
+	// userID := c.Request().Header.Get("userid")
+	userID := c.Get("UserID").(string)
 
 	//プロフィール取得
 	profile, err := services.GetProfileService(userID)
@@ -64,7 +65,8 @@ func CreateProfile(c echo.Context) error {
 // プロフィールをIDから変更
 func UpdateProfileById(c echo.Context) error {
 	//useridをヘッダーから取得
-	userID := c.Request().Header.Get("userid")
+	// userID := c.Request().Header.Get("userid")
+	userID := c.Get("UserID").(string)
 	var req services.Input
 
 	//リクエスト整形(bind)
@@ -92,7 +94,8 @@ func UpdateProfileById(c echo.Context) error {
 //実績を取得する
 func GetAchiveProfile(c echo.Context) error {
 	//userIDを取得
-	userID := c.Request().Header.Get("userid")
+	// userID := c.Request().Header.Get("userid")
+	userID := c.Get("UserID").(string)
 
 	//service実行
 	Achivement, err := services.GetAchiveProfile(userID)
@@ -113,7 +116,8 @@ func GetAchiveProfile(c echo.Context) error {
 
 // 実績更新
 func UpdateAchiveProfile(c echo.Context) error {
-	userID := c.Request().Header.Get("userid")
+	// userID := c.Request().Header.Get("userid")
+	userID := c.Get("UserID").(string)
 	var req services.AchiveInput
 
 	//リクエスト整形(bind)
@@ -142,7 +146,8 @@ func UpdateAchiveProfile(c echo.Context) error {
 // プライバシー情報を取得
 func GetPrivacyProfile(c echo.Context) error {
 	//useridをヘッダーから取得
-	userID := c.Request().Header.Get("userid")
+	// userID := c.Request().Header.Get("userid")
+	userID := c.Get("UserID").(string)
 
 	//取得
 	privacy, err := services.GetPrivacyProfileService(userID)
@@ -164,7 +169,8 @@ func GetPrivacyProfile(c echo.Context) error {
 func UpdatePrivacyProfile(c echo.Context) error {
 
 	//useridをヘッダーから取得
-	userID := c.Request().Header.Get("userid")
+	// userID := c.Request().Header.Get("userid")
+	userID := c.Get("UserID").(string)
 	var req services.PrivacyInput
 
 	//リクエスト整形(bind)
@@ -193,7 +199,8 @@ func UpdatePrivacyProfile(c echo.Context) error {
 func GetRegionProfile(c echo.Context) error {
 
 	//useridをヘッダーから取得
-	userID := c.Request().Header.Get("userid")
+	// userID := c.Request().Header.Get("userid")
+	userID := c.Get("UserID").(string)
 
 	//取得
 	region, err := services.GetRegionProfileService(userID)
@@ -214,7 +221,8 @@ func GetRegionProfile(c echo.Context) error {
 // 地域情報の編集
 func UpdateRegionProfile(c echo.Context) error {
 	//useridをヘッダーから取得
-	userID := c.Request().Header.Get("userid")
+	// userID := c.Request().Header.Get("userid")
+	userID := c.Get("UserID").(string)
 
 	//格納用の地域情報
 	var req struct {
