@@ -83,6 +83,10 @@ func UpdateProfileById(c echo.Context) error {
 		if errors.Is(err, gorm.ErrRecordNotFound) {
 			return c.JSON(http.StatusNotFound, echo.Map{"error": "profile not found"})
 		}
+		
+		if err.Error() == "no rows updated" {
+			return c.JSON(http.StatusConflict, echo.Map{"error": "no changes detected"})
+		}
 		//NotFound以外のエラー
 		logger.PrintErr(err)
 		return c.JSON(http.StatusInternalServerError, echo.Map{"error": "update failed"})
@@ -136,6 +140,11 @@ func UpdateAchiveProfile(c echo.Context) error {
 		if errors.Is(err, gorm.ErrRecordNotFound) {
 			return c.JSON(http.StatusNotFound, echo.Map{"error": "Achivement profile not found"})
 		}
+
+		if err.Error() == "no rows updated" {
+			return c.JSON(http.StatusConflict, echo.Map{"error": "no changes detected"})
+		}
+
 		//Notfound以外のエラー
 		logger.PrintErr(err)
 		return c.JSON(http.StatusInternalServerError, echo.Map{"error": "update failed"})
@@ -191,6 +200,11 @@ func UpdatePrivacyProfile(c echo.Context) error {
 		if errors.Is(err, gorm.ErrRecordNotFound) {
 			return c.JSON(http.StatusNotFound, echo.Map{"error": "privacy profile not found"})
 		}
+
+		if err.Error() == "no rows updated" {
+			return c.JSON(http.StatusConflict, echo.Map{"error": "no changes detected"})
+		}
+
 		//Notfound以外のエラー
 		logger.PrintErr(err)
 		return c.JSON(http.StatusInternalServerError, echo.Map{"error": "update failed"})
@@ -248,6 +262,11 @@ func UpdateRegionProfile(c echo.Context) error {
 		if errors.Is(err,gorm.ErrRecordNotFound) {
 			return c.JSON(http.StatusNotFound, echo.Map{"error": "region profile not found"})
 		}
+
+		if err.Error() == "no rows updated" {
+			return c.JSON(http.StatusConflict, echo.Map{"error": "no changes detected"})
+		}
+
 		//NotFound以外のエラー
 		logger.PrintErr(err)
 		return c.JSON(http.StatusInternalServerError, echo.Map{"error": "update failed"})
