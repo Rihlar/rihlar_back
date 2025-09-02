@@ -14,6 +14,7 @@ type Profile struct {
 	SysGame   string  `gorm:"type:varchar(50);default:''" json:"system_game_id"` // システムゲームID
 	AdmGame   string  `gorm:"type:varchar(50);default:''" json:"admin_game_id"`  // アドミンゲームID
 	Name      string  `gorm:"type:varchar(100);default:''" json:"name"`          //ユーザ名
+	Coin      int     `gorm:"default:0" json:"coin"`                             //　所持コイン
 }
 
 func (Profile) TableName() string {
@@ -26,14 +27,14 @@ func GetProfile(userID string) (*Profile, error) {
 
 	// ユーザ情報を取得
 	err := dbconn.Where(&Profile{
-		UserID:    userID,
+		UserID: userID,
 	}).First(profile).Error
 
 	// エラー処理
 	if err != nil {
 		return nil, err
 	}
-	
+
 	return profile, nil
 }
 

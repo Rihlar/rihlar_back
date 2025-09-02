@@ -1,5 +1,5 @@
-# @base_url = https://localhost:8943/game
-@base_url = https://rihlar-stage.kokomeow.com/game
+@base_url = https://localhost:8943/game
+# @base_url = https://rihlar-stage.kokomeow.com/game
 
 @user_id = userid-79541130-3275-4b90-8677-01323045aca5
 
@@ -77,3 +77,11 @@ UserID: userid-79541130-3275-4b90-8677-01323045aca5
 ### 開始済みのゲーム一覧を取得する
 GET {{base_url}}/allgames
 Authorization: {{token}}
+
+### アイテム詳細取得
+GET {{base_url}}/item
+ItemID: item-26164e99-790e-429f-95df-8008eb34d628
+
+### アイテムボックス取得
+GET {{base_url}}/item/box
+UserID: user-e3abf90d-4bcf-4c3b-bbde-37694b1611b3
