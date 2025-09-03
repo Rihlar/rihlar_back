@@ -4,6 +4,7 @@ import (
 	"game/logger"
 	"game/services"
 	"net/http"
+	"strings"
 
 	"github.com/labstack/echo/v4"
 )
@@ -22,7 +23,7 @@ func GetItemBoxHandler(ctx echo.Context) error {
 		logger.PrintErr("アイテム取得エラー", itemBox)
 	}
 
-		// 成功ログ
+	// 成功ログ
 	logger.Println("Successful itembox get.")
 
 	// レスポンス
@@ -49,4 +50,32 @@ func GetItemDeteileHandler(ctx echo.Context) error {
 	return ctx.JSON(http.StatusOK, echo.Map{
 		"Data": item,
 	})
+}
+
+// ガチャ
+func GetItemGachaHandler(ctx echo.Context) error {
+	// ユーザーの特定する TODO:
+	// id := ctx.Get("UserID").(string)
+	id := ctx.Request().Header.Get("UserID")
+
+	// サービスに渡す
+	item, err := itemService.GetItemGacha(id)
+	if err != nil {
+        logger.PrintErr("アイテム取得エラー", err)
+
+        // エラー内容によってステータス分け
+        if strings.Contains(err.Error(), "コイン不足") {
+            return ctx.JSON(http.StatusBadRequest, echo.Map{"error": err.Error()})
+        }
+        return ctx.JSON(http.StatusInternalServerError, echo.Map{"error": err.Error()})
+    }
+
+	// 成功ログ
+	logger.Println("Successful item get.")
+
+	// レスポンス
+	return ctx.JSON(http.StatusOK, echo.Map{
+		"Data": item,
+	})
+
 }

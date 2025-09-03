@@ -66,3 +66,28 @@ func GetItemBox(userId string) ([]ItemBox, error) {
 
 	return itemBox, nil
 }
+
+// 所持しているか取得
+func GetItemBoxByUserAndItem(userID, itemID string) (*ItemBox, error) {
+    var boxes []ItemBox
+    result := dbconn.Where("user_id = ? AND item_id = ?", userID, itemID).Find(&boxes)
+    if result.Error != nil {
+        return nil, result.Error
+    }
+
+    if len(boxes) == 0 {
+        return nil, nil // 存在しなければ nil
+    }
+
+    return &boxes[0], nil // 1件目を返す
+}
+
+// 新規作成
+func CreateItemBox(box *ItemBox) error {
+	return dbconn.Create(box).Error
+}
+
+// 更新
+func UpdateItemBox(box *ItemBox) error {
+	return dbconn.Save(box).Error
+}

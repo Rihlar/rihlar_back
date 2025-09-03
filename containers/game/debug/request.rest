@@ -85,3 +85,8 @@ ItemID: item-26164e99-790e-429f-95df-8008eb34d628
 ### アイテムボックス取得
 GET {{base_url}}/item/box
 UserID: user-e3abf90d-4bcf-4c3b-bbde-37694b1611b3
+
+### ガチャ取得
+GET {{base_url}}/item/gacha
+UserID: userid-e3abf90d-4bcf-4c3b-bbde-37694b1611b3
+

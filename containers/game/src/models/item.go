@@ -78,9 +78,19 @@ func GetItemDeteile(itemId string) (Item, error) {
 	result := dbconn.Where("item_id = ?", itemId).Take(&item)
 	if result.Error != nil {
 		logger.PrintErr("アイテム詳細取得エラー", result.Error)
-		return Item{}, nil
+		return Item{}, result.Error
 	}
 
 	return item, nil
+}
 
+func GetAllItems() ([]Item, error) {
+	var items []Item
+    // 全アイテム取得
+    err := dbconn.Find(&items).Error
+	if  err != nil {
+        return []Item{}, err
+    }
+
+	return items, nil
 }
