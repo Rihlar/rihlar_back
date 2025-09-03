@@ -144,7 +144,7 @@ func UpdateProfile(userID string, data Profile) error {
 	//0件ならNotFoundを返す
 	if result.RowsAffected == 0 {
 		logger.PrintErr("変更レコード0件エラー")
-		return gorm.ErrRecordNotFound
+		return errors.New("no rows updated")
 	}
 
 	return nil
@@ -209,7 +209,7 @@ func UpdateAchiveProfile(userID string, data AchiveProfile) error {
 	//0件エラー
 	if result.RowsAffected == 0 {
 		logger.PrintErr("変更レコード0件エラー")
-		return gorm.ErrRecordNotFound
+		return errors.New("no rows updated")
 	}
 
 	return nil
@@ -251,7 +251,7 @@ func UpdatePrivacyProfile(userID string, data PrivacyProfile) error {
 	//0件エラー
 	if result.RowsAffected == 0 {
 		logger.PrintErr("変更レコード0件エラー")
-		return gorm.ErrRecordNotFound
+		return errors.New("no rows updated")
 	}
 
 	return nil
@@ -289,7 +289,7 @@ func UpdateRegionProfile(userID string, regionID string) error {
 	//編集0件エラー
 	if result.RowsAffected == 0 {
 		logger.PrintErr("変更レコード0件エラー")
-		return gorm.ErrRecordNotFound
+		return errors.New("no rows updated")
 	}
 
 	return nil

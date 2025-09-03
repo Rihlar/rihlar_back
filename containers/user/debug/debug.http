@@ -3,15 +3,18 @@
 
 @user_id = userid-e3abf90d-4bcf-4c3b-bbde-37694b1611b3
 
+@token = eyJhbGciOiJFZERTQSIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3NTY2NjU3MDYsImxhYmVscyI6W10sInByb3ZDb2RlIjoiZ29vZ2xlIiwicHJvdlVpZCI6IjEwODExMjIxNDExMjc4NTg0NjkwNiIsInVzZXJJRCI6ImE4NmU2NGE2LTJkMjYtNDU4Ny1iZDA0LTEzZmRmYmUxZjliMSJ9.X8a2uKyHVtdkOA4KOloDYF7QJGNGCHLGRJgx4odAbiLVdrIty1K1W0t0dz-eQHFtgTa02wlwKdUovNZbm72DAw
+
 ### プロフィール取得
 GET {{base_url}}/profile HTTP/1.1
-UserID: {{user_id}}
+# UserID: {{user_id}}
 Content-Type: application/json
+Authorization: {{token}}
 
 ###プロフィール作成
 POST {{base_url}}/profile
 Content-Type: application/json
-Authorization: eyJhbGciOiJFZERTQSIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3NTY0NjM5MTMsImxhYmVscyI6W10sInByb3ZDb2RlIjoiZ29vZ2xlIiwicHJvdlVpZCI6IjEwMTI0MTk5Mjg0NTIzNzkwMjA4NiIsInVzZXJJRCI6IjgzOTMwOTllLWQ2NmQtNDNkYi04MmE5LTk2MjRlNmE3NjExYyJ9.ryjJ4p7lY2b0tz9QCxduIQY441nnsHznAPCE_gI6g1Vbv88Kw00XDkE0HrPNxeKND-g6V0AFQMOMHkB-xFbfAg
+Authorization: {{token}}
 
 {
   "name": "テスト太郎3",
@@ -23,29 +26,32 @@ Authorization: eyJhbGciOiJFZERTQSIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3NTY0NjM5MTMsImxh
 
 ###プロフィール編集
 PUT {{base_url}}/profile
-Userid: {{user_id}}
+# Userid: {{user_id}}
 Content-Type: application/json
+Authorization: {{token}}
 
 {
   "name": "テスト太郎",
-  "comment": "これはテスト用のコメントです。3",
+  "comment": "これはテスト用のコメントです。",
   "system_game_id": "systemgame-f5b632cb-707d-f450-eece-f119534b724a",
   "admin_game_id": "admingame-01e32526-1c27-c9a9-2b5b-d158b0f50c80"
 }
 
 ### プライバシー取得
 GET  {{base_url}}/privacy
-Userid: {{user_id}}
+# Userid: {{user_id}}
 Content-Type: application/json
+Authorization: {{token}}
 
 ### プライバシー編集
 
 PUT  {{base_url}}/privacy
 Content-Type: application/json
-Userid: {{user_id}}
+# Userid: {{user_id}}
+Authorization: {{token}}
 
 {
-  "latitude": 35.2020,
+  "latitude": 35.200,
   "longitude": 135.21,
   "size": 300
 }
@@ -53,12 +59,14 @@ Userid: {{user_id}}
 ###　所属地域の取得
 GET  {{base_url}}/region
 Content-Type: application/json
-Userid: {{user_id}}
+# Userid: {{user_id}}
+Authorization: {{token}}
 
 ### 所属地域の編集
 PUT {{base_url}}/region
 Content-Type: application/json
-Userid: {{user_id}}
+# Userid: {{user_id}}
+Authorization: {{token}}
 
 {
   "region_id": "関西地方"
@@ -67,15 +75,17 @@ Userid: {{user_id}}
 ### 実績の取得
 GET {{base_url}}/achive
 Content-Type: application/json
-Userid: {{user_id}}
+# Userid: {{user_id}}
+Authorization: {{token}}
 
 ### 実績の編集
 PUT {{base_url}}/achive
 Content-Type: application/json
-Userid: {{user_id}}
+# Userid: {{user_id}}
+Authorization: {{token}}
 
 {
-  "display_achive_id1": "achive-9d89644f-a0aa-e270-9c2b-2c0a88c85a93",
-  "display_achive_id2": "achive-9d5e7f55-eb7b-c2fd-5284-9b645e34eb3a",
-  "display_achive_id3": "achive-669ee10d-759f-584d-cd42-38af7850e41d"
+  "display_achive_id1": "achive-9d89644f-a0aa-e270-9c2b-2c0a88c85a9c",
+  "display_achive_id2": "achive-9d5e7f55-eb7b-c2fd-5284-9b645e34eb3f",
+  "display_achive_id3": "achive-669ee10d-759f-584d-cd42-38af7850e41r"
 }

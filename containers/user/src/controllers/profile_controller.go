@@ -4,11 +4,12 @@ import (
 	"errors"
 
 	"net/http"
+	"user/logger"
 	"user/services"
+
 	"github.com/labstack/echo/v4"
 	"gorm.io/gorm"
 )
-
 
 /*
 	プロフィール処理
@@ -17,7 +18,8 @@ import (
 // プロフィールをIDから取得
 func GetProfileById(c echo.Context) error {
 	//useridをヘッダーから取得
-	userID := c.Request().Header.Get("userid")
+	// userID := c.Request().Header.Get("userid")
+	userID := c.Get("UserID").(string)
 
 	//プロフィール取得
 	profile, err := services.GetProfileService(userID)
@@ -28,6 +30,7 @@ func GetProfileById(c echo.Context) error {
 		if errors.Is(err, gorm.ErrRecordNotFound) {
 			return c.JSON(http.StatusNotFound, echo.Map{"error": "profile not found"})
 		}
+		logger.PrintErr(err)
 		return c.JSON(http.StatusInternalServerError, echo.Map{"error": "internal error"})
 	}
 
@@ -51,6 +54,7 @@ func CreateProfile(c echo.Context) error {
 
 	//エラー処理
 	if err != nil{
+		logger.PrintErr(err)
 		return c.JSON(http.StatusInternalServerError, echo.Map{"status": "failed to create"})
 	}
 
@@ -64,7 +68,8 @@ func CreateProfile(c echo.Context) error {
 // プロフィールをIDから変更
 func UpdateProfileById(c echo.Context) error {
 	//useridをヘッダーから取得
-	userID := c.Request().Header.Get("userid")
+	// userID := c.Request().Header.Get("userid")
+	userID := c.Get("UserID").(string)
 	var req services.Input
 
 	//リクエスト整形(bind)
@@ -78,7 +83,12 @@ func UpdateProfileById(c echo.Context) error {
 		if errors.Is(err, gorm.ErrRecordNotFound) {
 			return c.JSON(http.StatusNotFound, echo.Map{"error": "profile not found"})
 		}
+		
+		if err.Error() == "no rows updated" {
+			return c.JSON(http.StatusConflict, echo.Map{"error": "no changes detected"})
+		}
 		//NotFound以外のエラー
+		logger.PrintErr(err)
 		return c.JSON(http.StatusInternalServerError, echo.Map{"error": "update failed"})
 	}
 
@@ -92,7 +102,8 @@ func UpdateProfileById(c echo.Context) error {
 //実績を取得する
 func GetAchiveProfile(c echo.Context) error {
 	//userIDを取得
-	userID := c.Request().Header.Get("userid")
+	// userID := c.Request().Header.Get("userid")
+	userID := c.Get("UserID").(string)
 
 	//service実行
 	Achivement, err := services.GetAchiveProfile(userID)
@@ -104,6 +115,7 @@ func GetAchiveProfile(c echo.Context) error {
 			return c.JSON(http.StatusNotFound, echo.Map{"error": "Achivement profile not found"})
 		}
 		//NotFound以外のエラー
+		logger.PrintErr(err)
 		return c.JSON(http.StatusInternalServerError, echo.Map{"error": "internal error"})
 	}
 	
@@ -113,7 +125,8 @@ func GetAchiveProfile(c echo.Context) error {
 
 // 実績更新
 func UpdateAchiveProfile(c echo.Context) error {
-	userID := c.Request().Header.Get("userid")
+	// userID := c.Request().Header.Get("userid")
+	userID := c.Get("UserID").(string)
 	var req services.AchiveInput
 
 	//リクエスト整形(bind)
@@ -127,7 +140,13 @@ func UpdateAchiveProfile(c echo.Context) error {
 		if errors.Is(err, gorm.ErrRecordNotFound) {
 			return c.JSON(http.StatusNotFound, echo.Map{"error": "Achivement profile not found"})
 		}
+
+		if err.Error() == "no rows updated" {
+			return c.JSON(http.StatusConflict, echo.Map{"error": "no changes detected"})
+		}
+
 		//Notfound以外のエラー
+		logger.PrintErr(err)
 		return c.JSON(http.StatusInternalServerError, echo.Map{"error": "update failed"})
 	}
 
@@ -142,7 +161,8 @@ func UpdateAchiveProfile(c echo.Context) error {
 // プライバシー情報を取得
 func GetPrivacyProfile(c echo.Context) error {
 	//useridをヘッダーから取得
-	userID := c.Request().Header.Get("userid")
+	// userID := c.Request().Header.Get("userid")
+	userID := c.Get("UserID").(string)
 
 	//取得
 	privacy, err := services.GetPrivacyProfileService(userID)
@@ -154,6 +174,7 @@ func GetPrivacyProfile(c echo.Context) error {
 			return c.JSON(http.StatusNotFound, echo.Map{"error": "privacy profile not found"})
 		}
 		//NotFound以外のエラー
+		logger.PrintErr(err)
 		return c.JSON(http.StatusInternalServerError, echo.Map{"error": "internal error"})
 	}
 
@@ -164,7 +185,8 @@ func GetPrivacyProfile(c echo.Context) error {
 func UpdatePrivacyProfile(c echo.Context) error {
 
 	//useridをヘッダーから取得
-	userID := c.Request().Header.Get("userid")
+	// userID := c.Request().Header.Get("userid")
+	userID := c.Get("UserID").(string)
 	var req services.PrivacyInput
 
 	//リクエスト整形(bind)
@@ -178,7 +200,13 @@ func UpdatePrivacyProfile(c echo.Context) error {
 		if errors.Is(err, gorm.ErrRecordNotFound) {
 			return c.JSON(http.StatusNotFound, echo.Map{"error": "privacy profile not found"})
 		}
+
+		if err.Error() == "no rows updated" {
+			return c.JSON(http.StatusConflict, echo.Map{"error": "no changes detected"})
+		}
+
 		//Notfound以外のエラー
+		logger.PrintErr(err)
 		return c.JSON(http.StatusInternalServerError, echo.Map{"error": "update failed"})
 	}
 
@@ -193,7 +221,8 @@ func UpdatePrivacyProfile(c echo.Context) error {
 func GetRegionProfile(c echo.Context) error {
 
 	//useridをヘッダーから取得
-	userID := c.Request().Header.Get("userid")
+	// userID := c.Request().Header.Get("userid")
+	userID := c.Get("UserID").(string)
 
 	//取得
 	region, err := services.GetRegionProfileService(userID)
@@ -205,6 +234,7 @@ func GetRegionProfile(c echo.Context) error {
 			return c.JSON(http.StatusNotFound, echo.Map{"error": "region profile not found"})
 		}
 		//NotFound以外のエラー
+		logger.PrintErr(err)
 		return c.JSON(http.StatusInternalServerError, echo.Map{"error": "internal error"})
 	}
 
@@ -214,7 +244,8 @@ func GetRegionProfile(c echo.Context) error {
 // 地域情報の編集
 func UpdateRegionProfile(c echo.Context) error {
 	//useridをヘッダーから取得
-	userID := c.Request().Header.Get("userid")
+	// userID := c.Request().Header.Get("userid")
+	userID := c.Get("UserID").(string)
 
 	//格納用の地域情報
 	var req struct {
@@ -231,7 +262,13 @@ func UpdateRegionProfile(c echo.Context) error {
 		if errors.Is(err,gorm.ErrRecordNotFound) {
 			return c.JSON(http.StatusNotFound, echo.Map{"error": "region profile not found"})
 		}
+
+		if err.Error() == "no rows updated" {
+			return c.JSON(http.StatusConflict, echo.Map{"error": "no changes detected"})
+		}
+
 		//NotFound以外のエラー
+		logger.PrintErr(err)
 		return c.JSON(http.StatusInternalServerError, echo.Map{"error": "update failed"})
 	}
 	
