@@ -38,7 +38,8 @@ func GetRankingTopHandler(ctx echo.Context) error {
 	userid := ctx.Get("UserID").(string)
 
 	// ヘッダーからゲームID取得
-	gameID := ctx.Request().Header.Get("GameID")
+	// gameID := ctx.Request().Header.Get("GameID")
+	gameID := ctx.Param("game_id")
 
 	// サービスに渡す
 	ranking, err := rankingService.GetRankingTop(userid, gameID)

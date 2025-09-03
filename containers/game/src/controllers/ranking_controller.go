@@ -38,14 +38,18 @@ func GetRankingTop10Handler(ctx echo.Context) error {
 	userid := ctx.Get("UserID").(string)
 
 	// コンテキストからゲームID取得
-	gameid := ctx.Get("GameID")
+	// gameid := ctx.Get("GameID")
+
+	// URLからゲームID取得
+	gameid := ctx.Param("game_id")
+
 	// ID取得できてるかチェック
 	if gameid == "" {
 		return ctx.JSON(http.StatusBadRequest, echo.Map{"error": "badRequest"})
 	}
 
 	// サービスに渡す
-	ranking, err := rankingService.GetRankingTop10(userid, gameid.(string))
+	ranking, err := rankingService.GetRankingTop10(userid, gameid)
 	if err != nil {
 		logger.PrintErr("ランキング取得エラー", ranking)
 		return err
@@ -66,15 +70,19 @@ func GetRankingTop10SoloHandler(ctx echo.Context) error {
 	// userid := ctx.Request().Header.Get("UserID")
 	userid := ctx.Get("UserID").(string)
 
-		// コンテキストからゲームID取得
-	gameid := ctx.Get("GameID")
+	// コンテキストからゲームID取得
+	// gameid := ctx.Get("GameID")
+
+	// URLからゲームID取得
+	gameid := ctx.Param("game_id")
+
 	// ID取得できてるかチェック
 	if gameid == "" {
 		return ctx.JSON(http.StatusBadRequest, echo.Map{"error": "badRequest"})
 	}
 
 	// サービスに渡す
-	ranking, err := rankingService.GetSoloRankingTop10(userid, gameid.(string))
+	ranking, err := rankingService.GetSoloRankingTop10(userid, gameid)
 	if err != nil {
 		logger.PrintErr("ランキング取得エラー", ranking)
 		return err
