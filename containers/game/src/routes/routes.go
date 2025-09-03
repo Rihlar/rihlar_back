@@ -11,7 +11,7 @@ import (
 // ルーティング
 func InitRoutes(router *echo.Echo) *echo.Echo {
 	// 認証を必要とするように変更
-	router.Use(middlewares.RequireAuth)
+	// router.Use(middlewares.RequireAuth)
 
 	//ranking取得
 	router.GET("/ranking/personal/:user_id", controllers.GetMyRankingHandler)
@@ -55,7 +55,7 @@ func InitRoutes(router *echo.Echo) *echo.Echo {
 	//円詳細取得
 	router.GET("/circle", controllers.GetCircleDetaileHandler,middlewares.RequireAuth)
 
-	// 円画像取得
+	// 円画像取得 (ここは認証なし)
 	router.GET("/circle/image/:circle_id", controllers.GetCircleImageHandler)
 
 	//円画像アップロード
@@ -65,7 +65,7 @@ func InitRoutes(router *echo.Echo) *echo.Echo {
 	router.GET("/image/list", controllers.GetImageListHandler, middlewares.RequireAuth)
 
 	// 終了済みゲーム一覧
-	router.GET("/endgame", controllers.GetEndGamesHandler)
+	router.GET("/endgame", controllers.GetEndGamesHandler, middlewares.RequireAuth)
 	// 参加している全てのゲーム一覧取得
 	router.GET("/joingame", controllers.GetJoinGamesHandler, middlewares.RequireAuth)
 
