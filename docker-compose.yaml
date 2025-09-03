@@ -11,6 +11,17 @@ services:
             - ./nginx/configs:/etc/nginx/conf.d/
             - ./nginx/keys:/etc/nginx/keys
             - ./nginx/statics:/etc/nginx/static/statics
+        depends_on:
+            auth:
+                condition: service_started
+            game:
+                condition: service_started
+            user:
+                condition: service_started
+            gcore:
+                condition: service_started
+            friend:
+                condition: service_started
     
     # 認証用コンテナ
     auth:
