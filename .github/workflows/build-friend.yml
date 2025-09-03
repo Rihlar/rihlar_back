@@ -1,0 +1,44 @@
+name: Build friend Container
+
+on:
+  push:
+    branches: [ "develop" ]
+    paths:
+      - 'containers/friend/**'
+      - '.github/workflows/**'
+jobs:
+  build-friend:
+    runs-on: ubuntu-latest
+    timeout-minutes: 3
+
+    permissions:
+      contents: read
+      packages: write
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        
+      - name: Login to GitHub Container Registry
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@v3
+      
+      - id: lower-repo
+        name: Repository to lowercase
+        run: |
+          echo "repository=${GITHUB_REPOSITORY@L}" >> $GITHUB_OUTPUT
+
+      - name: Build and push
+        uses: docker/build-push-action@v6
+        with:
+          platforms: linux/amd64
+          push: true
+          context: ./containers/friend
+          file: ./containers/friend/Dockerfile
+          tags: ghcr.io/${{ steps.lower-repo.outputs.repository }}/rihlar-friend:${{ github.sha }}, ghcr.io/${{ steps.lower-repo.outputs.repository }}/rihlar-friend:latest
