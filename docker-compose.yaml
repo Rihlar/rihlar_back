@@ -87,6 +87,24 @@ services:
         depends_on:
             auth:
                 condition: service_started
+    
+    # フレンド関係を処理するコンテナ
+    friend:
+        hostname: friend
+        build:
+            context: ./containers/friend
+            dockerfile: Dockerfile
+            target: Develop
+        tty: true
+        env_file:
+            - ./openssl/jwtKeys/public.env
+            - ./config/friend.env
+        volumes:
+            - ./containers/friend/src:/root/src
+        restart: always
+        depends_on:
+            auth:
+                condition: service_started
 
     # データベース
     mysql:

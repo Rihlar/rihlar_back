@@ -12,8 +12,12 @@ var gameService = services.GameService{} // サービスの実体を作る。
 
 // 終了済みゲーム一覧
 func GetEndGamesHandler(ctx echo.Context) error {
+
+	logger.Println("pass通過")
+	
 	// ユーザーの特定する
-	id := ctx.Param("user_id")
+	id := ctx.Request().Header.Get("UserID")
+
 
 	// サービスに渡す
 	endGame, err := gameService.GetEndGames(id)

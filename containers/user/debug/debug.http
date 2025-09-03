@@ -1,5 +1,5 @@
-# @base_url = https://localhost:8943/user
-@base_url = https://rihlar-stage.kokomeow.com/user
+@base_url = https://localhost:8943/user
+# @base_url = https://rihlar-stage.kokomeow.com/user
 
 @user_id = userid-e3abf90d-4bcf-4c3b-bbde-37694b1611b3
 
@@ -11,11 +11,10 @@ Content-Type: application/json
 ###プロフィール作成
 POST {{base_url}}/profile
 Content-Type: application/json
-Authorization: eyJhbGciOiJFZERTQSIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3NTQyOTI5OTUsImxhYmVscyI6W10sInByb3ZDb2RlIjoiZ29vZ2xlIiwicHJvdlVpZCI6IjExMDg3MTY0NTY2MjI0MTc5NjA1OSIsInVzZXJJRCI6Ijg2NWZiYzI1LWRjMzAtNGI2OS1hZjlkLTkxY2IxMmJkNGZkZCJ9.GRaKRuBgjkJ5BoLn1ytu73QBkONtM3FCnM_cb9gQPz0-j0zfgBXAO7c0hDCUCaqZdfLVrHpsWxp3vPxoeDbeBw
+Authorization: eyJhbGciOiJFZERTQSIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3NTY0NjM5MTMsImxhYmVscyI6W10sInByb3ZDb2RlIjoiZ29vZ2xlIiwicHJvdlVpZCI6IjEwMTI0MTk5Mjg0NTIzNzkwMjA4NiIsInVzZXJJRCI6IjgzOTMwOTllLWQ2NmQtNDNkYi04MmE5LTk2MjRlNmE3NjExYyJ9.ryjJ4p7lY2b0tz9QCxduIQY441nnsHznAPCE_gI6g1Vbv88Kw00XDkE0HrPNxeKND-g6V0AFQMOMHkB-xFbfAg
 
 {
-  "name": "テスト太郎2",
-  "record_id": "記録2",
+  "name": "テスト太郎3",
   "comment": "これはテスト用のコメントです。",
   "region_id": "北海道",
   "system_game_id": "",
@@ -29,10 +28,9 @@ Content-Type: application/json
 
 {
   "name": "テスト太郎",
-  "record_id": "記録2",
-  "comment": "これはテスト用のコメントです。",
-  "system_game_id": "f5b632cb-707d-f450-eece-f119534b724a",
-  "admin_game_id": "01e32526-1c27-c9a9-2b5b-d158b0f50c80"
+  "comment": "これはテスト用のコメントです。3",
+  "system_game_id": "systemgame-f5b632cb-707d-f450-eece-f119534b724a",
+  "admin_game_id": "admingame-01e32526-1c27-c9a9-2b5b-d158b0f50c80"
 }
 
 ### プライバシー取得
@@ -64,4 +62,20 @@ Userid: {{user_id}}
 
 {
   "region_id": "関西地方"
+}
+
+### 実績の取得
+GET {{base_url}}/achive
+Content-Type: application/json
+Userid: {{user_id}}
+
+### 実績の編集
+PUT {{base_url}}/achive
+Content-Type: application/json
+Userid: {{user_id}}
+
+{
+  "display_achive_id1": "achive-9d89644f-a0aa-e270-9c2b-2c0a88c85a93",
+  "display_achive_id2": "achive-9d5e7f55-eb7b-c2fd-5284-9b645e34eb3a",
+  "display_achive_id3": "achive-669ee10d-759f-584d-cd42-38af7850e41d"
 }
