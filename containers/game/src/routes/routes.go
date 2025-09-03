@@ -75,5 +75,14 @@ func InitRoutes(router *echo.Echo) *echo.Echo {
 	// 自身が関与しているゲームの情報を取得する
 	router.GET("/info/self", controllers.GetMyGamesHandler, middlewares.RequireAuth)
 
+	// アイテム詳細取得
+	router.GET("/item", controllers.GetItemDeteileHandler)
+
+	// 所持アイテム取得
+	router.GET("/item/box", controllers.GetItemBoxHandler)
+
+	// ガチャ
+	router.GET("item/gacha", controllers.GetItemGachaHandler)
+
 	return router
 }

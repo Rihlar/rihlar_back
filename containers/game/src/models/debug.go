@@ -31,6 +31,8 @@ func Debug() {
 	DeleteAndMigrate(Region{})
 	DeleteAndMigrate(MovementLog{})
 	DeleteAndMigrate(Profile{})
+	DeleteAndMigrate(Item{})
+	DeleteAndMigrate(ItemBox{})
 
 	// デバッグのコードを呼び出す
 	DebugSample()
@@ -42,4 +44,6 @@ func Debug() {
 	DebugRegion()
 	DebugMovementLog()
 	DebugProfile()
+	DebugItem()
+	DebugItemBox()
 }

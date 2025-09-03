@@ -1,6 +1,8 @@
 package models
 
-import "game/logger"
+import (
+	"game/logger"
+)
 
 // テーブル構造
 type Profile struct {
@@ -14,6 +16,7 @@ type Profile struct {
 	SysGame   string  `gorm:"type:varchar(50);default:''" json:"system_game_id"` // システムゲームID
 	AdmGame   string  `gorm:"type:varchar(50);default:''" json:"admin_game_id"`  // アドミンゲームID
 	Name      string  `gorm:"type:varchar(100);default:''" json:"name"`          //ユーザ名
+	Coin      int     `gorm:"default:0" json:"coin"`                             //　所持コイン
 }
 
 func (Profile) TableName() string {
@@ -26,15 +29,33 @@ func GetProfile(userID string) (*Profile, error) {
 
 	// ユーザ情報を取得
 	err := dbconn.Where(&Profile{
-		UserID:    userID,
+		UserID: userID,
 	}).First(profile).Error
 
 	// エラー処理
 	if err != nil {
 		return nil, err
 	}
-	
+
 	return profile, nil
+}
+
+// ユーザー所持コイン取得
+func GetUserCoins(userID string) (int, error) {
+    var profile Profile
+    result := dbconn.Where("user_id = ?", userID).First(&profile)
+    if result.Error != nil {
+        return 0, result.Error
+    }
+    return profile.Coin, nil
+}
+
+// コイン更新
+func UpdateUserCoins(userID string, newAmount int) error {
+    result := dbconn.Model(&Profile{}).
+        Where("user_id = ?", userID).
+        Update("coin", newAmount)
+    return result.Error
 }
 
 // プロファイルを保存する
@@ -58,6 +79,7 @@ func DebugProfile() {
 		RegionID:  "関東地方",
 		SysGame:   system_game_id,
 		AdmGame:   "",
+		Coin:      1000,
 	})
 
 	//エラー処理
