@@ -17,6 +17,9 @@ type Profile struct {
 	AdmGame   string  `gorm:"type:varchar(50);default:''" json:"admin_game_id"`  // アドミンゲームID
 	Name      string  `gorm:"type:varchar(100);default:''" json:"name"`          //ユーザ名
 	Coin      int     `gorm:"default:0" json:"coin"`                             //　所持コイン
+	DisplayAchiveID1 string  `gorm:"type:varchar(50);default:''" json:"display_achive_id1"` // 実績ID1
+	DisplayAchiveID2 string  `gorm:"type:varchar(50);default:''" json:"display_achive_id2"` // 実績ID2
+	DisplayAchiveID3 string  `gorm:"type:varchar(50);default:''" json:"display_achive_id3"` // 実績ID3
 }
 
 func (Profile) TableName() string {
