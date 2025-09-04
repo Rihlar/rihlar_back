@@ -45,7 +45,7 @@ func (Profile) TableName() string {
 func DebugProfile() {
 	user_id := "userid-e3abf90d-4bcf-4c3b-bbde-37694b1611b3"
 	system_game_id := "systemgame-f5b632cb-707d-f450-eece-f119534b724c"
-	admin_game_id := "admingame-01e32526-1c27-c9a9-2b5b-d158b0f50c83"
+	admin_game_id := "gameid-996e5916-28b7-4222-ad5c-b332c1f892ec"
 	display_achive_ID1 := "achive-d3c9d4be-84c2-5b4d-b116-088a8c8680ab"
 	display_achive_ID2 := "achive-86548e0a-41ab-9617-c248-094e2de7f4f4"
 	display_achive_ID3 := "achive-46e37298-1052-a002-4cc4-1567df59bae4"

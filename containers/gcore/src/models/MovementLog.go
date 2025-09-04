@@ -27,6 +27,8 @@ func (member *Member) SaveMovementLog(Latitude, Longitude float64, Steps int64,t
 	// id を生成する
 	movementId,_ := utils.Genid()
 
+	logger.Println("歩いた記録を保存する",movementId)
+
 	// 歩いた記録をする
 	return dbconn.Save(&MovementLog{
 		MovementId: movementId,

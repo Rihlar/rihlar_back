@@ -93,9 +93,8 @@ func (team *Team) GetRank() (int, error) {
 
 func DebugTeam() {
 	// デバッグ用のコードをここに書く
-
-	teamid := "b5fef636-b22e-4057-b1fe-acc7bde6add0"
-	gameid := "f36eb7ce-4e24-4805-99a5-b3ae3468708a"
+	teamid := "teamid-b5fef636-b22e-4057-b1fe-acc7bde6add0"
+	gameid := "gameid-996e5916-28b7-4222-ad5c-b332c1f892ec"
 
 	// 書き込み
 	result := dbconn.Save(&Team{
@@ -129,4 +128,18 @@ func DebugTeam() {
 	}
 
 	logger.Println("チーム取得成功")
+
+	// テスト用ユーザーをメンバーに追加する
+	err := returnData.AddMember(Member{
+		GameID: gameid,
+		TeamID: teamid,
+		UserID: "userid-e3abf90d-4bcf-4c3b-bbde-37694b1611b3",
+		Points: 0,
+	})
+
+	// エラー処理
+	if err != nil {
+		logger.PrintErr("メンバー追加エラー", err)
+		return
+	}
 }

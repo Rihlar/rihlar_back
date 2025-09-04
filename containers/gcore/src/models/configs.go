@@ -12,7 +12,7 @@ import (
 
 const (
 	// Admin ゲーム一覧
-	AdminGameId1 = "gameid-413a287b-213c-414f-a287-c1397db8f9bf"
+	AdminGameId1 = "gameid-996e5916-28b7-4222-ad5c-b332c1f892ec"
 
 	// システムゲーム一覧
 	SysGameId1  = "gameid-9fcb784b-04a8-49c3-9ed9-ca9588eb86a8" // UserID1 に割り当て

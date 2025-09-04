@@ -6,19 +6,19 @@ import (
 )
 
 func Debug() {
-	// CreateTestData()
+	CreateTestData()
 }
 
 func CreateTestData() {
-	for _, history := range models.AllUsersActionHistory {
-		ReportMovement(MovementArgs{
-			UserID:    history.UserID,
-			Steps:     int64(history.Steps),
-			Latitude:  history.Latitude,
-			Longitude: history.Longitude,
-			TimeStamp: history.Timestamp.Unix(),
-		})
-	}
+	// for _, history := range models.AllUsersActionHistory {
+	// 	ReportMovement(MovementArgs{
+	// 		UserID:    history.UserID,
+	// 		Steps:     int64(history.Steps),
+	// 		Latitude:  history.Latitude,
+	// 		Longitude: history.Longitude,
+	// 		TimeStamp: history.Timestamp.Unix(),
+	// 	})
+	// }
 
 	// admin ゲームを取得する
 	admGame, err := models.GetGame(models.AdminGameId1)

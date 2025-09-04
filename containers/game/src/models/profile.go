@@ -78,7 +78,7 @@ func DebugProfile() {
 		Size:      100,
 		RegionID:  "関東地方",
 		SysGame:   system_game_id,
-		AdmGame:   "",
+		AdmGame:   "gameid-996e5916-28b7-4222-ad5c-b332c1f892ec",
 		Coin:      1000,
 	})
 
