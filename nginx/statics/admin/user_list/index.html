@@ -3,16 +3,27 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ユーザー一覧</title>
-    <link rel="stylesheet" href="style.css">
+    <title>管理者ダッシュボード - ユーザー一覧</title>
+    <link rel="stylesheet" href="styles/style.css">
 </head>
 <body>
     <div class="container">
         <h1>ユーザー一覧</h1>
-        <ul id="user-list">
-            <!-- ユーザーリストがここに表示されます -->
-        </ul>
+        <table id="user-table">
+            <thead>
+                <tr>
+                    <th>ユーザーID</th>
+                    <th>名前</th>
+                    <th>コメント</th>
+                    <th>操作</th>
+                </tr>
+            </thead>
+            <tbody>
+                <!-- ユーザーデータがここに挿入されます -->
+            </tbody>
+        </table>
     </div>
-    <script src="script.js"></script>
+    <script src="../../authbase/authbase.js"></script>
+    <script src="scripts/main.js"></script>
 </body>
 </html>
