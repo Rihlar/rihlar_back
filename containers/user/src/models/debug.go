@@ -24,6 +24,6 @@ func Debug() {
 	DeleteAndMigrate(Profile{})
 
 	// デバッグのコードを呼び出す
-	DebugSample()
-	DebugProfile()
+	// DebugSample()
+	// DebugProfile()
 }
