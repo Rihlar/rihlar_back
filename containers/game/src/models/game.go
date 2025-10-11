@@ -309,6 +309,30 @@ func GetGameByID(gameId string) (Game, error) {
 	return game, nil
 }
 
+// ユーザーIDから参加しているゲーム一覧を取得する
+func GetGamesByUserID(userID string) ([]Game, error) {
+	// ユーザーが参加しているゲームID一覧を取得
+	gameIDs, err := GetJoinGames(userID)
+	if err != nil {
+		logger.PrintErr("参加ゲームIDの取得エラー", err)
+		return nil, err
+	}
+
+	if len(gameIDs) == 0 {
+		// 参加しているゲームがない場合は空のスライスを返す
+		return []Game{}, nil
+	}
+
+	// ゲームID一覧からゲーム情報を取得
+	games, err := GetGames(gameIDs)
+	if err != nil {
+		logger.PrintErr("ゲーム情報の取得エラー", err)
+		return nil, err
+	}
+
+	return games, nil
+}
+
 // Top10のランキングを取得
 func (game *Game) GetRankingTop10() ([]Team, error) {
 	var teams []Team

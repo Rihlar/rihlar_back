@@ -60,3 +60,16 @@ func DebugMovementLog() {
 
 	logger.Println("movementログ取得成功")
 }
+
+// ゲームIDとユーザーIDから行動ログを取得する
+func GetMovementLogs(gameID string, userID string) ([]MovementLog, error) {
+	var logs []MovementLog
+
+	result := dbconn.Where("game_id = ? AND user_id = ?", gameID, userID).Order("time_stamp asc").Find(&logs)
+	if result.Error != nil {
+		logger.PrintErr("行動ログの取得エラー", result.Error)
+		return nil, result.Error
+	}
+
+	return logs, nil
+}
