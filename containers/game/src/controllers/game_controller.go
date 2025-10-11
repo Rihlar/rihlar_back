@@ -245,8 +245,7 @@ func DeleteTeamHandler(ctx echo.Context) error {
 // メンバーを削除するエンドポイと
 func DeleteMemberHandler(ctx echo.Context) error {
 	// TODO 後ほどミドルウェアからの取得に変更す
-	userId := ctx.Get("UserID").(string)
-	// userId := ctx.Request().Header.Get("UserID")
+	userId := ctx.Request().Header.Get("UserID")
 	gameId := ctx.Request().Header.Get("GameID")
 
 	// サービスに渡す
