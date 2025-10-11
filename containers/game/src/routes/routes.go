@@ -37,6 +37,9 @@ func InitRoutes(router *echo.Echo) *echo.Echo {
 	// ゲームの一覧を取得するエンドポイント
 	router.GET("/list", controllers.GetGameListHandler, middlewares.RequireLabel([]string{"admin"}),middlewares.RequestLogger())
 
+	// 特定のゲームのチーム一覧を取得するエンドポイント
+	router.GET("/game/:game_id/teams", controllers.GetTeamsHandler, middlewares.RequireLabel([]string{"admin"}), middlewares.RequestLogger())
+
 	// ゲームを削除するエンドポイント
 	router.DELETE("/delete", controllers.DeleteGameHandler, middlewares.RequireLabel([]string{"admin"}),middlewares.RequestLogger())
 
