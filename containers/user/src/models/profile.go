@@ -303,3 +303,12 @@ func GetAllProfiles() ([]Profile, error) {
 	result := dbconn.Find(&profiles)
 	return profiles, result.Error
 }
+
+// プロファイルを削除する
+func DeleteProfile(userID string) error {
+	// データベースから削除
+	result := dbconn.Where(Profile{
+		UserID:           userID,
+	}).Unscoped().Delete(&Profile{})
+	return result.Error
+}

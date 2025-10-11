@@ -41,7 +41,7 @@ func Debug() {
 	// DebugTeam()
 	// DebugMember()
 	// DebugCircle()
-	// DebugRegion()
+	DebugRegion()
 	// DebugMovementLog()
 	// DebugProfile()
 	// DebugItem()

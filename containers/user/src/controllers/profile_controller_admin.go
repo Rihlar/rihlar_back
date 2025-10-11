@@ -89,3 +89,22 @@ func GetAllProfilesFromAdmin(ctx echo.Context) error {
 		"profiles": profiles,
 	})
 }
+
+// プロファイルを削除する
+func DeleteProfileFromAdmin(ctx echo.Context) error {
+	// ヘッダから削除対象のユーザーIDを取得
+	userID := ctx.Request().Header.Get("UserID")
+
+	//エラー処理
+	if err := services.DeleteProfileService(userID); err != nil {
+		//NotFoundのとき
+		if errors.Is(err, gorm.ErrRecordNotFound) {
+			return ctx.JSON(http.StatusNotFound, echo.Map{"error": "profile not found"})
+		}
+		//NotFound以外のエラー
+		logger.PrintErr(err)
+		return ctx.JSON(http.StatusInternalServerError, echo.Map{"error": "delete failed"})
+	}
+
+	return ctx.JSON(http.StatusOK, echo.Map{"status": "profile deleted"})
+}

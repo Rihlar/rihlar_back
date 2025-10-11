@@ -30,5 +30,7 @@ func InitRoute(router *echo.Echo) *echo.Echo {
 	//実績の編集
 	router.PUT("/achive", controllers.UpdateAchiveProfile)
 
+	// リージョン一覧の取得
+
 	return router
 }

@@ -19,6 +19,12 @@ func InitAdminRoute(router *echo.Echo) *echo.Echo {
 		
 		//profile作成
 		adminG.POST("/profile", controllers.CreateProfileFromAdmin)
+
+		// profile削除
+		adminG.DELETE("/profile", controllers.DeleteProfileFromAdmin)
+
+		// リージョン一覧を取得
+		adminG.GET("/regions", controllers.GetRegionList)
 	}
 
 	return router

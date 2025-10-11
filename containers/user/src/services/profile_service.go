@@ -270,3 +270,8 @@ func UpdateRegionById(UserID string, regionID string) error {
 func GetAllProfilesService() ([]models.Profile, error) {
 	return models.GetAllProfiles()
 }
+
+// プロファイルを削除する
+func DeleteProfileService(userID string) error {
+	return models.DeleteProfile(userID)
+}
