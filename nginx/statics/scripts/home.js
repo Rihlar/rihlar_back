@@ -65,6 +65,19 @@ async function Init() {
         // ログインにリダイレクト
         window.location.href = './login.html';
     }
+
+    // 管理者メニューの表示制御
+    try {
+        const token = await auth.getToken();
+        if (token) {
+            const payload = JSON.parse(atob(token.split('.')[1]));
+            if (payload.labels && payload.labels.includes('admin')) {
+                document.getElementById('admin-menu').style.display = 'block';
+            }
+        }
+    } catch (e) {
+        console.error('Admin check failed:', e);
+    }
 }
 
 Init();

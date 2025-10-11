@@ -61,6 +61,7 @@ document.addEventListener('DOMContentLoaded', () => {
                         <td class="p-3 text-sm text-gray-700">${member.userID}</td>
                         <td class="p-3 text-sm text-gray-700">${member.points} pts</td>
                         <td class="p-3 text-right">
+                            <a href="/admin/walking_history/?userId=${member.userID}&gameId=${gameId}" class="text-blue-500 hover:text-blue-700 text-sm font-semibold mr-4">行動履歴</a>
                             <button class="delete-member-btn text-red-500 hover:text-red-700 text-sm font-semibold" data-game-id="${gameId}" data-user-id="${member.userID}">削除</button>
                         </td>
                     </tr>

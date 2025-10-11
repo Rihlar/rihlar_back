@@ -23,9 +23,10 @@ document.addEventListener('DOMContentLoaded', async () => {
         return;
     }
 
-    // URLからuserIdを取得
     const urlParams = new URLSearchParams(window.location.search);
     const userId = urlParams.get('userId');
+    const gameId = urlParams.get('gameId'); // gameIdをURLパラメータから取得
+
     if (!userId) {
         document.body.innerHTML = '<h1>ユーザーIDが指定されていません。</h1>';
         return;
@@ -39,44 +40,58 @@ document.addEventListener('DOMContentLoaded', async () => {
     }).addTo(map);
     currentLayerGroup = L.layerGroup().addTo(map);
 
-    // ユーザーの参加ゲーム一覧を取得
-    try {
-        const games = await auth.Get(`/api/game/admin/users/${userId}/games`, {});
-        const gameSelect = document.getElementById('game-select');
-        if (games && games.length > 0) {
-            games.forEach(game => {
-                const option = document.createElement('option');
-                option.value = game.gameID;
-                // 日本時間に変換して表示
-                const startTime = new Date(game.startTime).toLocaleString('ja-JP');
-                option.textContent = `${game.gameID} (開始: ${startTime})`;
-                gameSelect.appendChild(option);
-            });
-        } else {
-            const option = document.createElement('option');
-            option.textContent = '参加しているゲームはありません';
-            option.disabled = true;
-            gameSelect.appendChild(option);
-        }
-    } catch (error) {
-        console.error('Failed to fetch games:', error);
+    // URLにgameIdがあるかどうかで処理を分岐
+    if (gameId) {
+        // gameIdがある場合、プルダウンを非表示にし、特定のゲームのログを直接表示
+        document.querySelector('.game-selector').style.display = 'none';
+        fetchAndDisplayLogs(userId, gameId);
+    } else {
+        // gameIdがない場合、従来通りゲーム選択のプルダウンをセットアップ
+        setupGameSelection(userId);
     }
 
-    // ゲーム選択時のイベントリスナー
-    document.getElementById('game-select').addEventListener('change', async (event) => {
-        const gameId = event.target.value;
-        if (!gameId) {
-            return;
-        }
-
-        // 行動ログの取得
+    // 特定のゲームの行動ログを取得して表示する関数
+    async function fetchAndDisplayLogs(uid, gid) {
         try {
-            const logs = await auth.Get(`/api/game/admin/games/${gameId}/movement_logs/${userId}`, {});
+            const logs = await auth.Get(`/api/game/admin/games/${gid}/movement_logs/${uid}`, {});
             updateMap(logs);
         } catch (error) {
             console.error('Failed to fetch movement logs:', error);
+            alert('行動ログの取得に失敗しました。');
         }
-    });
+    }
+
+    // ゲーム選択プルダウンをセットアップする関数
+    async function setupGameSelection(uid) {
+        try {
+            const games = await auth.Get(`/api/game/admin/users/${uid}/games`, {});
+            const gameSelect = document.getElementById('game-select');
+            if (games && games.length > 0) {
+                games.forEach(game => {
+                    const option = document.createElement('option');
+                    option.value = game.gameID;
+                    const startTime = new Date(game.startTime).toLocaleString('ja-JP');
+                    option.textContent = `${game.gameID} (開始: ${startTime})`;
+                    gameSelect.appendChild(option);
+                });
+            } else {
+                const option = document.createElement('option');
+                option.textContent = '参加しているゲームはありません';
+                option.disabled = true;
+                gameSelect.appendChild(option);
+            }
+        } catch (error) {
+            console.error('Failed to fetch games:', error);
+        }
+
+        // ゲーム選択時のイベントリスナー
+        document.getElementById('game-select').addEventListener('change', (event) => {
+            const selectedGameId = event.target.value;
+            if (selectedGameId) {
+                fetchAndDisplayLogs(uid, selectedGameId);
+            }
+        });
+    }
 
     // 地図を更新する関数
     function updateMap(logs) {
