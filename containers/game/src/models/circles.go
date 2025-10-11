@@ -35,7 +35,7 @@ func DebugCircle() {
 func GetCircleDeteile(circleId string) (Circle, error) {
 	var circleDeteile Circle
 
-	result := dbconn.Where("circle_id = ?", circleId).Take(&circleDeteile)
+	result := Dbconn.Where("circle_id = ?", circleId).Take(&circleDeteile)
 	if result.Error != nil {
 		logger.PrintErr("円詳細取得エラー", result.Error)
 		return Circle{}, nil
@@ -49,7 +49,7 @@ func GetCircleByTeamId(teamId string) ([]Circle, error) {
 	var circles []Circle
 
 	// 取得
-	err := dbconn.Where(&Circle{
+	err := Dbconn.Where(&Circle{
 		TeamID: teamId,
 	}).Find(&circles).Error
 
@@ -67,7 +67,7 @@ func (game Game) GetCircles() ([]Circle, error) {
 	var circles []Circle
 
 	// 取得
-	err := dbconn.Where(&Circle{
+	err := Dbconn.Where(&Circle{
 		GameID: game.GameID,
 	}).Find(&circles).Error
 

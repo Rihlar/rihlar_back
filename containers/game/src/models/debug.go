@@ -9,7 +9,7 @@ package models
 // テーブルを削除してマイグレートする関数
 func DeleteAndMigrate(table interface{}) error {
 	// // テーブルを削除する
-	// err := dbconn.Migrator().DropTable(table)
+	// err := Dbconn.Migrator().DropTable(table)
 
 	// // エラー処理
 	// if err != nil {
@@ -17,7 +17,7 @@ func DeleteAndMigrate(table interface{}) error {
 	// }
 
 	// マイグレーションする
-	return dbconn.AutoMigrate(table)
+	return Dbconn.AutoMigrate(table)
 }
 
 func Debug() {

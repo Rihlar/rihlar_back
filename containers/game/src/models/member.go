@@ -21,7 +21,7 @@ func (Member) TableName() string {
 
 // メンバーを削除する
 func (game *Game) DeleteMember(userId string) error {
-	return dbconn.Where(&Member{
+	return Dbconn.Where(&Member{
 		UserID: userId,
 		GameID: game.GameID,
 	}).Delete(&Member{}).Error
@@ -35,7 +35,7 @@ func DebugMember() {
 func (member *Member) GetTeam() (Team, error) {
 	// チームを取得
 	var team Team
-	err := dbconn.Where(&Team{
+	err := Dbconn.Where(&Team{
 		TeamID: member.TeamID,
 	}).Find(&team).Error
 	return team, err
@@ -49,7 +49,7 @@ func GetMyRanking(userId string, gameId string) (int, error) {
 	var users []Member
 
 	// ゲームIDでフィルタし、得点順に並べて全件取得
-	err := dbconn.
+	err := Dbconn.
 		Where("game_id = ?", gameId).
 		Order("points DESC").
 		Find(&users).Error
@@ -86,7 +86,7 @@ func GetMyPoints(userId string, gameId string) (Member, error) {
 	var user Member
 
 	// First() は条件に合う最初のレコードを取得し、見つからなければ error が返る
-	err := dbconn.Where("user_id = ? AND game_id = ?", userId, gameId).Take(&user).Error
+	err := Dbconn.Where("user_id = ? AND game_id = ?", userId, gameId).Take(&user).Error
 	if err != nil {
 		return Member{}, err
 	}
@@ -99,7 +99,7 @@ func GetJoinGames(userUuid string) ([]string, error) {
 	// 結果格納用
 	var games []Member
 
-	result := dbconn.Where("user_id = ?", userUuid).Find(&games)
+	result := Dbconn.Where("user_id = ?", userUuid).Find(&games)
 	if result.Error != nil {
 		logger.PrintErr("ゲームID取得エラー", result.Error)
 		return []string{}, nil
@@ -117,7 +117,7 @@ func GetJoinGames(userUuid string) ([]string, error) {
 func SearchMember(userId string, gameId string) (Member, error) {
 	var member Member
 
-	result := dbconn.Where(Member{
+	result := Dbconn.Where(Member{
 		GameID: gameId,
 		UserID: userId,
 	}).First(&member)

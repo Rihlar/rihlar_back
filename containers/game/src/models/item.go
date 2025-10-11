@@ -61,7 +61,7 @@ func DebugItem() {
 	// アイテムの登録する
 	for _, item := range items {
 		// 書き込み
-		err := dbconn.Save(&item).Error
+		err := Dbconn.Save(&item).Error
 		// エラー処理
 		if err != nil {
 			logger.PrintErr("アイテム登録エラー", err)
@@ -75,7 +75,7 @@ func DebugItem() {
 func GetItemDeteile(itemId string) (Item, error) {
 	var item Item
 
-	result := dbconn.Where("item_id = ?", itemId).Take(&item)
+	result := Dbconn.Where("item_id = ?", itemId).Take(&item)
 	if result.Error != nil {
 		logger.PrintErr("アイテム詳細取得エラー", result.Error)
 		return Item{}, result.Error
@@ -87,7 +87,7 @@ func GetItemDeteile(itemId string) (Item, error) {
 func GetAllItems() ([]Item, error) {
 	var items []Item
     // 全アイテム取得
-    err := dbconn.Find(&items).Error
+    err := Dbconn.Find(&items).Error
 	if  err != nil {
         return []Item{}, err
     }

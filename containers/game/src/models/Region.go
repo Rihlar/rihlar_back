@@ -93,7 +93,7 @@ func GetRegionByID(id string) (Region, error) {
 	region := Region{}
 
 	// 取得
-	err := dbconn.Where(&Region{
+	err := Dbconn.Where(&Region{
 		RegionID: id,
 	}).First(&region).Error
 
@@ -109,7 +109,7 @@ func InitRegion() error {
 	// リージョンを登録する
 	for _, region := range regions {
 		// 書き込み
-		err := dbconn.Save(&region).Error
+		err := Dbconn.Save(&region).Error
 
 		// エラー処理
 		if err != nil {

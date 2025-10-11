@@ -20,7 +20,7 @@ func DebugSample() {
 	userid := "e3abf90d-4bcf-4c3b-bbde-37694b1611b3"
 
 	// 書き込み
-	result := dbconn.Save(&Sample{
+	result := Dbconn.Save(&Sample{
 		UserID:   userid,
 		Name:     "aiueo",
 		Email:    "test@mattuu.com",
@@ -40,7 +40,7 @@ func DebugSample() {
 	returnData := Sample{}
 
 	// 取得する
-	result = dbconn.Where(&Sample{
+	result = Dbconn.Where(&Sample{
 		UserID:   userid,
 	}).First(&returnData)
 

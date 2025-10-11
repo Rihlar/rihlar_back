@@ -27,7 +27,7 @@ func DebugMovementLog() {
 	userid := "e3abf90d-4bcf-4c3b-bbde-37694b1611b3"
 
 	// 書き込み
-	result := dbconn.Save(&MovementLog{
+	result := Dbconn.Save(&MovementLog{
 		UserID:    userid,
 		Latitude:  0,
 		Longitude: 0,
@@ -48,7 +48,7 @@ func DebugMovementLog() {
 	returnData := MovementLog{}
 
 	// 取得する
-	result = dbconn.Where(&MovementLog{
+	result = Dbconn.Where(&MovementLog{
 		UserID: userid,
 	}).First(&returnData)
 
@@ -65,7 +65,7 @@ func DebugMovementLog() {
 func GetMovementLogs(gameID string, userID string) ([]MovementLog, error) {
 	var logs []MovementLog
 
-	result := dbconn.Where("game_id = ? AND user_id = ?", gameID, userID).Order("time_stamp asc").Find(&logs)
+	result := Dbconn.Where("game_id = ? AND user_id = ?", gameID, userID).Order("time_stamp asc").Find(&logs)
 	if result.Error != nil {
 		logger.PrintErr("行動ログの取得エラー", result.Error)
 		return nil, result.Error

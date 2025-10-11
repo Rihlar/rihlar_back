@@ -16,12 +16,12 @@ type Team struct {
 
 // チームを作成する
 func CreateTeam(team Team) error {
-	return dbconn.Create(&team).Error
+	return Dbconn.Create(&team).Error
 }
 
 // TODO デバッグ用 メンバーを追加する
 func (team *Team) AddMember(member Member) error {
-	return dbconn.Model(team).Association("Members").Append(&member)
+	return Dbconn.Model(team).Association("Members").Append(&member)
 }
 
 // チームを取得する
@@ -30,7 +30,7 @@ func (game *Game) GetTeam(teamID string) (Team, error) {
 	returnData := Team{}
 
 	// 取得
-	err := dbconn.Where(&Team{
+	err := Dbconn.Where(&Team{
 		GameID: game.GameID,
 		TeamID: teamID,
 	}).First(&returnData).Error
@@ -51,14 +51,14 @@ func (Team) TableName() string {
 // メンバー一覧を取得する
 func (team *Team) GetMembers() ([]Member, error) {
 	// 取得
-	err := dbconn.Model(team).Association("Members").Find(&team.Members)
+	err := Dbconn.Model(team).Association("Members").Find(&team.Members)
 
 	return team.Members, err
 }
 
 func GetTeamsByGameID(gameID string) ([]Team, error) {
 	var teams []Team
-	err := dbconn.Preload("Members").Where("game_id = ?", gameID).Find(&teams).Error
+	err := Dbconn.Preload("Members").Where("game_id = ?", gameID).Find(&teams).Error
 	if err != nil {
 		return nil, err
 	}
@@ -67,7 +67,7 @@ func GetTeamsByGameID(gameID string) ([]Team, error) {
 
 // チームを削除する
 func (game *Game) DeleteTeam(teamID string) error {
-	return dbconn.Where(&Team{
+	return Dbconn.Where(&Team{
 		TeamID: teamID,
 		GameID: game.GameID,
 	}).Delete(&Team{}).Error
@@ -79,7 +79,7 @@ func (team *Team) GetRank() (int, error) {
 	teams := []Team{}
 
 	// チームをソートして取得
-	result := dbconn.Where(&Team{
+	result := Dbconn.Where(&Team{
 		GameID: team.GameID,
 	}).Order("points desc").Find(&teams)
 
@@ -106,7 +106,7 @@ func DebugTeam() {
 	gameid := "gameid-996e5916-28b7-4222-ad5c-b332c1f892ec"
 
 	// 書き込み
-	result := dbconn.Save(&Team{
+	result := Dbconn.Save(&Team{
 		TeamID:    teamid,
 		GameID:    gameid,
 		Members:   []Member{},
@@ -126,7 +126,7 @@ func DebugTeam() {
 	returnData := Team{}
 
 	// 取得する
-	result = dbconn.Where(&Team{
+	result = Dbconn.Where(&Team{
 		TeamID: teamid,
 	}).First(&returnData)
 

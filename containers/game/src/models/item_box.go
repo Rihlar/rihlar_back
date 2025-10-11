@@ -22,7 +22,7 @@ func DebugItemBox() {
 	itemid := "item-e4c0e536-5cbe-4845-ac5d-3cd82dd86a15"
 
 	// 書き込み
-	result := dbconn.Save(&ItemBox{
+	result := Dbconn.Save(&ItemBox{
 		UserID:   userid,
 		ItemID:   itemid,
 		Quantity: 5,
@@ -40,7 +40,7 @@ func DebugItemBox() {
 	returnData := ItemBox{}
 
 	// 取得
-	result = dbconn.Where(&ItemBox{
+	result = Dbconn.Where(&ItemBox{
 		UserID: userid,
 		ItemID: itemid,
 	}).First(&returnData)
@@ -58,7 +58,7 @@ func DebugItemBox() {
 func GetItemBox(userId string) ([]ItemBox, error) {
 	var itemBox []ItemBox
 
-	result := dbconn.Where("user_id = ?", userId).Find(&itemBox)
+	result := Dbconn.Where("user_id = ?", userId).Find(&itemBox)
 	if result.Error != nil {
 		logger.PrintErr("アイテムボックス取得エラー", result.Error)
 		return nil, result.Error
@@ -70,7 +70,7 @@ func GetItemBox(userId string) ([]ItemBox, error) {
 // 所持しているか取得
 func GetItemBoxByUserAndItem(userID, itemID string) (*ItemBox, error) {
     var boxes []ItemBox
-    result := dbconn.Where("user_id = ? AND item_id = ?", userID, itemID).Find(&boxes)
+    result := Dbconn.Where("user_id = ? AND item_id = ?", userID, itemID).Find(&boxes)
     if result.Error != nil {
         return nil, result.Error
     }
@@ -84,10 +84,10 @@ func GetItemBoxByUserAndItem(userID, itemID string) (*ItemBox, error) {
 
 // 新規作成
 func CreateItemBox(box *ItemBox) error {
-	return dbconn.Create(box).Error
+	return Dbconn.Create(box).Error
 }
 
 // 更新
 func UpdateItemBox(box *ItemBox) error {
-	return dbconn.Save(box).Error
+	return Dbconn.Save(box).Error
 }

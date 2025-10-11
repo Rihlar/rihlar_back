@@ -31,7 +31,7 @@ func GetProfile(userID string) (*Profile, error) {
 	profile := &Profile{}
 
 	// ユーザ情報を取得
-	err := dbconn.Where(&Profile{
+	err := Dbconn.Where(&Profile{
 		UserID: userID,
 	}).First(profile).Error
 
@@ -46,7 +46,7 @@ func GetProfile(userID string) (*Profile, error) {
 // ユーザー所持コイン取得
 func GetUserCoins(userID string) (int, error) {
     var profile Profile
-    result := dbconn.Where("user_id = ?", userID).First(&profile)
+    result := Dbconn.Where("user_id = ?", userID).First(&profile)
     if result.Error != nil {
         return 0, result.Error
     }
@@ -55,7 +55,7 @@ func GetUserCoins(userID string) (int, error) {
 
 // コイン更新
 func UpdateUserCoins(userID string, newAmount int) error {
-    result := dbconn.Model(&Profile{}).
+    result := Dbconn.Model(&Profile{}).
         Where("user_id = ?", userID).
         Update("coin", newAmount)
     return result.Error
@@ -63,7 +63,7 @@ func UpdateUserCoins(userID string, newAmount int) error {
 
 // プロファイルを保存する
 func SaveProfile(profile *Profile) error {
-	return dbconn.Save(profile).Error
+	return Dbconn.Save(profile).Error
 }
 
 // デバッグ用
@@ -72,7 +72,7 @@ func DebugProfile() {
 	system_game_id := "f5b632cb-707d-f450-eece-f119534b724c"
 
 	//書き込み
-	result := dbconn.Save(&Profile{
+	result := Dbconn.Save(&Profile{
 		UserID:    user_id,
 		RecordID:  "第一回優勝",
 		Comment:   "よろしくお願いします。",
@@ -97,7 +97,7 @@ func DebugProfile() {
 	returnData := Sample{}
 
 	//取得する
-	result = dbconn.Where(&Sample{
+	result = Dbconn.Where(&Sample{
 		UserID: user_id,
 	}).First(&returnData)
 

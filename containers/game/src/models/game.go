@@ -39,17 +39,17 @@ func DebugGame() {
 // ゲームを作成する関数
 func CreateGame(game Game) error {
 	// 書き込み
-	return dbconn.Save(&game).Error
+	return Dbconn.Save(&game).Error
 }
 
 // TODO デバッグ用 チームを追加する
 func (game *Game) AddTeam(team Team) error {
-	return dbconn.Model(game).Association("Teams").Append(&team)
+	return Dbconn.Model(game).Association("Teams").Append(&team)
 }
 
 // ゲームを消す関数
 func (game *Game) DeleteGame() error {
-	return dbconn.Delete(game).Error
+	return Dbconn.Delete(game).Error
 }
 
 // 全てのゲームを取得
@@ -58,7 +58,7 @@ func GetAllGames() ([]Game, error) {
 	var games []Game
 
 	// 取得する
-	err := dbconn.Find(&games).Error
+	err := Dbconn.Find(&games).Error
 
 	// エラー処理
 	if err != nil {
@@ -118,7 +118,7 @@ func SearchGame(args SearchGameArgs) ([]Game, error) {
 	var games []Game
 
 	// 取得する
-	err := dbconn.Debug().Where(&searchParam).Find(&games).Error
+	err := Dbconn.Debug().Where(&searchParam).Find(&games).Error
 
 	// エラー処理
 	if err != nil {
@@ -130,12 +130,12 @@ func SearchGame(args SearchGameArgs) ([]Game, error) {
 
 // ゲームを開始する
 func (game *Game) StartGame() error {
-	return dbconn.Debug().Model(game).Update("status", 1).Error
+	return Dbconn.Debug().Model(game).Update("status", 1).Error
 }
 
 // ゲームを終了する
 func (game *Game) EndGame() error {
-	return dbconn.Debug().Model(game).Update("status", 2).Error
+	return Dbconn.Debug().Model(game).Update("status", 2).Error
 }
 
 // ゲームに属する全てのメンバー取得
@@ -144,7 +144,7 @@ func (game *Game) GetMembers() ([]Member, error) {
 	var members []Member
 
 	// 取得する
-	err := dbconn.Where(&Member{
+	err := Dbconn.Where(&Member{
 		GameID: game.GameID,
 	}).Find(&members).Error
 
@@ -161,7 +161,7 @@ func (game *Game) GetTeams() ([]Team, error) {
 	var teams []Team
 
 	// 取得する
-	err := dbconn.Where(&Team{
+	err := Dbconn.Where(&Team{
 		GameID: game.GameID,
 	}).Find(&teams).Error
 
@@ -179,7 +179,7 @@ func (game *Game) GetMemberByUserID(userid string) (Member, error) {
 	returnData := Member{}
 
 	// 取得する
-	err := dbconn.Where(&Member{
+	err := Dbconn.Where(&Member{
 		UserID: userid,
 		GameID: game.GameID,
 	}).First(&returnData).Error
@@ -205,7 +205,7 @@ func (game *Game) GetTeamByUserID(UserID string) (Team, error) {
 	}
 
 	// 取得する
-	err = dbconn.Where(&Team{
+	err = Dbconn.Where(&Team{
 		TeamID: member.TeamID,
 	}).First(&returnData).Error
 
@@ -221,7 +221,7 @@ func (game *Game) GetTeamByUserID(UserID string) (Team, error) {
 func (game *Game) GetRanking() ([]Team, error) {
 	var rankings []Team
 
-	result := dbconn.
+	result := Dbconn.
 		Where("game_id = ?", game.GameID).
 		Order("points DESC").
 		Find(&rankings)
@@ -239,7 +239,7 @@ func GetGames(gameId []string) ([]Game, error) {
 	// 結果格納用
 	var games []Game
 
-	result := dbconn.Where("game_id IN ?", gameId).Find(&games)
+	result := Dbconn.Where("game_id IN ?", gameId).Find(&games)
 	if result.Error != nil {
 		logger.PrintErr("ゲームID取得エラー", result.Error)
 		return []Game{}, nil
@@ -253,7 +253,7 @@ func GetGame(gameId string) (Game, error) {
 	var game Game
 
 	// 取得する
-	err := dbconn.Where(&Game{
+	err := Dbconn.Where(&Game{
 		GameID: gameId,
 	}).First(&game).Error
 
@@ -270,7 +270,7 @@ func GetGameHolding(gameId []string) ([]Game, error) {
 	// 結果格納用
 	var games []Game
 
-	result := dbconn.Where("game_id IN ?", gameId).Where("status = ?", 1).Find(&games)
+	result := Dbconn.Where("game_id IN ?", gameId).Where("status = ?", 1).Find(&games)
 	if result.Error != nil {
 			return []Game{}, nil
 	}
@@ -284,7 +284,7 @@ func GetEndGames(gameId []string) ([]Game, error) {
 	var games []Game
 
 	// statusが2で絞る
-	result := dbconn.Where("game_id IN ?", gameId).Where("status = ?", 2).Find(&games)
+	result := Dbconn.Where("game_id IN ?", gameId).Where("status = ?", 2).Find(&games)
 	if result.Error != nil {
 		logger.PrintErr("ゲーム取得エラー", result.Error)
 		return []Game{}, nil
@@ -297,7 +297,7 @@ func GetEndGames(gameId []string) ([]Game, error) {
 func GetGameByID(gameId string) (Game, error) {
 	var game Game
 
-	result := dbconn.Where(&Game{
+	result := Dbconn.Where(&Game{
 		GameID: gameId,
 	}).First(&game)
 
@@ -337,7 +337,7 @@ func GetGamesByUserID(userID string) ([]Game, error) {
 func (game *Game) GetRankingTop10() ([]Team, error) {
 	var teams []Team
 
-	result := dbconn.
+	result := Dbconn.
 		Where("game_id = ?", game.GameID).
 		Order("points DESC").
 		Limit(10).

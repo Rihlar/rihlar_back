@@ -13,7 +13,7 @@ import (
 )
 
 var (
-	dbconn *gorm.DB = nil
+	Dbconn *gorm.DB = nil
 )
 
 func Init() {
@@ -31,7 +31,7 @@ func Init() {
 	// db.AutoMigrate(&sample{})
 
 	// グローバル変数に格納
-	dbconn = db
+	Dbconn = db
 
 	// debug 用の関数を呼び出す
 	Debug()
