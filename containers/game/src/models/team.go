@@ -56,6 +56,15 @@ func (team *Team) GetMembers() ([]Member, error) {
 	return team.Members, err
 }
 
+func GetTeamsByGameID(gameID string) ([]Team, error) {
+	var teams []Team
+	err := dbconn.Preload("Members").Where("game_id = ?", gameID).Find(&teams).Error
+	if err != nil {
+		return nil, err
+	}
+	return teams, nil
+}
+
 // チームを削除する
 func (game *Game) DeleteTeam(teamID string) error {
 	return dbconn.Where(&Team{

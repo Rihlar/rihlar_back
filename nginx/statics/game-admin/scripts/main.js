@@ -90,6 +90,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     <button class="start-btn" data-id="${game.game_id}" ${game.status === 1 ? 'disabled' : ''}>開始</button>
                     <button class="end-btn" data-id="${game.game_id}" ${game.status !== 1 ? 'disabled' : ''}>終了</button>
                     <button class="delete-btn" data-id="${game.game_id}">削除</button>
+                    <a href="../team-admin/?game_id=${game.game_id}" class="manage-teams-btn">チーム管理</a>
                 </td>
             `;
             gamesTableBody.appendChild(row);
