@@ -32,7 +32,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                     <td>${user.user_id}</td>
                     <td>${user.name}</td>
                     <td>${user.comment}</td>
-                    <td><a href="/admin/walking_history/?userId=${user.user_id}">歩行履歴を見る</a></td>
+                    <td><a href="/statics/admin/walking_history/?userId=${user.user_id}">歩行履歴を見る</a></td>
                 `;
                 tableBody.appendChild(row);
             });
