@@ -1,93 +1,11 @@
-body {
-    font-family: sans-serif;
-    background-color: #f4f7f9;
-    color: #333;
-    margin: 0;
-    padding: 20px;
-}
-
-.container {
-    max-width: 1000px;
-    margin: 0 auto;
-    background: #fff;
-    padding: 20px 30px;
-    border-radius: 8px;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-}
-
-h1, h2, h3, h4 {
-    color: #007bff;
-}
-
-.table-wrapper {
-    overflow-x: auto;
-}
-
-table {
-    width: 100%;
-    border-collapse: separate;
-    border-spacing: 0;
-    min-width: 800px;
-}
-
-th {
-    background-color: #e9ecef;
-    padding: 12px 15px;
-    text-align: left;
-    font-weight: 600;
-    color: #495057;
-    border-bottom: 2px solid #dee2e6;
-}
-
-td {
-    padding: 10px 15px;
-    border-bottom: 1px solid #e9ecef;
-    vertical-align: middle;
-}
-
-tbody tr:nth-child(even) {
-    background-color: #f8f9fa;
-}
-
-tbody tr:hover {
-    background-color: #e9f5ff;
-}
-
-.actions button {
-    padding: 6px 10px;
-    border: none;
-    border-radius: 4px;
-    cursor: pointer;
-    font-size: 14px;
-    transition: background-color 0.2s;
-}
-
-.delete-team-btn, .delete-member-btn {
-    background-color: #dc3545;
-    color: white;
-}
-
-.delete-team-btn:hover, .delete-member-btn:hover {
-    background-color: #c82333;
-}
-
-td ul {
-    padding-left: 0;
-    list-style-type: none;
-    margin: 0;
-}
-
-td li {
-    margin-bottom: 5px;
-}
-
-
 .error-message {
     background-color: #f8d7da;
     color: #721c24;
     border: 1px solid #f5c6cb;
-    padding: 10px;
-    margin-top: 20px;
-    border-radius: 4px;
-    text-align: center;
+    padding: 1rem;
+    border-radius: 0.25rem;
+}
+
+.hidden {
+    display: none;
 }
