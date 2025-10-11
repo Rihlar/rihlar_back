@@ -14,11 +14,13 @@ func InitAdminRoute(router *echo.Echo) *echo.Echo {
 		// 認証を必要とする
 		adminG.Use(middlewares.RequireLabel([]string{"admin"}))
 
-		//profile一件取得
-		adminG.GET("/profiles", controllers.GetAllProfilesFromAdmin)
+				//profile一件取得
+				adminG.GET("/profiles", controllers.GetAllProfilesFromAdmin)
 		
-		//profile作成
-		adminG.POST("/profile", controllers.CreateProfileFromAdmin)
+				// 全てのユーザー情報を取得する
+				adminG.GET("/users", controllers.GetAllUsersFromAdmin)
+		
+				//profile作成		adminG.POST("/profile", controllers.CreateProfileFromAdmin)
 
 		// profile削除
 		adminG.DELETE("/profile", controllers.DeleteProfileFromAdmin)
