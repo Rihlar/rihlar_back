@@ -81,7 +81,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 <td>${new Date(game.start_time * 1000).toLocaleString()}</td>
                 <td>${game.dulation_date}</td>
                 <td class="actions">
-                    <button class="start-btn" data-id="${game.game_id}" ${game.status !== 0 ? 'disabled' : ''}>開始</button>
+                    <button class="start-btn" data-id="${game.game_id}" ${game.status === 1 ? 'disabled' : ''}>開始</button>
                     <button class="end-btn" data-id="${game.game_id}" ${game.status !== 1 ? 'disabled' : ''}>終了</button>
                     <button class="delete-btn" data-id="${game.game_id}">削除</button>
                 </td>
