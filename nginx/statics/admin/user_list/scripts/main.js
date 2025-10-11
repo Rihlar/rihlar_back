@@ -23,7 +23,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     // ユーザー一覧の取得と表示
     try {
-        const users = await auth.Get("/api/user/admin/users", {});
+        const users = await auth.Get("/user/admin/users", {});
         if (users) {
             const tableBody = document.querySelector('#user-table tbody');
             users.forEach(user => {

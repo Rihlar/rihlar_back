@@ -53,7 +53,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     // 特定のゲームの行動ログを取得して表示する関数
     async function fetchAndDisplayLogs(uid, gid) {
         try {
-            const logs = await auth.Get(`/api/game/admin/games/${gid}/movement_logs/${uid}`, {});
+            const logs = await auth.Get(`/game/admin/games/${gid}/movement_logs/${uid}`, {});
             updateMap(logs);
         } catch (error) {
             console.error('Failed to fetch movement logs:', error);
@@ -62,10 +62,9 @@ document.addEventListener('DOMContentLoaded', async () => {
     }
 
     // ゲーム選択プルダウンをセットアップする関数
-    async function setupGameSelection(uid) {
-        try {
-            const games = await auth.Get(`/api/game/admin/users/${uid}/games`, {});
-            const gameSelect = document.getElementById('game-select');
+            async function setupGameSelection(uid) {
+            try {
+                const games = await auth.Get(`/game/admin/users/${uid}/games`, {});            const gameSelect = document.getElementById('game-select');
             if (games && games.length > 0) {
                 games.forEach(game => {
                     const option = document.createElement('option');
