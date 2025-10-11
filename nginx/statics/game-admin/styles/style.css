@@ -33,7 +33,6 @@ th {
     max-width: 150px;
 }
 
-/* 基本的なリセットとフォント設定 (変更なし) */
 body {
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     background-color: #f4f7f9;
@@ -58,8 +57,8 @@ h1 {
     margin-bottom: 20px;
 }
 
-/* --- 新規プロファイル作成フォームのスタイル (一部修正) --- */
-.create-profile-section {
+/* --- 新規ゲーム作成フォームのスタイル --- */
+.create-game-section {
     padding: 20px;
     background-color: #f8f8f8;
     border-radius: 6px;
@@ -67,7 +66,7 @@ h1 {
     margin-bottom: 30px;
 }
 
-.create-profile-section h2 {
+.create-game-section h2 {
     color: #333;
     border-bottom: 1px solid #ddd;
     padding-bottom: 10px;
@@ -84,24 +83,27 @@ h1 {
     margin-bottom: 5px;
 }
 
-/* 💡 修正: inputとselectの両方にスタイルを適用 */
 .form-group input[type="text"],
+.form-group input[type="datetime-local"],
+.form-group input[type="number"],
 .form-group select.region-select {
     width: 100%;
     padding: 10px;
     border: 1px solid #ccc;
     border-radius: 4px;
     box-sizing: border-box;
-    /* select要素のデフォルトスタイルを調整 */
     -webkit-appearance: none;
     -moz-appearance: none;
     appearance: none;
     background-color: white;
-    background-image: url('data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22292.4%22%20height%3D%22292.4%22%3E%3Cpath%20fill%3D%22%23000000%22%20d%3D%22M287%20197.35L146.2%2056.55L5.4%20197.35z%22%2F%3E%3C%2Fsvg%3E'); /* ダウン矢印 */
+}
+
+.form-group select.region-select {
+    background-image: url('data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22292.4%22%20height%3D%22292.4%22%3E%3Cpath%20fill%3D%22%23000000%22%20d%3D%22M287%20197.35L146.2%2056.55L5.4%20197.35z%22%2F%3E%3C%2Fsvg%3E');
     background-repeat: no-repeat;
     background-position: right 10px top 50%;
     background-size: 0.6em auto;
-    padding-right: 30px; /* 矢印との隙間を確保 */
+    padding-right: 30px;
 }
 
 #create-btn {
@@ -135,8 +137,6 @@ h1 {
     background-image: linear-gradient(to right, rgba(0, 0, 0, 0), rgba(0, 0, 0, 0.1), rgba(0, 0, 0, 0));
 }
 
-/* --- テーブルセクションのスタイル (変更なし) --- */
-
 .table-wrapper {
     overflow-x: auto;
 }
@@ -158,53 +158,21 @@ th {
     user-select: none;
 }
 
-th.header-sortable {
-    cursor: pointer;
-    transition: background-color 0.2s;
-}
-
-th.header-sortable:hover {
-    background-color: #dee2e6;
-}
-
-th.header-sortable::after {
-    content: ' \21c5';
-    margin-left: 5px;
-    opacity: 0.3;
-    font-size: 0.8em;
-}
-
-th.header-sortable.asc::after {
-    content: ' \25b2';
-    opacity: 1;
-    color: #007bff;
-}
-
-th.header-sortable.desc::after {
-    content: ' \25bc';
-    opacity: 1;
-    color: #007bff;
-}
-
 td {
     padding: 10px 15px;
     border-bottom: 1px solid #e9ecef;
     vertical-align: middle;
 }
 
-#profiles-table-body tr:nth-child(even) {
+#games-table-body tr:nth-child(even) {
     background-color: #f8f9fa;
 }
 
-#profiles-table-body tr:hover {
+#games-table-body tr:hover {
     background-color: #e9f5ff;
 }
 
-.action-cell {
-    white-space: nowrap;
-}
-
-.action-button {
+.actions button {
     padding: 6px 10px;
     border: none;
     border-radius: 4px;
@@ -214,22 +182,16 @@ td {
     margin-right: 5px;
 }
 
-.edit-btn {
-    background-color: #28a745;
-    color: white;
-}
+.start-btn { background-color: #28a745; color: white; }
+.start-btn:hover:not(:disabled) { background-color: #218838; }
+.end-btn { background-color: #ffc107; color: #333; }
+.end-btn:hover:not(:disabled) { background-color: #e0a800; }
+.delete-btn { background-color: #dc3545; color: white; }
+.delete-btn:hover:not(:disabled) { background-color: #c82333; }
 
-.edit-btn:hover {
-    background-color: #218838;
-}
-
-.delete-btn {
-    background-color: #dc3545;
-    color: white;
-}
-
-.delete-btn:hover {
-    background-color: #c82333;
+.actions button:disabled {
+    background-color: #ccc;
+    cursor: not-allowed;
 }
 
 .loading-message, .no-data {

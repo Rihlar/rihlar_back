@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ゲーム管理画面</title>
+    <link rel="stylesheet" href="./styles/style.css">
+</head>
+<body>
+    <div class="container">
+        <h1>ゲーム管理画面</h1>
+
+        <div class="create-form-container">
+            <button id="toggle-create-form-btn">新規ゲーム作成</button>
+            <section id="create-game-section" class="collapsible-content hidden">
+                <h2>新規ゲーム作成</h2>
+                <form id="create-game-form">
+                    <div class="form-group">
+                        <label for="name">ゲーム名 (必須):</label>
+                        <input type="text" id="name" name="name" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="region_id">地域ID (選択):</label>
+                        <select id="region_id" name="region_id" class="region-select" required>
+                            <option value="" disabled selected>地域を読み込み中...</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="start_time">開始時間:</label>
+                        <input type="datetime-local" id="start_time" name="start_time" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="dulation_date">期間 (日数):</label>
+                        <input type="number" id="dulation_date" name="dulation_date" min="1" value="1" required>
+                    </div>
+                    <button type="submit" id="create-btn">ゲームを作成</button>
+                    <p id="create-status-message"></p>
+                </form>
+            </section>
+        </div>
+
+        <hr class="separator">
+
+        <h2 style="margin-top: 30px;">登録済みゲーム一覧</h2>
+        <div class="table-wrapper">
+            <table id="games-table">
+                <thead>
+                    <tr>
+                        <th class="header-sortable" data-key="name">ゲーム名</th>
+                        <th class="header-sortable" data-key="game_id">ゲームID</th>
+                        <th class="header-sortable" data-key="region_id">地域</th>
+                        <th class="header-sortable" data-key="status">ステータス</th>
+                        <th class="header-sortable" data-key="start_time">開始時間</th>
+                        <th class="header-sortable" data-key="dulation_date">期間</th>
+                        <th>操作</th>
+                    </tr>
+                </thead>
+                <tbody id="games-table-body">
+                    <tr><td colspan="7" class="loading-message">データを読み込み中...</td></tr>
+                </tbody>
+            </table>
+        </div>
+        <p id="error-message" class="error-message" style="display: none;"></p>
+    </div>
+
+    <script src="../authbase/authbase.js"></script>
+    <script src="./scripts/main.js"></script>
+</body>
+</html>
