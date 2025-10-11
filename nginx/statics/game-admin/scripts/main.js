@@ -1,6 +1,12 @@
 const auth = new AuthBase('/auth/');
 
 document.addEventListener('DOMContentLoaded', () => {
+    const toggleButton = document.getElementById('toggle-create-form-btn');
+    const createFormSection = document.getElementById('create-game-section');
+
+    toggleButton.addEventListener('click', () => {
+        createFormSection.classList.toggle('hidden');
+    });
     const gamesTableBody = document.getElementById('games-table-body');
     const createForm = document.getElementById('create-game-form');
     const regionSelect = document.getElementById('region_id');
