@@ -87,5 +87,15 @@ func InitRoutes(router *echo.Echo) *echo.Echo {
 	// ガチャ
 	router.GET("item/gacha", controllers.GetItemGachaHandler)
 
+	// 管理者用API
+	adminGroup := router.Group("/admin")
+	adminGroup.Use(middlewares.RequireLabel([]string{"admin"})) // 管理者ミドルウェアを適用
+
+	// ユーザーが参加したゲーム一覧を取得するエンドポイント (管理者用)
+	adminGroup.GET("/users/:user_id/games", controllers.GetUserParticipatedGamesHandler, middlewares.RequestLogger())
+
+	// 特定のゲームの行動ログを取得するエンドポイント (管理者用)
+	adminGroup.GET("/games/:game_id/movement_logs/:user_id", controllers.GetMovementLogsHandler, middlewares.RequestLogger())
+
 	return router
 }
