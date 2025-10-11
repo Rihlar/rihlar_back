@@ -265,3 +265,8 @@ func UpdateRegionById(UserID string, regionID string) error {
 
 	return models.UpdateRegionProfile(UserID, regionID)
 }
+
+// 全てのProfile情報を取得
+func GetAllProfilesService() ([]models.Profile, error) {
+	return models.GetAllProfiles()
+}
