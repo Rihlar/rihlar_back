@@ -296,3 +296,19 @@ func UpdateRegionProfile(userID string, regionID string) error {
 
 	return nil
 }
+
+// 全てのプロファイルを取得するエンドポイント
+func GetAllProfiles() ([]Profile, error) {
+	var profiles []Profile
+	result := dbconn.Find(&profiles)
+	return profiles, result.Error
+}
+
+// プロファイルを削除する
+func DeleteProfile(userID string) error {
+	// データベースから削除
+	result := dbconn.Where(Profile{
+		UserID:           userID,
+	}).Unscoped().Delete(&Profile{})
+	return result.Error
+}

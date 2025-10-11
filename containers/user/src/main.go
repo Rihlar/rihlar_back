@@ -38,7 +38,11 @@ func main() {
 		})
 	}, middlewares.RequireAuth)
 
+	// API用のルートを追加
 	router = routes.InitRoute(router)
+
+	// admin用のルートを追加
+	router = routes.InitAdminRoute(router)
 
 	router.Logger.Fatal(router.Start(":8090"))
 }

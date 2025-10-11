@@ -22,6 +22,7 @@ func Debug() {
 	// マイグレーション のコードをここに書く
 	DeleteAndMigrate(Sample{})
 	DeleteAndMigrate(Profile{})
+	DeleteAndMigrate(Region{})
 
 	// デバッグのコードを呼び出す
 	DebugSample()
