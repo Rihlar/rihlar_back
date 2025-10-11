@@ -184,6 +184,20 @@ td {
 
 .start-btn { background-color: #28a745; color: white; }
 .start-btn:hover:not(:disabled) { background-color: #218838; }
+.manage-teams-btn {
+    background-color: #17a2b8;
+    color: white;
+    padding: 6px 10px;
+    border-radius: 4px;
+    text-decoration: none;
+    font-size: 14px;
+    transition: background-color 0.2s;
+}
+
+.manage-teams-btn:hover {
+    background-color: #138496;
+}
+
 .end-btn { background-color: #ffc107; color: #333; }
 .end-btn:hover:not(:disabled) { background-color: #e0a800; }
 .delete-btn { background-color: #dc3545; color: white; }
