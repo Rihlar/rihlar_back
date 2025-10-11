@@ -9,6 +9,15 @@ document.addEventListener('DOMContentLoaded', () => {
     if (form) {
         form.addEventListener('submit', handleCreateProfileSubmit);
     }
+
+    const toggleButton = document.getElementById('toggle-create-form-btn');
+    const createFormSection = document.getElementById('create-profile-section');
+
+    if (toggleButton && createFormSection) {
+        toggleButton.addEventListener('click', () => {
+            createFormSection.classList.toggle('hidden');
+        });
+    }
 });
 
 async function Init() {    

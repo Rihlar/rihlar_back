@@ -1,3 +1,38 @@
+/* Collapsible form styles */
+.hidden {
+    display: none;
+}
+
+#toggle-create-form-btn {
+    background-color: #007bff;
+    color: white;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 16px;
+    margin-bottom: 20px;
+    transition: background-color 0.2s;
+}
+
+#toggle-create-form-btn:hover {
+    background-color: #0056b3;
+}
+
+/* Table improvements */
+td,
+th {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 200px; /* Adjust as needed */
+}
+
+/* Add a specific class for ID columns if more control is needed */
+.id-column {
+    max-width: 150px;
+}
+
 /* 基本的なリセットとフォント設定 (変更なし) */
 body {
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
