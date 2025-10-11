@@ -12,7 +12,21 @@
         <p><a href="../game-admin/">ゲーム管理画面に戻る</a></p>
         <h2 id="game-id-heading"></h2>
 
-        <div id="teams-container"></div>
+        <div class="table-wrapper">
+            <table id="teams-table">
+                <thead>
+                    <tr>
+                        <th>チームID</th>
+                        <th>合計ポイント</th>
+                        <th>メンバー</th>
+                        <th>操作</th>
+                    </tr>
+                </thead>
+                <tbody id="teams-table-body">
+                    <tr><td colspan="4" class="loading-message">データを読み込み中...</td></tr>
+                </tbody>
+            </table>
+        </div>
 
         <p id="error-message" class="error-message" style="display: none;"></p>
     </div>

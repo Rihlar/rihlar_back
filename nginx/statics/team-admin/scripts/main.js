@@ -42,33 +42,68 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function renderTeams(teams) {
-        teamsContainer.innerHTML = '';
+        const tableBody = document.getElementById('teams-table-body');
+        tableBody.innerHTML = '';
         if (teams.length === 0) {
-            teamsContainer.innerHTML = '<p>このゲームにはチームがありません。</p>';
+            tableBody.innerHTML = '<tr><td colspan="4">このゲームにはチームがありません。</td></tr>';
             return;
         }
 
         teams.forEach(team => {
-            const teamElement = document.createElement('div');
-            teamElement.classList.add('team-card');
+            const row = document.createElement('tr');
 
             let totalPoints = 0;
-            const membersList = team.members ? team.members.map(member => {
+            const membersHtml = team.members ? team.members.map(member => {
                 totalPoints += member.points;
-                return `<li>${member.userID} - ${member.points} pts</li>`;
+                return `<li>${member.userID} - ${member.points} pts <button class="delete-member-btn" data-game-id="${gameId}" data-user-id="${member.userID}">削除</button></li>`;
             }).join('') : '<li>メンバーがいません。</li>';
 
-            teamElement.innerHTML = `
-                <h3>チームID: ${team.teamID}</h3>
-                <p>合計ポイント: ${totalPoints}</p>
-                <h4>メンバー:</h4>
-                <ul>
-                    ${membersList}
-                </ul>
+            row.innerHTML = `
+                <td>${team.teamID}</td>
+                <td>${totalPoints}</td>
+                <td><ul>${membersHtml}</ul></td>
+                <td class="actions">
+                    <button class="delete-team-btn" data-game-id="${gameId}" data-team-id="${team.teamID}">チーム削除</button>
+                </td>
             `;
-            teamsContainer.appendChild(teamElement);
+            tableBody.appendChild(row);
         });
     }
+
+    document.getElementById('teams-table-body').addEventListener('click', async (e) => {
+        const target = e.target;
+        if (target.classList.contains('delete-team-btn')) {
+            const teamId = target.dataset.teamId;
+            const gameId = target.dataset.gameId;
+            if (confirm(`本当にチーム ${teamId} を削除しますか？`)) {
+                try {
+                    await apiRequest('/game/team/delete', { 
+                        method: 'DELETE',
+                        headers: { 'GameID': gameId, 'TeamID': teamId }
+                    });
+                    loadTeams();
+                } catch (error) {
+                    errorMessage.textContent = `チームの削除に失敗しました: ${error.message}`;
+                    errorMessage.style.display = 'block';
+                }
+            }
+        } else if (target.classList.contains('delete-member-btn')) {
+            const userId = target.dataset.userId;
+            const gameId = target.dataset.gameId;
+            if (confirm(`本当にメンバー ${userId} を削除しますか？`)) {
+                try {
+                    await apiRequest('/game/member/delete', { 
+                        method: 'DELETE',
+                        headers: { 'GameID': gameId, 'UserID': userId }
+                    });
+                    loadTeams();
+                } catch (error) {
+                    errorMessage.textContent = `メンバーの削除に失敗しました: ${error.message}`;
+                    errorMessage.style.display = 'block';
+                }
+            }
+        }
+    });
 
     async function init() {
         try {

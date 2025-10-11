@@ -19,23 +19,68 @@ h1, h2, h3, h4 {
     color: #007bff;
 }
 
-.team-card {
-    background-color: #f8f8f8;
-    border: 1px solid #e0e0e0;
-    border-radius: 6px;
-    padding: 15px;
-    margin-bottom: 15px;
+.table-wrapper {
+    overflow-x: auto;
 }
 
-.team-card h3 {
-    margin-top: 0;
-    border-bottom: 1px solid #ddd;
-    padding-bottom: 10px;
+table {
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0;
+    min-width: 800px;
 }
 
-.team-card ul {
-    padding-left: 20px;
+th {
+    background-color: #e9ecef;
+    padding: 12px 15px;
+    text-align: left;
+    font-weight: 600;
+    color: #495057;
+    border-bottom: 2px solid #dee2e6;
 }
+
+td {
+    padding: 10px 15px;
+    border-bottom: 1px solid #e9ecef;
+    vertical-align: middle;
+}
+
+tbody tr:nth-child(even) {
+    background-color: #f8f9fa;
+}
+
+tbody tr:hover {
+    background-color: #e9f5ff;
+}
+
+.actions button {
+    padding: 6px 10px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 14px;
+    transition: background-color 0.2s;
+}
+
+.delete-team-btn, .delete-member-btn {
+    background-color: #dc3545;
+    color: white;
+}
+
+.delete-team-btn:hover, .delete-member-btn:hover {
+    background-color: #c82333;
+}
+
+td ul {
+    padding-left: 0;
+    list-style-type: none;
+    margin: 0;
+}
+
+td li {
+    margin-bottom: 5px;
+}
+
 
 .error-message {
     background-color: #f8d7da;
