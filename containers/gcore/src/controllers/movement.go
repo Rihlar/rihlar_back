@@ -40,6 +40,36 @@ func ReportMovement(ctx echo.Context) error {
 	return ctx.JSON(http.StatusOK, response)
 }
 
+type AdminMovementArgs struct {
+	UserID    string  `json:"user_id"`
+	Steps     int64   `json:"steps`     //歩いた歩数
+	Latitude  float64 `json:"latitude`  //緯度
+	Longitude float64 `json:"longitude` //経度
+}
+
+// 歩いたことを報告するエンドポイント (管理者向け)
+func AdminReportMovement(ctx echo.Context) error {
+	// bind する
+	args := AdminMovementArgs{}
+	if err := ctx.Bind(&args); err != nil {
+		return err
+	}
+
+	// サービスを呼び出す
+	response,err := services.ReportMovement(services.MovementArgs{
+		UserID:    args.UserID,
+		Steps:     args.Steps,
+		Latitude:  args.Latitude,
+		Longitude: args.Longitude,
+	});
+	if err != nil {
+		logger.PrintErr(err)
+		return ctx.JSON(http.StatusInternalServerError,response)
+	}
+
+	return ctx.JSON(http.StatusOK, response)
+}
+
 // 歩いたデータを記録するエンドポイント
 func GetReportedMovement(ctx echo.Context) error {
 	// ユーザーIDを取得する

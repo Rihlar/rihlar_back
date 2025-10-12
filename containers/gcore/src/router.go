@@ -25,5 +25,10 @@ func InitRouter(router *echo.Echo) *echo.Echo {
 	// TOP10を取得するエンドポイント
 	router.GET("/get/top", controllers.GetRanking)
 
+	// 管理者用エンドポイント
+	adminGroup := router.Group("/admin")
+	adminGroup.Use(middlewares.RequireLabel([]string{"admin"}))
+	adminGroup.POST("/report/movement", controllers.AdminReportMovement)
+
 	return router
 }
