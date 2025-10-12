@@ -33,8 +33,41 @@ document.addEventListener('DOMContentLoaded', async () => {
                     <td>${user.name}</td>
                     <td>${user.comment}</td>
                     <td><a href="/statics/admin/walking_history/?userId=${user.user_id}">歩行履歴を見る</a></td>
+                    <td>
+                        <input type="text" placeholder="Game ID" class="game-id-input">
+                        <button class="add-to-game-btn">追加</button>
+                    </td>
                 `;
                 tableBody.appendChild(row);
+            });
+
+            // イベントリスナーを追加
+            document.querySelectorAll('.add-to-game-btn').forEach(button => {
+                button.addEventListener('click', async (event) => {
+                    const row = event.target.closest('tr');
+                    const userId = row.querySelector('td:first-child').textContent;
+                    const gameId = row.querySelector('.game-id-input').value;
+
+                    if (!gameId) {
+                        alert('Game IDを入力してください。');
+                        return;
+                    }
+
+                    try {
+                        const result = await auth.Post('/game/admin/member/join', {
+                            'Content-Type': 'application/json'
+                        }, JSON.stringify({ user_id: userId, game_id: gameId }));
+
+                        if (result) {
+                            alert('ユーザーをゲームに追加しました。');
+                        } else {
+                            alert('ユーザーの追加に失敗しました。');
+                        }
+                    } catch (error) {
+                        console.error('Failed to add user to game:', error);
+                        alert('エラーが発生しました。');
+                    }
+                });
             });
         }
     } catch (error) {
