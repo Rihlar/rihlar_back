@@ -28,7 +28,7 @@ function calculateDistance(lat1, lon1, lat2, lon2) {
     const R = 6371000; // 地球の半径（メートル）
     const dLat = (lat2 - lat1) * Math.PI / 180;
     const dLon = (lon2 - lon1) * Math.PI / 180;
-    const a = 
+    const a =
         Math.sin(dLat / 2) * Math.sin(dLat / 2) +
         Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) * Math.sin(dLon / 2) * Math.sin(dLon / 2);
     const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
@@ -85,11 +85,11 @@ export class RouteMapper {
         // イベントリスナー設定
         this.clearRouteBtn.addEventListener('click', () => this.clearRoute());
         this.addLogBtn.addEventListener('click', () => this.generateLogJSON());
-        
+
         // Leafletのダブルクリックイベントをマップインスタンスに直接追加
         this.map.on('dblclick', (e) => this.handleMapDoubleClick(e.latlng));
     }
-    
+
     /**
      * ルートマッピング機能を有効/無効にする
      */
@@ -125,7 +125,7 @@ export class RouteMapper {
      */
     handleMapDoubleClick(latlng) {
         if (!this.isActive) return;
-        
+
         if (this.selectedPoints.length >= 2) {
             this.clearRoute();
         }
@@ -153,7 +153,7 @@ export class RouteMapper {
      */
     async calculateRoute(point1, point2) {
         this.routeInstruction.textContent = 'ルートを計算中...';
-        const osrmBaseUrl = 'https://routing.openstreetmap.de/routed-foot/route/v1/driving/';
+        const osrmBaseUrl = 'https://routing.openstreetmap.de/routed-foot/route/v1/foot/';
         const coordsString = `${point1.lng},${point1.lat};${point2.lng},${point2.lat}`;
         const url = `${osrmBaseUrl}${coordsString}?overview=full&geometries=polyline`;
 
@@ -164,7 +164,7 @@ export class RouteMapper {
             if (data.code === 'Ok' && data.routes && data.routes.length > 0) {
                 // 成功したら以前の情報をクリア
                 this.clearRoute();
-                
+
                 // マーカーを再追加
                 this.markers.push(L.marker(point1, { icon: startIcon }).addTo(this.map).bindPopup('出発地').openPopup());
                 this.markers.push(L.marker(point2, { icon: endIcon }).addTo(this.map).bindPopup('目的地'));
@@ -283,10 +283,10 @@ export class RouteMapper {
         if (accumulatedStepsForInterval > 0 && thinnedLogData.length > 0) {
             const lastLog = thinnedLogData[thinnedLogData.length - 1];
             if (lastLog.timeStamp === startTime) { // 最初のログしかない場合
-                 lastLog.latitude = routeCoordinates[routeCoordinates.length - 1][0];
-                 lastLog.longitude = routeCoordinates[routeCoordinates.length - 1][1];
-                 lastLog.timeStamp = startTime + Math.floor(duration);
-                 lastLog.steps = accumulatedStepsForInterval;
+                lastLog.latitude = routeCoordinates[routeCoordinates.length - 1][0];
+                lastLog.longitude = routeCoordinates[routeCoordinates.length - 1][1];
+                lastLog.timeStamp = startTime + Math.floor(duration);
+                lastLog.steps = accumulatedStepsForInterval;
             } else {
                 lastLog.steps += accumulatedStepsForInterval;
             }
