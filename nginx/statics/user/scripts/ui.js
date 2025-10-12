@@ -36,10 +36,17 @@ function sortAndDisplayProfiles(profiles) {
  */
 function displayProfiles(profiles) {
     const tableBody = document.getElementById('profiles-table-body');
-    tableBody.innerHTML = '';
+    tableBody.textContent = '';
 
     if (!profiles || profiles.length === 0) {
-        tableBody.innerHTML = '<tr><td colspan="7" class="no-data">表示するプロファイルがありません。</td></tr>';
+        tableBody.textContent = '';
+        const tr = document.createElement('tr');
+        const td = document.createElement('td');
+        td.colSpan = 7;
+        td.className = 'no-data';
+        td.textContent = '表示するプロファイルがありません。';
+        tr.appendChild(td);
+        tableBody.appendChild(tr);
         return;
     }
 
@@ -120,7 +127,7 @@ async function fetchAndPopulateRegions() {
     try {
         const regions = await GetRegions();
         
-        regionSelect.innerHTML = '';
+        regionSelect.textContent = '';
         
         if (regions && regions.length > 0) {
             const defaultOption = document.createElement('option');
@@ -148,6 +155,12 @@ async function fetchAndPopulateRegions() {
         }
     } catch (error) {
         console.error("地域データの取得に失敗しました:", error);
-        regionSelect.innerHTML = '<option value="" disabled selected>地域の読み込みに失敗しました</option>';
+        regionSelect.textContent = '';
+        const option = document.createElement('option');
+        option.value = '';
+        option.disabled = true;
+        option.selected = true;
+        option.textContent = '地域の読み込みに失敗しました';
+        regionSelect.appendChild(option);
     }
 }

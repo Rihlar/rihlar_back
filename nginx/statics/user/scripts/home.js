@@ -52,7 +52,14 @@ async function Init() {
         console.error("初期化エラー:", error);
         errorMessage.textContent = '初期化中にエラーが発生しました。';
         errorMessage.style.display = 'block';
-        tableBody.innerHTML = '<tr><td colspan="7" class="no-data">エラーによりデータを取得できませんでした。</td></tr>';
+        tableBody.textContent = '';
+        const tr = document.createElement('tr');
+        const td = document.createElement('td');
+        td.colSpan = 7;
+        td.className = 'no-data';
+        td.textContent = 'エラーによりデータを取得できませんでした。';
+        tr.appendChild(td);
+        tableBody.appendChild(tr);
     }
 }
 
@@ -62,7 +69,14 @@ async function fetchAndDisplayProfiles() {
         allProfiles = profilesResult.profiles;
         sortAndDisplayProfiles(allProfiles); 
     } else {
-        document.getElementById('profiles-table-body').innerHTML = '<tr><td colspan="7" class="no-data">プロファイルデータが見つかりませんでした。</td></tr>';
+        document.getElementById('profiles-table-body').textContent = '';
+        const tr = document.createElement('tr');
+        const td = document.createElement('td');
+        td.colSpan = 7;
+        td.className = 'no-data';
+        td.textContent = 'プロファイルデータが見つかりませんでした。';
+        tr.appendChild(td);
+        document.getElementById('profiles-table-body').appendChild(tr);
     }
 }
 
@@ -195,7 +209,7 @@ async function fetchAndPopulateRegionsForEdit(regionSelect) {
     try {
         const regions = await GetRegions();
         
-        regionSelect.innerHTML = '';
+        regionSelect.textContent = '';
         
         if (regions && regions.length > 0) {
             regions.forEach(region => {
@@ -215,7 +229,13 @@ async function fetchAndPopulateRegionsForEdit(regionSelect) {
         }
     } catch (error) {
         console.error("地域データの取得に失敗しました:", error);
-        regionSelect.innerHTML = '<option value="" disabled selected>地域の読み込みに失敗しました</option>';
+        regionSelect.textContent = '';
+        const option = document.createElement('option');
+        option.value = '';
+        option.disabled = true;
+        option.selected = true;
+        option.textContent = '地域の読み込みに失敗しました';
+        regionSelect.appendChild(option);
     }
 }
 

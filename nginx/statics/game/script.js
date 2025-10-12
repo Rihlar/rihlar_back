@@ -417,7 +417,11 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // リージョン選択ドロップダウンを初期化
     const populateRegionsDropdown = () => {
-        gameRegionSelect.innerHTML = '<option value="">リージョンを選択してください</option>'; // デフォルトオプション
+        gameRegionSelect.textContent = '';
+        const option = document.createElement('option');
+        option.value = '';
+        option.textContent = 'リージョンを選択してください';
+        gameRegionSelect.appendChild(option);
         regions.forEach(region => {
             const option = document.createElement('option');
             option.value = region.RegionID;
@@ -462,10 +466,13 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // ゲームリストのレンダリング
     const renderGames = () => {
-        gameListDiv.innerHTML = ''; // リストをクリア
+        gameListDiv.textContent = '';
 
         if (games.length === 0) {
-            gameListDiv.innerHTML = '<p class="text-center text-gray-500">ゲームがありません。新しいゲームを作成してください。</p>';
+            const p = document.createElement('p');
+            p.className = 'text-center text-gray-500';
+            p.textContent = 'ゲームがありません。新しいゲームを作成してください。';
+            gameListDiv.appendChild(p);
             return;
         }
 
@@ -478,28 +485,86 @@ document.addEventListener('DOMContentLoaded', () => {
                 }`;
             gameCard.dataset.id = game.game_id; // game_id を使用
 
-            gameCard.innerHTML = `
-                <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-4">
-                    <h3 class="text-2xl font-bold text-gray-900 mb-2 sm:mb-0">${game.name}</h3>
-                    <span class="px-3 py-1 rounded-full text-sm font-semibold ${game.status === '予定' ? 'status-予定' :
-                    game.status === '開催中' ? 'status-開催中' :
-                        'status-終了'
-                }">${game.status}</span>
-                </div>
-                <p class="text-gray-700 mb-2"><strong>リージョン:</strong> ${getRegionNameById(game.region_id)}</p>
-                <p class="text-gray-700 mb-2"><strong>開催時間:</strong> ${new Date(game.start_time * 1000).toLocaleString('ja-JP', { // 秒をミリ秒に変換
-                    year: 'numeric', month: 'numeric', day: 'numeric',
-                    hour: '2-digit', minute: '2-digit', hour12: false
-                })}</p>
-                <p class="text-gray-700 mb-2"><strong>開催期間:</strong> ${game.dulation_date} 日間</p>
-                <p class="text-gray-700 mb-4"><strong>ゲームタイプ:</strong> ${game.gameType === 'personal' ? '個人のゲーム' : 'チームのゲーム'}</p>
-                <div class="flex flex-wrap gap-3 mt-4">
-                    <button data-id="${game.game_id}" class="delete-btn bg-red-500 hover:bg-red-600 text-white font-semibold py-2 px-4 rounded-lg shadow-sm transition duration-200">削除</button>
-                    <button data-id="${game.game_id}" class="members-btn bg-gray-600 hover:bg-gray-700 text-white font-semibold py-2 px-4 rounded-lg shadow-sm transition duration-200">メンバー (${game.members ? game.members.length : 0})</button>
-                    ${game.status === '予定' || game.status === '終了' ? `<button data-id="${game.game_id}" class="start-btn bg-gray-700 hover:bg-gray-800 text-white font-semibold py-2 px-4 rounded-lg shadow-sm transition duration-200">開始</button>` : ''}
-                    ${game.status === '開催中' ? `<button data-id="${game.game_id}" class="end-btn bg-gray-600 hover:bg-gray-700 text-white font-semibold py-2 px-4 rounded-lg shadow-sm transition duration-300">終了</button>` : ''}
-                </div>
-            `;
+            const div1 = document.createElement('div');
+            div1.className = 'flex flex-col sm:flex-row justify-between items-start sm:items-center mb-4';
+            const h3 = document.createElement('h3');
+            h3.className = 'text-2xl font-bold text-gray-900 mb-2 sm:mb-0';
+            h3.textContent = game.name;
+            div1.appendChild(h3);
+            const span = document.createElement('span');
+            span.className = `px-3 py-1 rounded-full text-sm font-semibold ${game.status === '予定' ? 'status-予定' :
+                game.status === '開催中' ? 'status-開催中' :
+                    'status-終了'
+                }`;
+            span.textContent = game.status;
+            div1.appendChild(span);
+            gameCard.appendChild(div1);
+
+            const p1 = document.createElement('p');
+            p1.className = 'text-gray-700 mb-2';
+            const strong1 = document.createElement('strong');
+            strong1.textContent = 'リージョン:';
+            p1.appendChild(strong1);
+            p1.append(` ${getRegionNameById(game.region_id)}`);
+            gameCard.appendChild(p1);
+
+            const p2 = document.createElement('p');
+            p2.className = 'text-gray-700 mb-2';
+            const strong2 = document.createElement('strong');
+            strong2.textContent = '開催時間:';
+            p2.appendChild(strong2);
+            p2.append(` ${new Date(game.start_time * 1000).toLocaleString('ja-JP', { 
+                year: 'numeric', month: 'numeric', day: 'numeric',
+                hour: '2-digit', minute: '2-digit', hour12: false
+            })}`);
+            gameCard.appendChild(p2);
+
+            const p3 = document.createElement('p');
+            p3.className = 'text-gray-700 mb-2';
+            const strong3 = document.createElement('strong');
+            strong3.textContent = '開催期間:';
+            p3.appendChild(strong3);
+            p3.append(` ${game.dulation_date} 日間`);
+            gameCard.appendChild(p3);
+
+            const p4 = document.createElement('p');
+            p4.className = 'text-gray-700 mb-4';
+            const strong4 = document.createElement('strong');
+            strong4.textContent = 'ゲームタイプ:';
+            p4.appendChild(strong4);
+            p4.append(` ${game.gameType === 'personal' ? '個人のゲーム' : 'チームのゲーム'}`);
+            gameCard.appendChild(p4);
+
+            const div2 = document.createElement('div');
+            div2.className = 'flex flex-wrap gap-3 mt-4';
+            const deleteBtn = document.createElement('button');
+            deleteBtn.dataset.id = game.game_id;
+            deleteBtn.className = 'delete-btn bg-red-500 hover:bg-red-600 text-white font-semibold py-2 px-4 rounded-lg shadow-sm transition duration-200';
+            deleteBtn.textContent = '削除';
+            div2.appendChild(deleteBtn);
+
+            const membersBtn = document.createElement('button');
+            membersBtn.dataset.id = game.game_id;
+            membersBtn.className = 'members-btn bg-gray-600 hover:bg-gray-700 text-white font-semibold py-2 px-4 rounded-lg shadow-sm transition duration-200';
+            membersBtn.textContent = `メンバー (${game.members ? game.members.length : 0})`;
+            div2.appendChild(membersBtn);
+
+            if (game.status === '予定' || game.status === '終了') {
+                const startBtn = document.createElement('button');
+                startBtn.dataset.id = game.game_id;
+                startBtn.className = 'start-btn bg-gray-700 hover:bg-gray-800 text-white font-semibold py-2 px-4 rounded-lg shadow-sm transition duration-200';
+                startBtn.textContent = '開始';
+                div2.appendChild(startBtn);
+            }
+
+            if (game.status === '開催中') {
+                const endBtn = document.createElement('button');
+                endBtn.dataset.id = game.game_id;
+                endBtn.className = 'end-btn bg-gray-600 hover:bg-gray-700 text-white font-semibold py-2 px-4 rounded-lg shadow-sm transition duration-300';
+                endBtn.textContent = '終了';
+                div2.appendChild(endBtn);
+            }
+            gameCard.appendChild(div2);
             gameListDiv.appendChild(gameCard);
         });
 
@@ -642,17 +707,27 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // チームリストをレンダリング
     const renderTeams = (teams) => {
-        teamListDiv.innerHTML = ''; // リストをクリア
+        teamListDiv.textContent = '';
         if (teams && teams.length > 0) {
             noTeamsMessage.classList.add('hidden');
             teams.forEach((team, index) => {
                 const teamItem = document.createElement('div');
                 teamItem.className = 'flex justify-between items-center bg-gray-50 p-3 rounded-md shadow-sm';
-                teamItem.innerHTML = `
-                    <span class="text-gray-800 font-medium">チームID: ${team.team_id}</span>
-                    <span class="text-gray-600">ポイント: ${team.points}</span>
-                    <button data-index="${index}" class="remove-team-btn text-red-500 hover:text-red-700 font-semibold text-sm">削除</button>
-                `;
+                const span1 = document.createElement('span');
+                span1.className = 'text-gray-800 font-medium';
+                span1.textContent = `チームID: ${team.team_id}`;
+                teamItem.appendChild(span1);
+
+                const span2 = document.createElement('span');
+                span2.className = 'text-gray-600';
+                span2.textContent = `ポイント: ${team.points}`;
+                teamItem.appendChild(span2);
+
+                const button = document.createElement('button');
+                button.dataset.index = index;
+                button.className = 'remove-team-btn text-red-500 hover:text-red-700 font-semibold text-sm';
+                button.textContent = '削除';
+                teamItem.appendChild(button);
                 teamListDiv.appendChild(teamItem);
             });
             // チーム削除ボタンにイベントリスナーを追加
@@ -696,15 +771,21 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // メンバー一覧をレンダリング
     const renderMembers = (members) => {
-        memberListDiv.innerHTML = '';
+        memberListDiv.textContent = '';
         if (members && members.length > 0) {
             members.forEach((member, index) => {
                 const memberItem = document.createElement('div');
                 memberItem.className = 'flex justify-between items-center bg-gray-50 p-3 rounded-md shadow-sm';
-                memberItem.innerHTML = `
-                    <span class="text-gray-800">${member.user_name || member.user_id}</span> <!-- Display user_name or user_id -->
-                    <button data-index="${index}" class="remove-member-btn text-red-500 hover:text-red-700 font-semibold text-sm">削除</button>
-                `;
+                const span = document.createElement('span');
+                span.className = 'text-gray-800';
+                span.textContent = member.user_name || member.user_id;
+                memberItem.appendChild(span);
+
+                const button = document.createElement('button');
+                button.dataset.index = index;
+                button.className = 'remove-member-btn text-red-500 hover:text-red-700 font-semibold text-sm';
+                button.textContent = '削除';
+                memberItem.appendChild(button);
                 memberListDiv.appendChild(memberItem);
             });
             // メンバー削除ボタンにイベントリスナーを追加
@@ -728,7 +809,10 @@ document.addEventListener('DOMContentLoaded', () => {
                 };
             });
         } else {
-            memberListDiv.innerHTML = '<p class="text-center text-gray-500">このゲームにはまだメンバーがいません。</p>';
+            const p = document.createElement('p');
+            p.className = 'text-center text-gray-500';
+            p.textContent = 'このゲームにはまだメンバーがいません。';
+            memberListDiv.appendChild(p);
         }
     };
 

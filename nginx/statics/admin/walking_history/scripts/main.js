@@ -28,7 +28,10 @@ document.addEventListener('DOMContentLoaded', async () => {
     try {
         const payload = JSON.parse(atob(token.split('.')[1]));
         if (!payload.labels || !payload.labels.includes('admin')) {
-            document.body.innerHTML = '<h1>アクセス権限がありません。</h1>';
+            document.body.textContent = '';
+            const h1 = document.createElement('h1');
+            h1.textContent = 'アクセス権限がありません。';
+            document.body.appendChild(h1);
             return;
         }
     } catch (e) {
@@ -42,7 +45,10 @@ document.addEventListener('DOMContentLoaded', async () => {
     const gameId = urlParams.get('gameId');
 
     if (!userId) {
-        document.body.innerHTML = '<h1>ユーザーIDが指定されていません。</h1>';
+        document.body.textContent = '';
+        const h1 = document.createElement('h1');
+        h1.textContent = 'ユーザーIDが指定されていません。';
+        document.body.appendChild(h1);
         return;
     }
     document.getElementById('user-id').textContent = userId;

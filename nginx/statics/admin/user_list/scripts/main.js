@@ -12,7 +12,10 @@ document.addEventListener('DOMContentLoaded', async () => {
     try {
         const payload = JSON.parse(atob(token.split('.')[1]));
         if (!payload.labels || !payload.labels.includes('admin')) {
-            document.body.innerHTML = '<h1>アクセス権限がありません。</h1>';
+            document.body.textContent = '';
+            const h1 = document.createElement('h1');
+            h1.textContent = 'アクセス権限がありません。';
+            document.body.appendChild(h1);
             return;
         }
     } catch (e) {
@@ -43,14 +46,14 @@ document.addEventListener('DOMContentLoaded', async () => {
 
         // 3. HTMLを文字列として構築
         const tableBody = document.querySelector('#user-table tbody');
-        let tableContent = '';
+        tableBody.textContent = '';
 
-        let gameOptions = '<option value="">ゲームを選択</option>';
-        if (games) {
-            games.forEach(game => {
-                gameOptions += `<option value="${game.game_id}">${game.name} (開始: ${new Date(game.start_time * 1000).toLocaleString()})</option>`;
-            });
-        }
+        const gameOptions = games ? games.map(game => {
+            const option = document.createElement('option');
+            option.value = game.game_id;
+            option.textContent = `${game.name} (開始: ${new Date(game.start_time * 1000).toLocaleString()})`;
+            return option;
+        }) : [];
 
         users.forEach((user, index) => {
             const joinedGames = joinedGamesResults[index];
@@ -58,23 +61,50 @@ document.addEventListener('DOMContentLoaded', async () => {
                 ? joinedGames.map(g => g.gameID).join(', ') 
                 : 'なし';
 
-            tableContent += `
-                <tr>
-                    <td>${user.user_id}</td>
-                    <td>${user.name}</td>
-                    <td>${user.comment}</td>
-                    <td><a href="/statics/admin/walking_history/?userId=${user.user_id}">歩行履歴を見る</a></td>
-                    <td>
-                        <select class="game-id-select">${gameOptions}</select>
-                        <button class="add-to-game-btn">追加</button>
-                    </td>
-                    <td>${joinedGamesText}</td>
-                </tr>
-            `;
-        });
+            const tr = document.createElement('tr');
 
-        // 4. DOMを一括で更新
-        tableBody.innerHTML = tableContent;
+            const td1 = document.createElement('td');
+            td1.textContent = user.user_id;
+            tr.appendChild(td1);
+
+            const td2 = document.createElement('td');
+            td2.textContent = user.name;
+            tr.appendChild(td2);
+
+            const td3 = document.createElement('td');
+            td3.textContent = user.comment;
+            tr.appendChild(td3);
+
+            const td4 = document.createElement('td');
+            const a = document.createElement('a');
+            a.href = `/statics/admin/walking_history/?userId=${user.user_id}`;
+            a.textContent = '歩行履歴を見る';
+            td4.appendChild(a);
+            tr.appendChild(td4);
+
+            const td5 = document.createElement('td');
+            const select = document.createElement('select');
+            select.className = 'game-id-select';
+            const defaultOption = document.createElement('option');
+            defaultOption.value = '';
+            defaultOption.textContent = 'ゲームを選択';
+            select.appendChild(defaultOption);
+            gameOptions.forEach(option => {
+                select.appendChild(option.cloneNode(true));
+            });
+            td5.appendChild(select);
+            const button = document.createElement('button');
+            button.className = 'add-to-game-btn';
+            button.textContent = '追加';
+            td5.appendChild(button);
+            tr.appendChild(td5);
+
+            const td6 = document.createElement('td');
+            td6.textContent = joinedGamesText;
+            tr.appendChild(td6);
+
+            tableBody.appendChild(tr);
+        });
 
         // 5. イベントリスナーをまとめて追加
         document.querySelectorAll('.add-to-game-btn').forEach(button => {
@@ -115,6 +145,8 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     } catch (error) {
         console.error('Failed to fetch users:', error);
-        document.body.innerHTML += '<p>ユーザー一覧の取得に失敗しました。</p>';
+        const p = document.createElement('p');
+        p.textContent = 'ユーザー一覧の取得に失敗しました。';
+        document.body.appendChild(p);
     }
 });

@@ -45,7 +45,13 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function populateRegions() {
-        regionSelect.innerHTML = '<option value="" disabled selected>地域を選択</option>';
+        regionSelect.textContent = '';
+        const option = document.createElement('option');
+        option.value = '';
+        option.disabled = true;
+        option.selected = true;
+        option.textContent = '地域を選択';
+        regionSelect.appendChild(option);
         regions.forEach(region => {
             const option = document.createElement('option');
             option.value = region.RegionID;
@@ -61,7 +67,14 @@ document.addEventListener('DOMContentLoaded', () => {
 
     async function loadGames() {
         try {
-            gamesTableBody.innerHTML = '<tr><td colspan="7" class="loading-message">データを読み込み中...</td></tr>';
+            gamesTableBody.textContent = '';
+            const tr = document.createElement('tr');
+            const td = document.createElement('td');
+            td.colSpan = 7;
+            td.className = 'loading-message';
+            td.textContent = 'データを読み込み中...';
+            tr.appendChild(td);
+            gamesTableBody.appendChild(tr);
             const data = await apiRequest('/game/list', { method: 'GET' });
             renderGames(data.Data || []);
         } catch (error) {
@@ -71,28 +84,76 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function renderGames(games) {
-        gamesTableBody.innerHTML = '';
+        gamesTableBody.textContent = '';
         if (games.length === 0) {
-            gamesTableBody.innerHTML = '<tr><td colspan="7">ゲームが見つかりません。</td></tr>';
+            gamesTableBody.textContent = '';
+            const tr = document.createElement('tr');
+            const td = document.createElement('td');
+            td.colSpan = 7;
+            td.textContent = 'ゲームが見つかりません。';
+            tr.appendChild(td);
+            gamesTableBody.appendChild(tr);
             return;
         }
 
         games.forEach(game => {
             const row = document.createElement('tr');
-            row.innerHTML = `
-                <td>${game.name}</td>
-                <td>${game.game_id}</td>
-                <td>${getRegionNameById(game.region_id)}</td>
-                <td>${statusMap[game.status] || '不明'}</td>
-                <td>${new Date(game.start_time * 1000).toLocaleString()}</td>
-                <td>${game.dulation_date}</td>
-                <td class="actions">
-                    <button class="start-btn" data-id="${game.game_id}" ${game.status === 1 ? 'disabled' : ''}>開始</button>
-                    <button class="end-btn" data-id="${game.game_id}" ${game.status !== 1 ? 'disabled' : ''}>終了</button>
-                    <button class="delete-btn" data-id="${game.game_id}">削除</button>
-                    <a href="../team-admin/?game_id=${game.game_id}" class="manage-teams-btn">チーム管理</a>
-                </td>
-            `;
+            const td1 = document.createElement('td');
+            td1.textContent = game.name;
+            row.appendChild(td1);
+
+            const td2 = document.createElement('td');
+            td2.textContent = game.game_id;
+            row.appendChild(td2);
+
+            const td3 = document.createElement('td');
+            td3.textContent = getRegionNameById(game.region_id);
+            row.appendChild(td3);
+
+            const td4 = document.createElement('td');
+            td4.textContent = statusMap[game.status] || '不明';
+            row.appendChild(td4);
+
+            const td5 = document.createElement('td');
+            td5.textContent = new Date(game.start_time * 1000).toLocaleString();
+            row.appendChild(td5);
+
+            const td6 = document.createElement('td');
+            td6.textContent = game.dulation_date;
+            row.appendChild(td6);
+
+            const td7 = document.createElement('td');
+            td7.className = 'actions';
+            const startButton = document.createElement('button');
+            startButton.className = 'start-btn';
+            startButton.dataset.id = game.game_id;
+            if (game.status === 1) {
+                startButton.disabled = true;
+            }
+            startButton.textContent = '開始';
+            td7.appendChild(startButton);
+
+            const endButton = document.createElement('button');
+            endButton.className = 'end-btn';
+            endButton.dataset.id = game.game_id;
+            if (game.status !== 1) {
+                endButton.disabled = true;
+            }
+            endButton.textContent = '終了';
+            td7.appendChild(endButton);
+
+            const deleteButton = document.createElement('button');
+            deleteButton.className = 'delete-btn';
+            deleteButton.dataset.id = game.game_id;
+            deleteButton.textContent = '削除';
+            td7.appendChild(deleteButton);
+
+            const a = document.createElement('a');
+            a.href = `../team-admin/?game_id=${game.game_id}`;
+            a.className = 'manage-teams-btn';
+            a.textContent = 'チーム管理';
+            td7.appendChild(a);
+            row.appendChild(td7);
             gamesTableBody.appendChild(row);
         });
     }
@@ -103,7 +164,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const gameData = {
             name: formData.get('name'),
             region_id: formData.get('region_id'),
-            start_time: new Date(formData.get('start_time')).getTime(),
+            start_time: new Date(formData.get('start_time')).getTime() / 1000,
             dulation_date: parseInt(formData.get('dulation_date'), 10),
         };
 

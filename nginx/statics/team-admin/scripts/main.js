@@ -43,9 +43,12 @@ document.addEventListener('DOMContentLoaded', () => {
 
     function renderTeams(teams) {
         const teamsContainer = document.getElementById('teams-container');
-        teamsContainer.innerHTML = '';
+        teamsContainer.textContent = '';
         if (teams.length === 0) {
-            teamsContainer.innerHTML = '<p class="text-gray-500 text-center">このゲームにはチームがありません。</p>';
+            const p = document.createElement('p');
+            p.className = 'text-gray-500 text-center';
+            p.textContent = 'このゲームにはチームがありません。';
+            teamsContainer.appendChild(p);
             return;
         }
 
@@ -53,44 +56,108 @@ document.addEventListener('DOMContentLoaded', () => {
             const teamCard = document.createElement('div');
             teamCard.className = 'bg-white rounded-lg shadow-md overflow-hidden';
 
-            let totalPoints = 0;
-            const memberRows = team.members ? team.members.map(member => {
-                totalPoints += member.points;
-                return `
-                    <tr class="hover:bg-gray-50">
-                        <td class="p-3 text-sm text-gray-700">${member.userID}</td>
-                        <td class="p-3 text-sm text-gray-700">${member.points} pts</td>
-                        <td class="p-3 text-right">
-                            <a href="/statics/admin/walking_history/?userId=${member.userID}&gameId=${gameId}" class="text-blue-500 hover:text-blue-700 text-sm font-semibold mr-4">行動履歴</a>
-                            <button class="delete-member-btn text-red-500 hover:text-red-700 text-sm font-semibold" data-game-id="${gameId}" data-user-id="${member.userID}">削除</button>
-                        </td>
-                    </tr>
-                `;
-            }).join('') : '<tr><td colspan="3" class="p-3 text-center text-gray-500">メンバーがいません。</td></tr>';
+            const teamCard = document.createElement('div');
+            teamCard.className = 'bg-white rounded-lg shadow-md overflow-hidden';
 
-            teamCard.innerHTML = `
-                <div class="p-4 bg-gray-50 border-b border-gray-200 flex justify-between items-center">
-                    <div>
-                        <h3 class="text-lg font-bold text-gray-800">${team.teamID}</h3>
-                        <p class="text-sm text-gray-600">合計ポイント: <span class="font-semibold">${totalPoints}</span></p>
-                    </div>
-                    <button class="delete-team-btn bg-red-500 hover:bg-red-600 text-white font-bold py-2 px-4 rounded-lg text-sm" data-game-id="${gameId}" data-team-id="${team.teamID}">チーム削除</button>
-                </div>
-                <div class="p-0">
-                    <table class="min-w-full">
-                        <thead class="bg-gray-50">
-                            <tr>
-                                <th class="p-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">メンバーID</th>
-                                <th class="p-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">ポイント</th>
-                                <th class="p-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">操作</th>
-                            </tr>
-                        </thead>
-                        <tbody class="bg-white divide-y divide-gray-200">
-                            ${memberRows}
-                        </tbody>
-                    </table>
-                </div>
-            `;
+            let totalPoints = 0;
+
+            const div1 = document.createElement('div');
+            div1.className = 'p-4 bg-gray-50 border-b border-gray-200 flex justify-between items-center';
+            
+            const div2 = document.createElement('div');
+            const h3 = document.createElement('h3');
+            h3.className = 'text-lg font-bold text-gray-800';
+            h3.textContent = team.teamID;
+            div2.appendChild(h3);
+            const p = document.createElement('p');
+            p.className = 'text-sm text-gray-600';
+            p.textContent = '合計ポイント: ';
+            const span = document.createElement('span');
+            span.className = 'font-semibold';
+            p.appendChild(span);
+            div2.appendChild(p);
+            div1.appendChild(div2);
+
+            const deleteButton = document.createElement('button');
+            deleteButton.className = 'delete-team-btn bg-red-500 hover:bg-red-600 text-white font-bold py-2 px-4 rounded-lg text-sm';
+            deleteButton.dataset.gameId = gameId;
+            deleteButton.dataset.teamId = team.teamID;
+            deleteButton.textContent = 'チーム削除';
+            div1.appendChild(deleteButton);
+            teamCard.appendChild(div1);
+
+            const div3 = document.createElement('div');
+            div3.className = 'p-0';
+            const table = document.createElement('table');
+            table.className = 'min-w-full';
+            const thead = document.createElement('thead');
+            thead.className = 'bg-gray-50';
+            const tr1 = document.createElement('tr');
+            const th1 = document.createElement('th');
+            th1.className = 'p-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider';
+            th1.textContent = 'メンバーID';
+            tr1.appendChild(th1);
+            const th2 = document.createElement('th');
+            th2.className = 'p-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider';
+            th2.textContent = 'ポイント';
+            tr1.appendChild(th2);
+            const th3 = document.createElement('th');
+            th3.className = 'p-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider';
+            th3.textContent = '操作';
+            tr1.appendChild(th3);
+            thead.appendChild(tr1);
+            table.appendChild(thead);
+
+            const tbody = document.createElement('tbody');
+            tbody.className = 'bg-white divide-y divide-gray-200';
+
+            if (team.members && team.members.length > 0) {
+                team.members.forEach(member => {
+                    totalPoints += member.points;
+                    const tr = document.createElement('tr');
+                    tr.className = 'hover:bg-gray-50';
+
+                    const td1 = document.createElement('td');
+                    td1.className = 'p-3 text-sm text-gray-700';
+                    td1.textContent = member.userID;
+                    tr.appendChild(td1);
+
+                    const td2 = document.createElement('td');
+                    td2.className = 'p-3 text-sm text-gray-700';
+                    td2.textContent = `${member.points} pts`;
+                    tr.appendChild(td2);
+
+                    const td3 = document.createElement('td');
+                    td3.className = 'p-3 text-right';
+                    const a = document.createElement('a');
+                    a.href = `/statics/admin/walking_history/?userId=${member.userID}&gameId=${gameId}`;
+                    a.className = 'text-blue-500 hover:text-blue-700 text-sm font-semibold mr-4';
+                    a.textContent = '行動履歴';
+                    td3.appendChild(a);
+                    const button = document.createElement('button');
+                    button.className = 'delete-member-btn text-red-500 hover:text-red-700 text-sm font-semibold';
+                    button.dataset.gameId = gameId;
+                    button.dataset.userId = member.userID;
+                    button.textContent = '削除';
+                    td3.appendChild(button);
+                    tr.appendChild(td3);
+
+                    tbody.appendChild(tr);
+                });
+            } else {
+                const tr = document.createElement('tr');
+                const td = document.createElement('td');
+                td.colSpan = 3;
+                td.className = 'p-3 text-center text-gray-500';
+                td.textContent = 'メンバーがいません。';
+                tr.appendChild(td);
+                tbody.appendChild(tr);
+            }
+
+            span.textContent = totalPoints;
+            table.appendChild(tbody);
+            div3.appendChild(table);
+            teamCard.appendChild(div3);
             teamsContainer.appendChild(teamCard);
         });
     }

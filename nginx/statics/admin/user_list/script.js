@@ -10,10 +10,14 @@ document.addEventListener('DOMContentLoaded', () => {
 
     users.forEach(user => {
         const listItem = document.createElement('li');
-        listItem.innerHTML = `
-            <span>${user.name} (ID: ${user.id})</span>
-            <a href="/statics/admin/walking_history/index.html?user_id=${user.id}">歩行履歴を見る</a>
-        `;
+        const span = document.createElement('span');
+        span.textContent = `${user.name} (ID: ${user.id})`;
+        listItem.appendChild(span);
+
+        const a = document.createElement('a');
+        a.href = `/statics/admin/walking_history/index.html?user_id=${user.id}`;
+        a.textContent = '歩行履歴を見る';
+        listItem.appendChild(a);
         userListElement.appendChild(listItem);
     });
 });
