@@ -65,7 +65,8 @@ func AdminReportMovement(ctx echo.Context) error {
 		})
 		if err != nil {
 			logger.PrintErr(err)
-			return ctx.JSON(http.StatusInternalServerError, echo.Map{"error": "failed to report movement"})
+			continue
+			// return ctx.JSON(http.StatusInternalServerError, echo.Map{"error": "failed to report movement"})
 		}
 	}
 
