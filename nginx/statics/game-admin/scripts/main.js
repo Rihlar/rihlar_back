@@ -115,7 +115,7 @@ document.addEventListener('DOMContentLoaded', () => {
             row.appendChild(td4);
 
             const td5 = document.createElement('td');
-            td5.textContent = new Date(game.start_time * 1000).toLocaleString();
+            td5.textContent = new Date(game.start_time * 1000000).toLocaleString();
             row.appendChild(td5);
 
             const td6 = document.createElement('td');
@@ -164,7 +164,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const gameData = {
             name: formData.get('name'),
             region_id: formData.get('region_id'),
-            start_time: new Date(formData.get('start_time')).getTime() / 1000,
+            start_time: new Date(formData.get('start_time')).getTime(),
             dulation_date: parseInt(formData.get('dulation_date'), 10),
         };
 
@@ -239,3 +239,4 @@ document.addEventListener('DOMContentLoaded', () => {
 
     init();
 });
+
