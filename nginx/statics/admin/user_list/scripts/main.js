@@ -50,6 +50,23 @@ document.addEventListener('DOMContentLoaded', async () => {
                     </td>
                 `;
                 tableBody.appendChild(row);
+
+                (async () => {
+                    try {
+                        const joinedGames = await auth.Get(`/game/admin/users/${user.user_id}/games`, {});
+                        const gamesCell = document.createElement('td');
+                        if (joinedGames && joinedGames.length > 0) {
+                            gamesCell.textContent = joinedGames.map(g => g.gameID).join(', ');
+                        } else {
+                            gamesCell.textContent = 'なし';
+                        }
+                        row.appendChild(gamesCell);
+                    } catch (e) {
+                        const gamesCell = document.createElement('td');
+                        gamesCell.textContent = '取得エラー';
+                        row.appendChild(gamesCell);
+                    }
+                })();
             });
 
             // イベントリスナーを追加
