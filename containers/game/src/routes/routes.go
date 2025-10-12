@@ -97,5 +97,8 @@ func InitRoutes(router *echo.Echo) *echo.Echo {
 	// 特定のゲームの行動ログを取得するエンドポイント (管理者用)
 	adminGroup.GET("/games/:game_id/movement_logs/:user_id", controllers.GetMovementLogsHandler, middlewares.RequestLogger())
 
+	// ゲームにユーザーを追加するエンドポイント (管理者用)
+	adminGroup.POST("/member/join", controllers.AdminAddUserToGameHandler, middlewares.RequestLogger())
+
 	return router
 }

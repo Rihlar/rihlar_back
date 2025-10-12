@@ -137,6 +137,71 @@ func (GameService) JoinGame(userId string, gameId string) error {
 	return nil
 }
 
+// ゲームにユーザーを追加する (管理者向け)
+func (GameService) AdminAddUserToGame(userId string, gameId string) error {
+	// メンバーが存在するか判定
+	exists, err := models.ExistsMember(userId, gameId)
+
+	// エラー処理
+	if err != nil {
+		return err
+	}
+
+	// 存在している場合 (参加済みの場合)
+	if exists {
+		// エラーを返す
+		return errors.New("you have already joined this game")
+	}
+
+	// チームのIDを生成する
+	teamId, _ := utils.Genid()
+
+	team := models.Team{
+		TeamID: "teamid-" + teamId,
+		GameID: gameId,
+		Points: 0,
+	}
+
+	// チームを作成する
+	err = models.CreateTeam(team)
+
+	// エラー処理
+	if err != nil {
+		return err
+	}
+
+	// ゲームを取得する
+	game, err := models.GetGame(gameId)
+
+	// エラー処理
+	if err != nil {
+		return err
+	}
+
+	// チームを追加する
+	err = game.AddTeam(team)
+
+	// エラー処理
+	if err != nil {
+		return err
+	}
+
+	// チームにメンバーを追加
+	err = team.AddMember(models.Member{
+		GameID: gameId,
+		TeamID: teamId,
+		UserID: userId,
+		Points: 0,
+	})
+
+	// エラー処理
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
 type CreateGameArgs struct {
 	Name         string `json:"name"`
 	RegionID     string `json:"region_id"`

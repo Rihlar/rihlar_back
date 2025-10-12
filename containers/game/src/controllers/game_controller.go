@@ -80,6 +80,35 @@ func JoinGameHandler(ctx echo.Context) error {
 	})
 }
 
+type AdminAddUserToGameArgs struct {
+	UserID string `json:"user_id"`
+	GameID string `json:"game_id"`
+}
+
+// ゲームにユーザーを追加する (管理者向け)
+func AdminAddUserToGameHandler(ctx echo.Context) error {
+	// bodyを取得
+	var args AdminAddUserToGameArgs
+	if err := ctx.Bind(&args); err != nil {
+		return err
+	}
+
+	// サービスに渡す
+	err := gameService.AdminAddUserToGame(args.UserID, args.GameID)
+	if err != nil {
+		logger.PrintErr("ゲームにユーザーを追加エラー", err)
+		return err
+	}
+
+	// 成功ログ
+	logger.Println("Successful game join.")
+
+	// レスポンス
+	return ctx.JSON(http.StatusOK, echo.Map{
+		"Data": "success",
+	})
+}
+
 // ゲームを作成する関数
 func CreateGameHandler(ctx echo.Context) error {
 	// bodyを取得
