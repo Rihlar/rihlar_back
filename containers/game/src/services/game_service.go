@@ -228,7 +228,7 @@ func (GameService) CreateGame(args CreateGameArgs) error {
 	args.RegionID = region.RegionID
 
 	// unix 時間を変換する
-	startTime := time.Unix(0, args.StartTime)
+	startTime := time.Unix(0, args.StartTime*1000)
 	endTime := startTime.AddDate(0, 0, args.DulationDate)
 
 	// ゲームを作成する

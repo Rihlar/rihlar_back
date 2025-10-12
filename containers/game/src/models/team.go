@@ -67,11 +67,18 @@ func GetTeamsByGameID(gameID string) ([]Team, error) {
 
 // チームを削除する
 func (game *Game) DeleteTeam(teamID string) error {
+	// まず、チームに所属するすべてのメンバーを削除します。
+	if err := Dbconn.Where("team_id = ? AND game_id = ?", teamID, game.GameID).Delete(&Member{}).Error; err != nil {
+		return err
+	}
+
+	// 次に、チーム自体を削除します。
 	return Dbconn.Where(&Team{
 		TeamID: teamID,
 		GameID: game.GameID,
 	}).Delete(&Team{}).Error
 }
+
 
 // 自分のチームのランキングを取得
 func (team *Team) GetRank() (int, error) {

@@ -18,6 +18,15 @@ document.addEventListener('DOMContentLoaded', () => {
             createFormSection.classList.toggle('hidden');
         });
     }
+
+    const editModal = document.getElementById('edit-profile-modal');
+    const closeButton = editModal.querySelector('.close-button');
+    closeButton.addEventListener('click', () => {
+        editModal.style.display = 'none';
+    });
+
+    const editForm = document.getElementById('edit-profile-form');
+    editForm.addEventListener('submit', handleUpdateProfileSubmit);
 });
 
 async function Init() {    
@@ -124,8 +133,90 @@ async function handleDelete(userId, name) {
     }
 }
 
-function handleEdit(userId) {
-    alert(`ユーザーID: ${userId} の編集画面へ遷移します。（未実装）`);
+async function handleEdit(userId) {
+    const modal = document.getElementById('edit-profile-modal');
+    modal.style.display = 'block';
+
+    const profile = await GetProfile(userId);
+    if (profile) {
+        document.getElementById('edit-user-id').value = profile.user_id;
+        document.getElementById('edit-name').value = profile.name;
+        document.getElementById('edit-comment').value = profile.comment;
+        
+        const regionSelect = document.getElementById('edit-region_id');
+        await fetchAndPopulateRegionsForEdit(regionSelect);
+        regionSelect.value = profile.region_id;
+    }
+}
+
+async function handleUpdateProfileSubmit(event) {
+    event.preventDefault();
+
+    const form = event.target;
+    const formData = new FormData(form);
+    const userId = formData.get('user_id');
+    const data = {
+        name: formData.get('name'),
+        comment: formData.get('comment'),
+        region_id: formData.get('region_id'),
+    };
+
+    const statusMessage = document.getElementById('update-status-message');
+    const updateBtn = document.getElementById('update-btn');
+
+    updateBtn.disabled = true;
+    statusMessage.textContent = '更新中...';
+    statusMessage.style.color = 'black';
+
+    try {
+        const success = await UpdateProfile(userId, data);
+        if (success) {
+            statusMessage.textContent = '✅ プロファイルの更新に成功しました！';
+            statusMessage.style.color = 'green';
+            await fetchAndDisplayProfiles();
+            setTimeout(() => {
+                document.getElementById('edit-profile-modal').style.display = 'none';
+                statusMessage.textContent = '';
+            }, 2000);
+        } else {
+            statusMessage.textContent = '❌ プロファイルの更新に失敗しました。';
+            statusMessage.style.color = 'red';
+        }
+    } catch (error) {
+        console.error("プロファイル更新中にエラー:", error);
+        statusMessage.textContent = `❌ エラーが発生しました: ${error.message}`;
+        statusMessage.style.color = 'red';
+    } finally {
+        updateBtn.disabled = false;
+    }
+}
+
+async function fetchAndPopulateRegionsForEdit(regionSelect) {
+    try {
+        const regions = await GetRegions();
+        
+        regionSelect.innerHTML = '';
+        
+        if (regions && regions.length > 0) {
+            regions.forEach(region => {
+                const option = document.createElement('option');
+                option.value = region.RegionID;
+                option.textContent = region.regionName;
+                regionSelect.appendChild(option);
+            });
+        } else {
+            const noDataOption = document.createElement('option');
+            noDataOption.value = '';
+            noDataOption.textContent = '地域データがありません';
+            noDataOption.disabled = true;
+            noDataOption.selected = true;
+            regionSelect.appendChild(noDataOption);
+            console.warn("地域データが見つかりませんでした。");
+        }
+    } catch (error) {
+        console.error("地域データの取得に失敗しました:", error);
+        regionSelect.innerHTML = '<option value="" disabled selected>地域の読み込みに失敗しました</option>';
+    }
 }
 
 

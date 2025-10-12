@@ -108,3 +108,23 @@ func DeleteProfileFromAdmin(ctx echo.Context) error {
 
 	return ctx.JSON(http.StatusOK, echo.Map{"status": "profile deleted"})
 }
+
+func GetProfileFromAdmin(c echo.Context) error {
+	//useridをヘッダーから取得
+	userID := c.Request().Header.Get("UserID")
+
+	//プロフィール取得
+	profile, err := services.GetProfileService(userID)
+
+	//エラー処理
+	if err != nil {
+		//結果がNotFoundの時
+		if errors.Is(err, gorm.ErrRecordNotFound) {
+			return c.JSON(http.StatusNotFound, echo.Map{"error": "profile not found"})
+		}
+		logger.PrintErr(err)
+		return c.JSON(http.StatusInternalServerError, echo.Map{"error": "internal error"})
+	}
+
+	return c.JSON(http.StatusOK, profile)
+}

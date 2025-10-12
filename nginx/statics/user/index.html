@@ -59,6 +59,32 @@
         <p id="error-message" class="error-message" style="display: none;"></p>
     </div>
 
+    <div id="edit-profile-modal" class="modal" style="display: none;">
+        <div class="modal-content">
+            <span class="close-button">&times;</span>
+            <h2>プロファイル編集</h2>
+            <form id="edit-profile-form">
+                <input type="hidden" id="edit-user-id" name="user_id">
+                <div class="form-group">
+                    <label for="edit-name">ユーザー名 (必須):</label>
+                    <input type="text" id="edit-name" name="name" required>
+                </div>
+                <div class="form-group">
+                    <label for="edit-comment">コメント:</label>
+                    <input type="text" id="edit-comment" name="comment">
+                </div>
+                <div class="form-group">
+                    <label for="edit-region_id">地域ID (選択):</label>
+                    <select id="edit-region_id" name="region_id" class="region-select" required>
+                        <option value="" disabled selected>地域を読み込み中...</option>
+                    </select>
+                </div>
+                <button type="submit" id="update-btn">プロファイルを更新</button>
+                <p id="update-status-message"></p>
+            </form>
+        </div>
+    </div>
+
     <script src="../authbase/authbase.js"></script>
     <script src="./scripts/utils.js"></script>
     <script src="./scripts/api.js"></script>
