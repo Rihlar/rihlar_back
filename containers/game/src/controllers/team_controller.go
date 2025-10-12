@@ -22,3 +22,18 @@ func GetTeamsHandler(c echo.Context) error {
 
 	return c.JSON(http.StatusOK, teams)
 }
+
+func DeleteTeamHandler(c echo.Context) error {
+	gameID := c.Request().Header.Get("GameID")
+	teamID := c.Request().Header.Get("TeamID")
+
+	if gameID == "" || teamID == "" {
+		return c.JSON(http.StatusBadRequest, "Game ID and Team ID are required")
+	}
+
+	if err := gameService.DeleteTeam(gameID, teamID); err != nil {
+		return c.JSON(http.StatusInternalServerError, err.Error())
+	}
+
+	return c.NoContent(http.StatusNoContent)
+}

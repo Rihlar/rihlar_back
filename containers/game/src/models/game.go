@@ -49,8 +49,20 @@ func (game *Game) AddTeam(team Team) error {
 
 // ゲームを消す関数
 func (game *Game) DeleteGame() error {
+	// First, delete all members associated with the game.
+	if err := Dbconn.Where("game_id = ?", game.GameID).Delete(&Member{}).Error; err != nil {
+		return err
+	}
+
+	// Next, delete all teams associated with the game.
+	if err := Dbconn.Where("game_id = ?", game.GameID).Delete(&Team{}).Error; err != nil {
+		return err
+	}
+
+	// Finally, delete the game itself.
 	return Dbconn.Delete(game).Error
 }
+
 
 // 全てのゲームを取得
 func GetAllGames() ([]Game, error) {

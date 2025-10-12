@@ -117,3 +117,46 @@ async function GetRegions() {
     console.error("地域データ取得失敗:", req.status, req.statusText);
     return null;
 }
+
+async function GetProfile(userId) {
+    const accessToken = await auth.getToken();
+    const req = await fetch("/user/admin/profile", {
+        method: 'GET',
+        headers: {
+            'Content-Type': 'application/json',
+            'UserID': userId,
+            'Authorization': accessToken
+        }
+    });
+
+    if (req.ok) {
+        return await req.json();
+    }
+    
+    console.error("プロファイル取得失敗:", req.status, req.statusText);
+    return null;
+}
+
+async function UpdateProfile(userId, data) {
+    const accessToken = await auth.getToken();
+    const requestBody = {
+        user_id: userId,
+        ...data
+    };
+
+    const req = await fetch("/user/admin/profile", {
+        method: 'PUT',
+        headers: {
+            'Content-Type': 'application/json',
+            'Authorization': accessToken
+        },
+        body: JSON.stringify(requestBody)
+    });
+
+    if (req.ok) {
+        return true;
+    }
+    
+    console.error("プロファイル更新失敗:", req.status, req.statusText);
+    return false;
+}

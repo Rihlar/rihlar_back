@@ -249,27 +249,7 @@ func EndGameHandler(ctx echo.Context) error {
 	})
 }
 
-// チームを削除するエンドポイント
-func DeleteTeamHandler(ctx echo.Context) error {
-	// TODO 後ほどミドルウェアからの取得に変更す
-	teamId := ctx.Request().Header.Get("TeamID")
-	gameId := ctx.Request().Header.Get("GameID")
 
-	// サービスに渡す
-	err := gameService.DeleteTeam(gameId, teamId)
-	if err != nil {
-		logger.PrintErr("チーム削除エラー", err)
-		return err
-	}
-
-	// 成功ログ
-	logger.Println("Successful team delete.")
-
-	// レスポンス
-	return ctx.JSON(http.StatusOK, echo.Map{
-		"Data": "success",
-	})
-}
 
 // メンバーを削除するエンドポイと
 func DeleteMemberHandler(ctx echo.Context) error {
