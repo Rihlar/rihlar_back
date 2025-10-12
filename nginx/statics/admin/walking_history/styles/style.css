@@ -1,33 +1,85 @@
-body {
-    font-family: sans-serif;
-    background-color: #f4f4f4;
-    margin: 0;
-    padding: 20px;
-}
-
+/* 元のスタイル */
 .container {
-    max-width: 1200px;
-    margin: auto;
-    background: white;
     padding: 20px;
-    border-radius: 8px;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
 h1 {
-    color: #333;
+    font-size: 24px;
+    margin-bottom: 15px;
 }
 
 .info {
-    margin-bottom: 20px;
+    margin-bottom: 15px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    align-items: center;
 }
 
 .game-selector {
-    margin-top: 10px;
+    margin-right: 20px;
 }
 
 #map {
     height: 600px;
     width: 100%;
+}
+
+/* 追加機能のためのスタイル */
+.mode-button {
+    padding: 8px 15px;
+    cursor: pointer;
     border: 1px solid #ccc;
+    border-radius: 4px;
+    background-color: #f0f0f0;
+    transition: all 0.2s;
+    font-weight: bold;
+}
+.mode-button.active {
+    background-color: #007bff;
+    color: white;
+    border-color: #007bff;
+}
+
+#route-info-area {
+    background: #ffffff;
+    padding: 15px;
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    margin-top: 15px;
+    margin-bottom: 15px;
+    display: none; /* 初期は非表示 */
+    width: 100%;
+    box-sizing: border-box;
+    border-left: 5px solid #007bff;
+}
+
+#route-info-area p {
+    margin: 5px 0;
+}
+
+.route-controls {
+    margin-top: 15px;
+    display: flex;
+    gap: 10px;
+}
+.route-controls button {
+    padding: 10px 15px;
+    cursor: pointer;
+    border: none;
+    border-radius: 4px;
+    font-weight: bold;
+    transition: background-color 0.2s;
+}
+#add-log-btn {
+    background-color: #28a745;
+    color: white;
+}
+#add-log-btn:disabled {
+    background-color: #90c79c;
+    cursor: not-allowed;
+}
+#clear-route-btn {
+    background-color: #dc3545;
+    color: white;
 }

@@ -18,11 +18,26 @@
                     <option value="">-- ゲームを選択してください --</option>
                 </select>
             </div>
+            <button id="mode-display" class="mode-button active">履歴表示モード</button>
+            <button id="mode-add" class="mode-button">ログ追加モード</button>
         </div>
+
+        <div id="route-info-area">
+            <p id="route-instruction">ログ追加モード: 地図上の2点をクリックしてルートを検索してください。</p>
+            <p><strong>所要時間:</strong> <span id="route-time"></span></p>
+            <p><strong>距離:</strong> <span id="route-dist"></span></p>
+            <p><strong>歩数 (推定):</strong> <span id="route-steps"></span></p>
+            <div class="route-controls">
+                <button id="add-log-btn" disabled>このルートをログに追加</button>
+                <button id="clear-route-btn" disabled>ルートをクリア</button>
+            </div>
+        </div>
+
         <div id="map"></div>
     </div>
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
     <script src="../../authbase/authbase.js"></script>
-    <script src="scripts/main.js"></script>
+    <script type="module" src="scripts/route-mapper.js"></script>
+    <script type="module" src="scripts/main.js"></script>
 </body>
 </html>

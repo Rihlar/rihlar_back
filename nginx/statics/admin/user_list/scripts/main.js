@@ -4,7 +4,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     // 認証チェック
     const token = await auth.getToken();
     if (!token) {
-        window.location.href = '/login.html';
+        window.location.href = '/statics/login.html';
         return;
     }
 
@@ -17,7 +17,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         }
     } catch (e) {
         console.error('Token decode error:', e);
-        window.location.href = '/login.html';
+        window.location.href = '/statics/login.html';
         return;
     }
 
