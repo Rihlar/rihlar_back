@@ -23,9 +23,20 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     // ユーザー一覧の取得と表示
     try {
+        const gameData = await auth.Get("/game/list", {});
+        const games = gameData.Data;
+
         const users = await auth.Get("/user/admin/users", {});
         if (users) {
             const tableBody = document.querySelector('#user-table tbody');
+            
+            let gameOptions = '<option value="">ゲームを選択</option>';
+            if (games) {
+                games.forEach(game => {
+                    gameOptions += `<option value="${game.game_id}">${game.name} (開始: ${new Date(game.start_time * 1000).toLocaleString()})</option>`;
+                });
+            }
+
             users.forEach(user => {
                 const row = document.createElement('tr');
                 row.innerHTML = `
@@ -34,7 +45,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                     <td>${user.comment}</td>
                     <td><a href="/statics/admin/walking_history/?userId=${user.user_id}">歩行履歴を見る</a></td>
                     <td>
-                        <input type="text" placeholder="Game ID" class="game-id-input">
+                        <select class="game-id-select">${gameOptions}</select>
                         <button class="add-to-game-btn">追加</button>
                     </td>
                 `;
@@ -46,10 +57,10 @@ document.addEventListener('DOMContentLoaded', async () => {
                 button.addEventListener('click', async (event) => {
                     const row = event.target.closest('tr');
                     const userId = row.querySelector('td:first-child').textContent;
-                    const gameId = row.querySelector('.game-id-input').value;
+                    const gameId = row.querySelector('.game-id-select').value;
 
                     if (!gameId) {
-                        alert('Game IDを入力してください。');
+                        alert('ゲームを選択してください。');
                         return;
                     }
 
