@@ -231,54 +231,68 @@ export class RouteMapper {
         const { routeCoordinates, duration, distance, steps } = this.calculatedRouteData;
         const currentTimeStamp = Math.floor(Date.now() / 1000);
         const totalDistance = distance;
-        
-        let logData = [];
-        let accumulatedSteps = 0;
-        let accumulatedDistance = 0;
-
         const startTime = currentTimeStamp - Math.floor(duration);
 
-        for (let i = 0; i < routeCoordinates.length; i++) {
+        let thinnedLogData = [];
+        let lastLogTime = startTime;
+        let accumulatedStepsForInterval = 0;
+        let totalStepsCalculated = 0;
+
+        // 最初のポイントを基準として追加
+        thinnedLogData.push({
+            user_id: userId,
+            steps: 0,
+            latitude: routeCoordinates[0][0],
+            longitude: routeCoordinates[0][1],
+            timeStamp: startTime
+        });
+
+        let accumulatedDistance = 0;
+        for (let i = 1; i < routeCoordinates.length; i++) {
             const coord = routeCoordinates[i];
-            const isFirst = i === 0;
-            const isLast = i === routeCoordinates.length - 1;
-            
-            let segmentDistance = 0;
-            let segmentTimeOffset = 0;
-            
-            if (!isFirst) {
-                const prevCoord = routeCoordinates[i - 1];
-                segmentDistance = calculateDistance(prevCoord[0], prevCoord[1], coord[0], coord[1]);
-                accumulatedDistance += segmentDistance;
-                
-                const stepRatio = segmentDistance / totalDistance;
-                let stepsForSegment = Math.round(steps * stepRatio);
+            const prevCoord = routeCoordinates[i - 1];
 
-                if (isLast) {
-                    stepsForSegment = steps - accumulatedSteps;
-                }
-                accumulatedSteps += stepsForSegment;
-                
-                const timeRatio = accumulatedDistance / totalDistance;
-                segmentTimeOffset = Math.floor(duration * timeRatio);
-            }
+            const segmentDistance = calculateDistance(prevCoord[0], prevCoord[1], coord[0], coord[1]);
+            accumulatedDistance += segmentDistance;
 
-            const timeStamp = isFirst ? startTime : startTime + segmentTimeOffset;
+            const stepRatio = segmentDistance / totalDistance;
+            const stepsForSegment = Math.round(steps * stepRatio);
+            accumulatedStepsForInterval += stepsForSegment;
+            totalStepsCalculated += stepsForSegment;
 
-            // stepsが0より大きいログのみを追加
-            const stepsForLog = isFirst ? 0 : Math.max(0, accumulatedSteps - (logData.length > 0 ? logData.reduce((acc, val) => acc + val.steps, 0) : 0));
-            if (stepsForLog > 0) {
-                 logData.push({
+            const timeRatio = accumulatedDistance / totalDistance;
+            const timeStamp = startTime + Math.floor(duration * timeRatio);
+
+            if (timeStamp >= lastLogTime + 5) {
+                thinnedLogData.push({
                     user_id: userId,
-                    steps: stepsForLog,
+                    steps: accumulatedStepsForInterval,
                     latitude: coord[0],
                     longitude: coord[1],
-                    timeStamp: Math.floor(timeStamp)
+                    timeStamp: timeStamp
                 });
+                lastLogTime = timeStamp;
+                accumulatedStepsForInterval = 0;
             }
         }
 
-        if (logData.length === 0) {
+        // 最後のログに端数を追加
+        const remainingSteps = steps - totalStepsCalculated;
+        accumulatedStepsForInterval += remainingSteps;
+
+        if (accumulatedStepsForInterval > 0 && thinnedLogData.length > 0) {
+            const lastLog = thinnedLogData[thinnedLogData.length - 1];
+            if (lastLog.timeStamp === startTime) { // 最初のログしかない場合
+                 lastLog.latitude = routeCoordinates[routeCoordinates.length - 1][0];
+                 lastLog.longitude = routeCoordinates[routeCoordinates.length - 1][1];
+                 lastLog.timeStamp = startTime + Math.floor(duration);
+                 lastLog.steps = accumulatedStepsForInterval;
+            } else {
+                lastLog.steps += accumulatedStepsForInterval;
+            }
+        }
+
+        if (thinnedLogData.length <= 1 && thinnedLogData[0].steps === 0) {
             alert('生成されたログデータがありません。歩数が0より大きい必要があります。');
             return;
         }
@@ -288,7 +302,7 @@ export class RouteMapper {
         try {
             await this.auth.Post('/gcore/admin/report/movement', {
                 'Content-Type': 'application/json'
-            }, JSON.stringify(logData));
+            }, JSON.stringify(thinnedLogData));
 
             alert('歩行ログをサーバーに保存しました。');
             this.clearRoute();
