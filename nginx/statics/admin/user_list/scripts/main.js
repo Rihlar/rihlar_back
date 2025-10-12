@@ -113,7 +113,6 @@ document.addEventListener('DOMContentLoaded', async () => {
             });
         });
 
-    }
     } catch (error) {
         console.error('Failed to fetch users:', error);
         document.body.innerHTML += '<p>ユーザー一覧の取得に失敗しました。</p>';
