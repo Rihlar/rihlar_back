@@ -23,23 +23,43 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     // ユーザー一覧の取得と表示
     try {
-        const gameData = await auth.Get("/game/list", {});
-        const games = gameData.Data;
+        // 1. 全ゲームリストと全ユーザーリストを並行して取得
+        const [gameData, users] = await Promise.all([
+            auth.Get("/game/list", {}),
+            auth.Get("/user/admin/users", {})
+        ]);
 
-        const users = await auth.Get("/user/admin/users", {});
-        if (users) {
-            const tableBody = document.querySelector('#user-table tbody');
-            
-            let gameOptions = '<option value="">ゲームを選択</option>';
-            if (games) {
-                games.forEach(game => {
-                    gameOptions += `<option value="${game.game_id}">${game.name} (開始: ${new Date(game.start_time * 1000).toLocaleString()})</option>`;
-                });
-            }
+        if (!users) {
+            throw new Error('ユーザー一覧の取得に失敗しました。');
+        }
 
-            users.forEach(user => {
-                const row = document.createElement('tr');
-                row.innerHTML = `
+        const games = gameData ? gameData.Data : [];
+
+        // 2. 各ユーザーの参加ゲームリストを並行して取得
+        const joinedGamesPromises = users.map(user => 
+            auth.Get(`/game/admin/users/${user.user_id}/games`, {})
+        );
+        const joinedGamesResults = await Promise.all(joinedGamesPromises);
+
+        // 3. HTMLを文字列として構築
+        const tableBody = document.querySelector('#user-table tbody');
+        let tableContent = '';
+
+        let gameOptions = '<option value="">ゲームを選択</option>';
+        if (games) {
+            games.forEach(game => {
+                gameOptions += `<option value="${game.game_id}">${game.name} (開始: ${new Date(game.start_time * 1000).toLocaleString()})</option>`;
+            });
+        }
+
+        users.forEach((user, index) => {
+            const joinedGames = joinedGamesResults[index];
+            const joinedGamesText = (joinedGames && joinedGames.length > 0) 
+                ? joinedGames.map(g => g.gameID).join(', ') 
+                : 'なし';
+
+            tableContent += `
+                <tr>
                     <td>${user.user_id}</td>
                     <td>${user.name}</td>
                     <td>${user.comment}</td>
@@ -48,56 +68,52 @@ document.addEventListener('DOMContentLoaded', async () => {
                         <select class="game-id-select">${gameOptions}</select>
                         <button class="add-to-game-btn">追加</button>
                     </td>
-                `;
-                tableBody.appendChild(row);
+                    <td>${joinedGamesText}</td>
+                </tr>
+            `;
+        });
 
-                (async () => {
-                    try {
-                        const joinedGames = await auth.Get(`/game/admin/users/${user.user_id}/games`, {});
-                        const gamesCell = document.createElement('td');
-                        if (joinedGames && joinedGames.length > 0) {
-                            gamesCell.textContent = joinedGames.map(g => g.gameID).join(', ');
+        // 4. DOMを一括で更新
+        tableBody.innerHTML = tableContent;
+
+        // 5. イベントリスナーをまとめて追加
+        document.querySelectorAll('.add-to-game-btn').forEach(button => {
+            button.addEventListener('click', async (event) => {
+                const row = event.target.closest('tr');
+                const userId = row.querySelector('td:first-child').textContent;
+                const gameId = row.querySelector('.game-id-select').value;
+
+                if (!gameId) {
+                    alert('ゲームを選択してください。');
+                    return;
+                }
+
+                try {
+                    const result = await auth.Post('/game/admin/member/join', {
+                        'Content-Type': 'application/json'
+                    }, JSON.stringify({ user_id: userId, game_id: gameId }));
+
+                    if (result) {
+                        alert('ユーザーをゲームに追加しました。');
+                        // 表示を更新
+                        const gamesCell = row.querySelector('td:last-child');
+                        const currentGames = gamesCell.textContent;
+                        if (currentGames === 'なし') {
+                            gamesCell.textContent = gameId;
                         } else {
-                            gamesCell.textContent = 'なし';
+                            gamesCell.textContent += `, ${gameId}`;
                         }
-                        row.appendChild(gamesCell);
-                    } catch (e) {
-                        const gamesCell = document.createElement('td');
-                        gamesCell.textContent = '取得エラー';
-                        row.appendChild(gamesCell);
+                    } else {
+                        alert('ユーザーの追加に失敗しました。');
                     }
-                })();
+                } catch (error) {
+                    console.error('Failed to add user to game:', error);
+                    alert('エラーが発生しました。');
+                }
             });
+        });
 
-            // イベントリスナーを追加
-            document.querySelectorAll('.add-to-game-btn').forEach(button => {
-                button.addEventListener('click', async (event) => {
-                    const row = event.target.closest('tr');
-                    const userId = row.querySelector('td:first-child').textContent;
-                    const gameId = row.querySelector('.game-id-select').value;
-
-                    if (!gameId) {
-                        alert('ゲームを選択してください。');
-                        return;
-                    }
-
-                    try {
-                        const result = await auth.Post('/game/admin/member/join', {
-                            'Content-Type': 'application/json'
-                        }, JSON.stringify({ user_id: userId, game_id: gameId }));
-
-                        if (result) {
-                            alert('ユーザーをゲームに追加しました。');
-                        } else {
-                            alert('ユーザーの追加に失敗しました。');
-                        }
-                    } catch (error) {
-                        console.error('Failed to add user to game:', error);
-                        alert('エラーが発生しました。');
-                    }
-                });
-            });
-        }
+    }
     } catch (error) {
         console.error('Failed to fetch users:', error);
         document.body.innerHTML += '<p>ユーザー一覧の取得に失敗しました。</p>';
