@@ -220,16 +220,16 @@ export class RouteMapper {
      * 計算されたルートデータから歩行ログJSONを生成する
      */
     async generateLogJSON() {
-        const gameSelect = document.getElementById('game-select');
         const userId = document.getElementById('user-id').textContent;
+        const loadingOverlay = document.getElementById('loading-overlay');
 
-        if (!this.calculatedRouteData || !gameSelect.value) {
-            alert('ルート情報またはゲームが選択されていません。');
+        if (!this.calculatedRouteData) {
+            alert('ルート情報がありません。');
             return;
         }
 
         const { routeCoordinates, duration, distance, steps } = this.calculatedRouteData;
-        const currentTimeStamp = Math.floor(Date.now() / 1000); // 現在のUNIXタイムスタンプ（秒）
+        const currentTimeStamp = Math.floor(Date.now() / 1000);
         const totalDistance = distance;
         
         let logData = [];
@@ -265,28 +265,31 @@ export class RouteMapper {
 
             const timeStamp = isFirst ? startTime : startTime + segmentTimeOffset;
 
-            logData.push({
-                timeStamp: Math.floor(timeStamp),
-                latitude: coord[0],
-                longitude: coord[1],
-                steps: isFirst ? 0 : Math.max(0, accumulatedSteps - (logData[i-1] ? logData[i-1].steps : 0)),
-                userID: userId
-            });
+            // stepsが0より大きいログのみを追加
+            const stepsForLog = isFirst ? 0 : Math.max(0, accumulatedSteps - (logData.length > 0 ? logData.reduce((acc, val) => acc + val.steps, 0) : 0));
+            if (stepsForLog > 0) {
+                 logData.push({
+                    user_id: userId,
+                    steps: stepsForLog,
+                    latitude: coord[0],
+                    longitude: coord[1],
+                    timeStamp: Math.floor(timeStamp)
+                });
+            }
         }
 
-        try {
-            for (const log of logData) {
-                if (log.steps <= 0) continue;
+        if (logData.length === 0) {
+            alert('生成されたログデータがありません。歩数が0より大きい必要があります。');
+            return;
+        }
 
-                await this.auth.Post('/gcore/admin/report/movement', {
-                    'Content-Type': 'application/json'
-                }, JSON.stringify({
-                    user_id: log.userID,
-                    steps: log.steps,
-                    latitude: log.latitude,
-                    longitude: log.longitude
-                }));
-            }
+        loadingOverlay.classList.add('visible');
+
+        try {
+            await this.auth.Post('/gcore/admin/report/movement', {
+                'Content-Type': 'application/json'
+            }, JSON.stringify(logData));
+
             alert('歩行ログをサーバーに保存しました。');
             this.clearRoute();
             return true;
@@ -294,6 +297,8 @@ export class RouteMapper {
             console.error('Failed to save walking log:', error);
             alert('歩行ログの保存に失敗しました。');
             return false;
+        } finally {
+            loadingOverlay.classList.remove('visible');
         }
     }
 }

@@ -50,24 +50,26 @@ type AdminMovementArgs struct {
 // 歩いたことを報告するエンドポイント (管理者向け)
 func AdminReportMovement(ctx echo.Context) error {
 	// bind する
-	args := AdminMovementArgs{}
+	var args []AdminMovementArgs
 	if err := ctx.Bind(&args); err != nil {
 		return err
 	}
 
 	// サービスを呼び出す
-	response,err := services.ReportMovement(services.MovementArgs{
-		UserID:    args.UserID,
-		Steps:     args.Steps,
-		Latitude:  args.Latitude,
-		Longitude: args.Longitude,
-	});
-	if err != nil {
-		logger.PrintErr(err)
-		return ctx.JSON(http.StatusInternalServerError,response)
+	for _, log := range args {
+		_, err := services.ReportMovement(services.MovementArgs{
+			UserID:    log.UserID,
+			Steps:     log.Steps,
+			Latitude:  log.Latitude,
+			Longitude: log.Longitude,
+		})
+		if err != nil {
+			logger.PrintErr(err)
+			return ctx.JSON(http.StatusInternalServerError, echo.Map{"error": "failed to report movement"})
+		}
 	}
 
-	return ctx.JSON(http.StatusOK, response)
+	return ctx.JSON(http.StatusOK, echo.Map{"result": "success"})
 }
 
 // 歩いたデータを記録するエンドポイント
