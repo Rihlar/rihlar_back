@@ -4,7 +4,7 @@ import { RouteMapper } from './route-mapper.js';
 
 document.addEventListener('DOMContentLoaded', async () => {
     // 認証ベースのインスタンスは、AuthBaseがグローバルに読み込まれていることを前提とする
-    const auth = new AuthBase('/api/auth');
+    const auth = new AuthBase('/auth/');
     let map = null;
     let currentLayerGroup = null;
 

@@ -1,5 +1,5 @@
 document.addEventListener('DOMContentLoaded', async () => {
-    const auth = new AuthBase('/api/auth');
+    const auth = new AuthBase('/auth/');
 
     // 認証チェック
     const token = await auth.getToken();
