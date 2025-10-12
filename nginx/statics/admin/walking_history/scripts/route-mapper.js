@@ -65,8 +65,9 @@ function decodePolyline(encoded) {
 }
 
 export class RouteMapper {
-    constructor(mapInstance) {
+    constructor(mapInstance, auth) {
         this.map = mapInstance;
+        this.auth = auth;
         this.selectedPoints = [];
         this.markers = [];
         this.displayedRoute = null;
@@ -218,7 +219,7 @@ export class RouteMapper {
     /**
      * 計算されたルートデータから歩行ログJSONを生成する
      */
-    generateLogJSON() {
+    async generateLogJSON() {
         const gameSelect = document.getElementById('game-select');
         const userId = document.getElementById('user-id').textContent;
 
@@ -227,7 +228,6 @@ export class RouteMapper {
             return;
         }
 
-        const selectedGameId = gameSelect.value;
         const { routeCoordinates, duration, distance, steps } = this.calculatedRouteData;
         const currentTimeStamp = Math.floor(Date.now() / 1000); // 現在のUNIXタイムスタンプ（秒）
         const totalDistance = distance;
@@ -236,7 +236,6 @@ export class RouteMapper {
         let accumulatedSteps = 0;
         let accumulatedDistance = 0;
 
-        // ログの開始時刻を現在の推定時刻（currentTimeStamp）からduration分前（約-duration秒）に設定
         const startTime = currentTimeStamp - Math.floor(duration);
 
         for (let i = 0; i < routeCoordinates.length; i++) {
@@ -249,52 +248,52 @@ export class RouteMapper {
             
             if (!isFirst) {
                 const prevCoord = routeCoordinates[i - 1];
-                // 座標間の距離を計算
                 segmentDistance = calculateDistance(prevCoord[0], prevCoord[1], coord[0], coord[1]);
                 accumulatedDistance += segmentDistance;
                 
-                // 距離の割合に基づいて歩数を割り当て
                 const stepRatio = segmentDistance / totalDistance;
                 let stepsForSegment = Math.round(steps * stepRatio);
 
-                // 最後のログで残りの歩数を調整し、合計が合うようにする
                 if (isLast) {
                     stepsForSegment = steps - accumulatedSteps;
                 }
                 accumulatedSteps += stepsForSegment;
                 
-                // タイムスタンプのオフセット: 総時間に対する距離の割合で時間を配分
                 const timeRatio = accumulatedDistance / totalDistance;
                 segmentTimeOffset = Math.floor(duration * timeRatio);
             }
 
-            // タイムスタンプを計算 (開始時刻 + 経過時間)
             const timeStamp = isFirst ? startTime : startTime + segmentTimeOffset;
 
             logData.push({
                 timeStamp: Math.floor(timeStamp),
                 latitude: coord[0],
                 longitude: coord[1],
-                // 歩数は、その座標までの移動（つまり前の座標からこの座標への移動）として割り当てる
-                steps: isFirst ? 0 : Math.max(0, accumulatedSteps - logData[i-1].steps), // このセグメントで稼いだ歩数
-                gameID: selectedGameId,
+                steps: isFirst ? 0 : Math.max(0, accumulatedSteps - (logData[i-1] ? logData[i-1].steps : 0)),
                 userID: userId
             });
-            
-            // NOTE: Leafletのデコードされた座標配列では、各座標がほぼ等間隔ではないため、距離に基づいて時間を配分するのがより正確です。
-            // stepsは、この地点に到達するまでに稼いだ歩数として、前地点から移動した分の歩数を割り当てます。
         }
 
-        // ログデータをJSON形式で表示
-        console.log('--- 生成された歩行ログJSON ---');
-        console.log(`// ユーザーID: ${userId}`);
-        console.log(`// ゲームID: ${selectedGameId}`);
-        console.log(`// 総歩数（推定）：${steps.toLocaleString()} 歩`);
-        console.log(JSON.stringify(logData, null, 2));
-        alert('生成された歩行ログJSONをコンソールに出力しました。\n(APIへの追加処理は、このコードでは実装されていません。)');
+        try {
+            for (const log of logData) {
+                if (log.steps <= 0) continue;
 
-        this.clearRoute(); // ログ生成後、ルートをクリア
-
-        return true;
+                await this.auth.Post('/gcore/admin/report/movement', {
+                    'Content-Type': 'application/json'
+                }, JSON.stringify({
+                    user_id: log.userID,
+                    steps: log.steps,
+                    latitude: log.latitude,
+                    longitude: log.longitude
+                }));
+            }
+            alert('歩行ログをサーバーに保存しました。');
+            this.clearRoute();
+            return true;
+        } catch (error) {
+            console.error('Failed to save walking log:', error);
+            alert('歩行ログの保存に失敗しました。');
+            return false;
+        }
     }
 }

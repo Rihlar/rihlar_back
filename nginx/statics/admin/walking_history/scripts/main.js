@@ -56,7 +56,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     currentLayerGroup = L.layerGroup().addTo(map);
 
     // RouteMapperの初期化
-    routeMapper = new RouteMapper(map);
+    routeMapper = new RouteMapper(map, auth);
 
     // 初期化後の処理
     if (gameId) {
