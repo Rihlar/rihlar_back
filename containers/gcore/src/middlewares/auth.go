@@ -25,6 +25,9 @@ func DebugRequireAuth(next echo.HandlerFunc) echo.HandlerFunc {
 // 認証ミドルウェア
 func RequireAuth(next echo.HandlerFunc) echo.HandlerFunc {
 	return func(ctx echo.Context) error {
+		// 認証を開始します
+		logger.Println("認証を開始します 認証トークン", ctx.Request().Header.Get("Authorization"),"アクセスしたURL", ctx.Request().URL.String())
+
 		// ヘッダからトークンを取得
 		token := ctx.Request().Header.Get("Authorization")
 		if token == "" {
@@ -43,7 +46,11 @@ func RequireAuth(next echo.HandlerFunc) echo.HandlerFunc {
 		// contextにトークンを格納
 		ctx.Set("claim", claim)
 		// トークンを格納
-		ctx.Set("token", token)
+		ctx.Set("token", token)		
+
+		// ユーザーIDを格納
+		ctx.Set("UserID", "userid-" + claim.UserID)
+
 		// 認証処理
 		return next(ctx)
 	}
