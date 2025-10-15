@@ -57,7 +57,7 @@ func AdminReportMovement(ctx echo.Context) error {
 
 	// サービスを呼び出す
 	for _, log := range args {
-		_, err := services.ReportMovement(services.MovementArgs{
+		response, err := services.ReportMovement(services.MovementArgs{
 			UserID:    log.UserID,
 			Steps:     log.Steps,
 			Latitude:  log.Latitude,
@@ -68,6 +68,9 @@ func AdminReportMovement(ctx echo.Context) error {
 			continue
 			// return ctx.JSON(http.StatusInternalServerError, echo.Map{"error": "failed to report movement"})
 		}
+
+		// ログ出力
+		logger.Println("Successful movement report. user_id:", log.UserID, "steps:", log.Steps, "latitude:", log.Latitude, "longitude:", log.Longitude,"response:", response)
 	}
 
 	return ctx.JSON(http.StatusOK, echo.Map{"result": "success"})

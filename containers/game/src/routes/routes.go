@@ -62,7 +62,7 @@ func InitRoutes(router *echo.Echo) *echo.Echo {
 	router.GET("/circle/image/:circle_id", controllers.GetCircleImageHandler)
 
 	//円画像アップロード
-	router.POST("/circle/image/upload", controllers.UploadCircleImageHandler, middlewares.RequireAuth,middlewares.RequestLogger())
+	router.POST("/circle/image/upload", controllers.UploadCircleImageHandler, middlewares.RequireAuth)
 
 	// 画像のリストを返すエンドポイント
 	router.GET("/image/list", controllers.GetImageListHandler, middlewares.RequireAuth,middlewares.RequestLogger())

@@ -27,12 +27,12 @@ func DebugGame() {
 	// ゲームを作成する関数
 	CreateGame(Game{
 		GameID:    "gameid-996e5916-28b7-4222-ad5c-b332c1f892ec",
-		StartTime: time.Now(),
-		EndTime:   time.Now().AddDate(0,0,20),
+		StartTime: time.Now().AddDate(0,0,-30),
+		EndTime:   time.Now().AddDate(0,0,30),
 		Flag:      0,
 		Type:      1,
 		Status:    1,
-		RegionID:  "regionId-ef5aa179-53e0-481d-b64d-ae7654049a88",
+		RegionID:  "regionId-fb145c05-e0e5-4f22-86e1-9f40326faf31",
 	})
 }
 
@@ -87,8 +87,11 @@ func (game *Game) CheckJoin(userId string) bool {
 
 	// エラー処理
 	if err != nil {
+		logger.Println("MemberCheck Error: ", err)
 		return false
 	}
+
+	logger.Println("MemberCheck Success")
 
 	return true
 }
